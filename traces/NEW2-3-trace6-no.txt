@@ -1,0 +1,410 @@
+
+======================================================================
+TABLEAU DE CONTRAINTES
+======================================================================
+Matrice des coûts
+-----------------
+   |    C1 |    C2 |    C3 |    C4
+----------------------------------
+P1 | 11.00 | 12.00 | 10.00 | 10.00
+P2 | 17.00 | 16.00 | 15.00 | 18.00
+P3 | 19.00 | 21.00 | 20.00 | 22.00
+
+Provisions : [60.0, 30.0, 90.0]
+Commandes  : [50.0, 75.0, 30.0, 25.0]
+Total provisions : 180.00
+Total commandes  : 180.00
+
+======================================================================
+>>> ALGORITHME DU COIN NORD-OUEST <<<
+======================================================================
+
+>>> Proposition de transport initiale <<<
+Proposition de transport
+------------------------
+   |    C1 |    C2 |    C3 |    C4
+----------------------------------
+P1 | 50.00 | 10.00 |  0.00 |  0.00
+P2 |  0.00 | 30.00 |  0.00 |  0.00
+P3 |  0.00 | 35.00 | 30.00 | 25.00
+
+Coût total initial : 3035.00
+
+======================================================================
+>>> MÉTHODE DU MARCHE-PIED AVEC POTENTIEL <<<
+======================================================================
+
+======================================================================
+ITÉRATION 1
+======================================================================
+
+>>> Proposition de transport actuelle <<<
+Proposition de transport
+------------------------
+   |    C1 |    C2 |    C3 |    C4
+----------------------------------
+P1 | 50.00 | 10.00 |  0.00 |  0.00
+P2 |  0.00 | 30.00 |  0.00 |  0.00
+P3 |  0.00 | 35.00 | 30.00 | 25.00
+
+Coût total actuel : 3035.00
+
+>>> Potentiels par sommet <<<
+Potentiels
+----------
+Sommet |        Type | Potentiel
+--------------------------------
+    P1 | Fournisseur |      0.00
+    P2 | Fournisseur |      4.00
+    P3 | Fournisseur |      9.00
+    C1 |      Client |     11.00
+    C2 |      Client |     12.00
+    C3 |      Client |     11.00
+    C4 |      Client |     13.00
+
+>>> Table des coûts potentiels <<<
+Table des coûts potentiels
+--------------------------
+   |    C1 |    C2 |    C3 |    C4
+----------------------------------
+P1 | 11.00 | 12.00 | 11.00 | 13.00
+P2 | 15.00 | 16.00 | 15.00 | 17.00
+P3 | 20.00 | 21.00 | 20.00 | 22.00
+
+>>> Table des coûts marginaux <<<
+Table des coûts marginaux
+-------------------------
+   |    C1 |   C2 |    C3 |    C4
+---------------------------------
+P1 |  0.00 | 0.00 | -1.00 | -3.00
+P2 |  2.00 | 0.00 |  0.00 |  1.00
+P3 | -1.00 | 0.00 |  0.00 |  0.00
+
+>>> Arête améliorante détectée <<<
+  Case : (1, 4) = P1 -> C4
+  Coût marginal : -3.000000
+  Cycle formé : [(0, 3)]
+  Maximisation effectuée avec delta = 0.000000
+
+⚠ Delta = 0 : cas particulier détecté
+  On conserve l'arête améliorante et on enlève les arêtes ajoutées lors du test de connexité
+  L'arête améliorante est conservée avec valeur epsilon
+
+======================================================================
+ITÉRATION 2
+======================================================================
+
+>>> Proposition de transport actuelle <<<
+Proposition de transport
+------------------------
+   |    C1 |    C2 |    C3 |    C4
+----------------------------------
+P1 | 50.00 | 10.00 |  0.00 |  0.00
+P2 |  0.00 | 30.00 |  0.00 |  0.00
+P3 |  0.00 | 35.00 | 30.00 | 25.00
+
+Coût total actuel : 3035.00
+
+>>> Potentiels par sommet <<<
+Potentiels
+----------
+Sommet |        Type | Potentiel
+--------------------------------
+    P1 | Fournisseur |      0.00
+    P2 | Fournisseur |      4.00
+    P3 | Fournisseur |      9.00
+    C1 |      Client |     11.00
+    C2 |      Client |     12.00
+    C3 |      Client |     11.00
+    C4 |      Client |     10.00
+
+>>> Table des coûts potentiels <<<
+Table des coûts potentiels
+--------------------------
+   |    C1 |    C2 |    C3 |    C4
+----------------------------------
+P1 | 11.00 | 12.00 | 11.00 | 10.00
+P2 | 15.00 | 16.00 | 15.00 | 14.00
+P3 | 20.00 | 21.00 | 20.00 | 19.00
+
+>>> Table des coûts marginaux <<<
+Table des coûts marginaux
+-------------------------
+   |    C1 |   C2 |    C3 |   C4
+--------------------------------
+P1 |  0.00 | 0.00 | -1.00 | 0.00
+P2 |  2.00 | 0.00 |  0.00 | 4.00
+P3 | -1.00 | 0.00 |  0.00 | 3.00
+
+>>> Arête améliorante détectée <<<
+  Case : (1, 3) = P1 -> C3
+  Coût marginal : -1.000000
+  Cycle formé : [(0, 2)]
+  Maximisation effectuée avec delta = 0.000000
+
+⚠ Delta = 0 : cas particulier détecté
+  On conserve l'arête améliorante et on enlève les arêtes ajoutées lors du test de connexité
+  L'arête améliorante est conservée avec valeur epsilon
+
+======================================================================
+ITÉRATION 3
+======================================================================
+
+>>> Proposition de transport actuelle <<<
+Proposition de transport
+------------------------
+   |    C1 |    C2 |    C3 |    C4
+----------------------------------
+P1 | 50.00 | 10.00 |  0.00 |  0.00
+P2 |  0.00 | 30.00 |  0.00 |  0.00
+P3 |  0.00 | 35.00 | 30.00 | 25.00
+
+Coût total actuel : 3035.00
+
+>>> Potentiels par sommet <<<
+Potentiels
+----------
+Sommet |        Type | Potentiel
+--------------------------------
+    P1 | Fournisseur |      0.00
+    P2 | Fournisseur |      4.00
+    P3 | Fournisseur |      9.00
+    C1 |      Client |     11.00
+    C2 |      Client |     12.00
+    C3 |      Client |     10.00
+    C4 |      Client |     10.00
+
+>>> Table des coûts potentiels <<<
+Table des coûts potentiels
+--------------------------
+   |    C1 |    C2 |    C3 |    C4
+----------------------------------
+P1 | 11.00 | 12.00 | 10.00 | 10.00
+P2 | 15.00 | 16.00 | 14.00 | 14.00
+P3 | 20.00 | 21.00 | 19.00 | 19.00
+
+>>> Table des coûts marginaux <<<
+Table des coûts marginaux
+-------------------------
+   |    C1 |   C2 |   C3 |   C4
+-------------------------------
+P1 |  0.00 | 0.00 | 0.00 | 0.00
+P2 |  2.00 | 0.00 | 1.00 | 4.00
+P3 | -1.00 | 0.00 | 1.00 | 3.00
+
+>>> Arête améliorante détectée <<<
+  Case : (3, 1) = P3 -> C1
+  Coût marginal : -1.000000
+  Cycle formé : [(2, 0)]
+  Maximisation effectuée avec delta = 0.000000
+
+⚠ Delta = 0 : cas particulier détecté
+  On conserve l'arête améliorante et on enlève les arêtes ajoutées lors du test de connexité
+  L'arête améliorante est conservée avec valeur epsilon
+
+======================================================================
+ITÉRATION 4
+======================================================================
+
+>>> Proposition de transport actuelle <<<
+Proposition de transport
+------------------------
+   |    C1 |    C2 |    C3 |    C4
+----------------------------------
+P1 | 50.00 | 10.00 |  0.00 |  0.00
+P2 |  0.00 | 30.00 |  0.00 |  0.00
+P3 |  0.00 | 35.00 | 30.00 | 25.00
+
+Coût total actuel : 3035.00
+
+⚠ Cycle détecté : [(2, 0), (0, 0), (0, 1), (2, 1)]
+
+>>> Conditions pour la maximisation sur le cycle <<<
+Cases marquées + (où on ajoute delta) :
+  Case (3, 1) = P3 -> C1 : valeur actuelle = 0.00
+  Case (1, 2) = P1 -> C2 : valeur actuelle = 10.00
+Cases marquées - (où on soustrait delta) :
+  Case (1, 1) = P1 -> C1 : valeur actuelle = 50.00
+  Case (3, 2) = P3 -> C2 : valeur actuelle = 35.00
+
+Delta calculé = min(valeurs des cases -) = 35.000000
+  Case (3, 1) = P3 -> C1 : 0.00 -> 35.00 (+35.00)
+  Case (1, 2) = P1 -> C2 : 10.00 -> 45.00 (+35.00)
+  Case (1, 1) = P1 -> C1 : 50.00 -> 15.00 (-35.00)
+  Case (3, 2) = P3 -> C2 : 35.00 -> 0.00 (-35.00) [SUPPRIMÉE]
+
+>>> Arête(s) supprimée(s) à l'issue de la maximisation <<<
+  Arête (3, 2) = P3 -> C2 (mise à zéro)
+  Maximisation effectuée avec delta = 35.000000
+
+⚠ Cycle détecté : [(2, 0), (0, 0), (0, 2), (2, 2)]
+
+>>> Conditions pour la maximisation sur le cycle <<<
+Cases marquées + (où on ajoute delta) :
+  Case (3, 1) = P3 -> C1 : valeur actuelle = 35.00
+  Case (1, 3) = P1 -> C3 : valeur actuelle = 0.00
+Cases marquées - (où on soustrait delta) :
+  Case (1, 1) = P1 -> C1 : valeur actuelle = 15.00
+  Case (3, 3) = P3 -> C3 : valeur actuelle = 30.00
+
+Delta calculé = min(valeurs des cases -) = 15.000000
+  Case (3, 1) = P3 -> C1 : 35.00 -> 50.00 (+15.00)
+  Case (1, 3) = P1 -> C3 : 0.00 -> 15.00 (+15.00)
+  Case (1, 1) = P1 -> C1 : 15.00 -> 0.00 (-15.00) [SUPPRIMÉE]
+  Case (3, 3) = P3 -> C3 : 30.00 -> 15.00 (-15.00)
+
+>>> Arête(s) supprimée(s) à l'issue de la maximisation <<<
+  Arête (1, 1) = P1 -> C1 (mise à zéro)
+  Maximisation effectuée avec delta = 15.000000
+
+✓ Proposition rendue acyclique (2 cycle(s) éliminé(s))
+
+>>> Potentiels par sommet <<<
+Potentiels
+----------
+Sommet |        Type | Potentiel
+--------------------------------
+    P1 | Fournisseur |      0.00
+    P2 | Fournisseur |      4.00
+    P3 | Fournisseur |     10.00
+    C1 |      Client |      9.00
+    C2 |      Client |     12.00
+    C3 |      Client |     10.00
+    C4 |      Client |     10.00
+
+>>> Table des coûts potentiels <<<
+Table des coûts potentiels
+--------------------------
+   |    C1 |    C2 |    C3 |    C4
+----------------------------------
+P1 |  9.00 | 12.00 | 10.00 | 10.00
+P2 | 13.00 | 16.00 | 14.00 | 14.00
+P3 | 19.00 | 22.00 | 20.00 | 20.00
+
+>>> Table des coûts marginaux <<<
+Table des coûts marginaux
+-------------------------
+   |   C1 |    C2 |   C3 |   C4
+-------------------------------
+P1 | 2.00 |  0.00 | 0.00 | 0.00
+P2 | 4.00 |  0.00 | 1.00 | 4.00
+P3 | 0.00 | -1.00 | 0.00 | 2.00
+
+>>> Arête améliorante détectée <<<
+  Case : (3, 2) = P3 -> C2
+  Coût marginal : -1.000000
+  Cycle formé : [(2, 1)]
+  Maximisation effectuée avec delta = 0.000000
+
+⚠ Delta = 0 : cas particulier détecté
+  On conserve l'arête améliorante et on enlève les arêtes ajoutées lors du test de connexité
+  L'arête améliorante est conservée avec valeur epsilon
+
+======================================================================
+ITÉRATION 5
+======================================================================
+
+>>> Proposition de transport actuelle <<<
+Proposition de transport
+------------------------
+   |    C1 |    C2 |    C3 |    C4
+----------------------------------
+P1 |  0.00 | 45.00 | 15.00 |  0.00
+P2 |  0.00 | 30.00 |  0.00 |  0.00
+P3 | 50.00 |  0.00 | 15.00 | 25.00
+
+Coût total actuel : 2970.00
+
+⚠ Cycle détecté : [(2, 1), (0, 1), (0, 2), (2, 2)]
+
+>>> Conditions pour la maximisation sur le cycle <<<
+Cases marquées + (où on ajoute delta) :
+  Case (3, 2) = P3 -> C2 : valeur actuelle = 0.00
+  Case (1, 3) = P1 -> C3 : valeur actuelle = 15.00
+Cases marquées - (où on soustrait delta) :
+  Case (1, 2) = P1 -> C2 : valeur actuelle = 45.00
+  Case (3, 3) = P3 -> C3 : valeur actuelle = 15.00
+
+Delta calculé = min(valeurs des cases -) = 15.000000
+  Case (3, 2) = P3 -> C2 : 0.00 -> 15.00 (+15.00)
+  Case (1, 3) = P1 -> C3 : 15.00 -> 30.00 (+15.00)
+  Case (1, 2) = P1 -> C2 : 45.00 -> 30.00 (-15.00)
+  Case (3, 3) = P3 -> C3 : 15.00 -> 0.00 (-15.00) [SUPPRIMÉE]
+
+>>> Arête(s) supprimée(s) à l'issue de la maximisation <<<
+  Arête (3, 3) = P3 -> C3 (mise à zéro)
+  Maximisation effectuée avec delta = 15.000000
+
+⚠ Cycle détecté : [(2, 1), (0, 1), (0, 3), (2, 3)]
+
+>>> Conditions pour la maximisation sur le cycle <<<
+Cases marquées + (où on ajoute delta) :
+  Case (3, 2) = P3 -> C2 : valeur actuelle = 15.00
+  Case (1, 4) = P1 -> C4 : valeur actuelle = 0.00
+Cases marquées - (où on soustrait delta) :
+  Case (1, 2) = P1 -> C2 : valeur actuelle = 30.00
+  Case (3, 4) = P3 -> C4 : valeur actuelle = 25.00
+
+Delta calculé = min(valeurs des cases -) = 25.000000
+  Case (3, 2) = P3 -> C2 : 15.00 -> 40.00 (+25.00)
+  Case (1, 4) = P1 -> C4 : 0.00 -> 25.00 (+25.00)
+  Case (1, 2) = P1 -> C2 : 30.00 -> 5.00 (-25.00)
+  Case (3, 4) = P3 -> C4 : 25.00 -> 0.00 (-25.00) [SUPPRIMÉE]
+
+>>> Arête(s) supprimée(s) à l'issue de la maximisation <<<
+  Arête (3, 4) = P3 -> C4 (mise à zéro)
+  Maximisation effectuée avec delta = 25.000000
+
+✓ Proposition rendue acyclique (2 cycle(s) éliminé(s))
+
+>>> Potentiels par sommet <<<
+Potentiels
+----------
+Sommet |        Type | Potentiel
+--------------------------------
+    P1 | Fournisseur |      0.00
+    P2 | Fournisseur |      4.00
+    P3 | Fournisseur |      9.00
+    C1 |      Client |     10.00
+    C2 |      Client |     12.00
+    C3 |      Client |     10.00
+    C4 |      Client |     10.00
+
+>>> Table des coûts potentiels <<<
+Table des coûts potentiels
+--------------------------
+   |    C1 |    C2 |    C3 |    C4
+----------------------------------
+P1 | 10.00 | 12.00 | 10.00 | 10.00
+P2 | 14.00 | 16.00 | 14.00 | 14.00
+P3 | 19.00 | 21.00 | 19.00 | 19.00
+
+>>> Table des coûts marginaux <<<
+Table des coûts marginaux
+-------------------------
+   |   C1 |   C2 |   C3 |   C4
+------------------------------
+P1 | 1.00 | 0.00 | 0.00 | 0.00
+P2 | 3.00 | 0.00 | 1.00 | 4.00
+P3 | 0.00 | 0.00 | 1.00 | 3.00
+
+✓ Solution optimale trouvée !
+  Tous les coûts marginaux sont >= 0
+
+======================================================================
+>>> SOLUTION OPTIMALE FINALE <<<
+======================================================================
+
+Proposition de transport optimale :
+Proposition de transport
+------------------------
+   |    C1 |    C2 |    C3 |    C4
+----------------------------------
+P1 |  0.00 |  5.00 | 30.00 | 25.00
+P2 |  0.00 | 30.00 |  0.00 |  0.00
+P3 | 50.00 | 40.00 |  0.00 |  0.00
+
+Coût total optimal : 2880.00
+Coût initial (Nord-Ouest) : 3035.00
+Amélioration : 155.00 (5.11%)
+Nombre d'itérations : 5

@@ -1,0 +1,165 @@
+
+======================================================================
+TABLEAU DE CONTRAINTES
+======================================================================
+Matrice des coûts
+-----------------
+   |    C1 |    C2
+------------------
+P1 | 30.00 | 20.00
+P2 | 10.00 | 50.00
+
+Provisions : [600.0, 500.0]
+Commandes  : [100.0, 1000.0]
+Total provisions : 1100.00
+Total commandes  : 1100.00
+
+======================================================================
+>>> ALGORITHME DU COIN NORD-OUEST <<<
+======================================================================
+
+>>> Proposition de transport initiale <<<
+Proposition de transport
+------------------------
+   |     C1 |     C2
+--------------------
+P1 | 100.00 | 500.00
+P2 |   0.00 | 500.00
+
+Coût total initial : 38000.00
+
+======================================================================
+>>> MÉTHODE DU MARCHE-PIED AVEC POTENTIEL <<<
+======================================================================
+
+======================================================================
+ITÉRATION 1
+======================================================================
+
+>>> Proposition de transport actuelle <<<
+Proposition de transport
+------------------------
+   |     C1 |     C2
+--------------------
+P1 | 100.00 | 500.00
+P2 |   0.00 | 500.00
+
+Coût total actuel : 38000.00
+
+>>> Potentiels par sommet <<<
+Potentiels
+----------
+Sommet |        Type | Potentiel
+--------------------------------
+    P1 | Fournisseur |      0.00
+    P2 | Fournisseur |     30.00
+    C1 |      Client |     30.00
+    C2 |      Client |     20.00
+
+>>> Table des coûts potentiels <<<
+Table des coûts potentiels
+--------------------------
+   |    C1 |    C2
+------------------
+P1 | 30.00 | 20.00
+P2 | 60.00 | 50.00
+
+>>> Table des coûts marginaux <<<
+Table des coûts marginaux
+-------------------------
+   |     C1 |   C2
+------------------
+P1 |   0.00 | 0.00
+P2 | -50.00 | 0.00
+
+>>> Arête améliorante détectée <<<
+  Case : (2, 1) = P2 -> C1
+  Coût marginal : -50.000000
+  Cycle formé : [(1, 0)]
+  Maximisation effectuée avec delta = 0.000000
+
+⚠ Delta = 0 : cas particulier détecté
+  On conserve l'arête améliorante et on enlève les arêtes ajoutées lors du test de connexité
+  L'arête améliorante est conservée avec valeur epsilon
+
+======================================================================
+ITÉRATION 2
+======================================================================
+
+>>> Proposition de transport actuelle <<<
+Proposition de transport
+------------------------
+   |     C1 |     C2
+--------------------
+P1 | 100.00 | 500.00
+P2 |   0.00 | 500.00
+
+Coût total actuel : 38000.00
+
+⚠ Cycle détecté : [(1, 0), (0, 0), (0, 1), (1, 1)]
+
+>>> Conditions pour la maximisation sur le cycle <<<
+Cases marquées + (où on ajoute delta) :
+  Case (2, 1) = P2 -> C1 : valeur actuelle = 0.00
+  Case (1, 2) = P1 -> C2 : valeur actuelle = 500.00
+Cases marquées - (où on soustrait delta) :
+  Case (1, 1) = P1 -> C1 : valeur actuelle = 100.00
+  Case (2, 2) = P2 -> C2 : valeur actuelle = 500.00
+
+Delta calculé = min(valeurs des cases -) = 100.000000
+  Case (2, 1) = P2 -> C1 : 0.00 -> 100.00 (+100.00)
+  Case (1, 2) = P1 -> C2 : 500.00 -> 600.00 (+100.00)
+  Case (1, 1) = P1 -> C1 : 100.00 -> 0.00 (-100.00) [SUPPRIMÉE]
+  Case (2, 2) = P2 -> C2 : 500.00 -> 400.00 (-100.00)
+
+>>> Arête(s) supprimée(s) à l'issue de la maximisation <<<
+  Arête (1, 1) = P1 -> C1 (mise à zéro)
+  Maximisation effectuée avec delta = 100.000000
+
+✓ Proposition rendue acyclique (1 cycle(s) éliminé(s))
+
+>>> Potentiels par sommet <<<
+Potentiels
+----------
+Sommet |        Type | Potentiel
+--------------------------------
+    P1 | Fournisseur |      0.00
+    P2 | Fournisseur |     30.00
+    C1 |      Client |    -20.00
+    C2 |      Client |     20.00
+
+>>> Table des coûts potentiels <<<
+Table des coûts potentiels
+--------------------------
+   |     C1 |    C2
+-------------------
+P1 | -20.00 | 20.00
+P2 |  10.00 | 50.00
+
+>>> Table des coûts marginaux <<<
+Table des coûts marginaux
+-------------------------
+   |    C1 |   C2
+-----------------
+P1 | 50.00 | 0.00
+P2 |  0.00 | 0.00
+
+✓ Solution optimale trouvée !
+  Tous les coûts marginaux sont >= 0
+
+======================================================================
+>>> SOLUTION OPTIMALE FINALE <<<
+======================================================================
+
+Proposition de transport optimale :
+Proposition de transport
+------------------------
+   |     C1 |     C2
+--------------------
+P1 |   0.00 | 600.00
+P2 | 100.00 | 400.00
+
+Coût total optimal : 33000.00
+Coût initial (Nord-Ouest) : 38000.00
+Amélioration : 5000.00 (13.16%)
+Nombre d'itérations : 2

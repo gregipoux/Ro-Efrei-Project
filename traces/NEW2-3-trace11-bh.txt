@@ -1,0 +1,1006 @@
+
+======================================================================
+TABLEAU DE CONTRAINTES
+======================================================================
+Matrice des coûts
+-----------------
+    |     C1 |     C2 |     C3 |     C4 |     C5 |     C6 |     C7 |     C8 |     C9 |    C10
+---------------------------------------------------------------------------------------------
+ P1 |   1.00 |   2.00 |   3.00 |   4.00 |   5.00 |   6.00 |   7.00 |   8.00 |   9.00 |  10.00
+ P2 |  11.00 |  12.00 |  13.00 |  14.00 |  15.00 |  16.00 |  17.00 |  18.00 |  19.00 |  20.00
+ P3 |  21.00 |  22.00 |  23.00 |  24.00 |  25.00 |  26.00 |  27.00 |  28.00 |  29.00 |  30.00
+ P4 |  31.00 |  32.00 |  33.00 |  34.00 |  35.00 |  36.00 |  37.00 |  38.00 |  39.00 |  40.00
+ P5 |  41.00 |  41.00 |  43.00 |  44.00 |  45.00 |  46.00 |  47.00 |  48.00 |  49.00 |  50.00
+ P6 |  51.00 |  52.00 |  53.00 |  54.00 |  55.00 |  56.00 |  57.00 |  58.00 |  59.00 |  60.00
+ P7 |  61.00 |  62.00 |  63.00 |  64.00 |  65.00 |  66.00 |  67.00 |  68.00 |  69.00 |  70.00
+ P8 |  71.00 |  72.00 |  73.00 |  74.00 |  75.00 |  76.00 |  77.00 |  78.00 |  79.00 |  80.00
+ P9 |  81.00 |  82.00 |  83.00 |  84.00 |  85.00 |  86.00 |  87.00 |  88.00 |  89.00 |  90.00
+P10 |  91.00 |  92.00 |  93.00 |  94.00 |  95.00 |  96.00 |  97.00 |  98.00 |  99.00 | 100.00
+P11 | 101.00 | 102.00 | 103.00 | 104.00 | 105.00 | 106.00 | 107.00 | 108.00 | 109.00 | 110.00
+P12 | 111.00 | 112.00 | 113.00 | 114.00 | 115.00 | 116.00 | 117.00 | 118.00 | 119.00 | 120.00
+P13 | 121.00 | 122.00 | 123.00 | 124.00 | 125.00 | 126.00 | 127.00 | 128.00 | 129.00 | 130.00
+P14 | 131.00 | 132.00 | 133.00 | 134.00 | 135.00 | 136.00 | 137.00 | 138.00 | 139.00 | 140.00
+P15 | 141.00 | 142.00 | 143.00 | 144.00 | 145.00 | 146.00 | 147.00 | 148.00 | 149.00 | 150.00
+P16 | 151.00 | 152.00 | 153.00 | 154.00 | 155.00 | 156.00 | 157.00 | 158.00 | 159.00 | 160.00
+P17 | 161.00 | 162.00 | 163.00 | 164.00 | 165.00 | 166.00 | 167.00 | 168.00 | 169.00 | 170.00
+P18 | 171.00 | 172.00 | 173.00 | 174.00 | 175.00 | 176.00 | 177.00 | 178.00 | 179.00 | 180.00
+P19 | 181.00 | 182.00 | 183.00 | 184.00 | 185.00 | 186.00 | 187.00 | 188.00 | 189.00 | 190.00
+P20 | 191.00 | 192.00 | 193.00 | 194.00 | 195.00 | 196.00 | 197.00 | 198.00 | 199.00 | 200.00
+
+Provisions : [10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0, 110.0, 120.0, 130.0, 140.0, 150.0, 160.0, 170.0, 180.0, 190.0, 200.0]
+Commandes  : [120.0, 140.0, 160.0, 180.0, 200.0, 220.0, 240.0, 260.0, 280.0, 300.0]
+Total provisions : 2100.00
+Total commandes  : 2100.00
+
+======================================================================
+>>> ALGORITHME DE BALAS-HAMMER <<<
+======================================================================
+
+--- Itération 1 ---
+Pénalités des lignes actives :
+  Ligne 1 (P1) : pénalité = 1.00
+  Ligne 2 (P2) : pénalité = 1.00
+  Ligne 3 (P3) : pénalité = 1.00
+  Ligne 4 (P4) : pénalité = 1.00
+  Ligne 5 (P5) : pénalité = 0.00
+  Ligne 6 (P6) : pénalité = 1.00
+  Ligne 7 (P7) : pénalité = 1.00
+  Ligne 8 (P8) : pénalité = 1.00
+  Ligne 9 (P9) : pénalité = 1.00
+  Ligne 10 (P10) : pénalité = 1.00
+  Ligne 11 (P11) : pénalité = 1.00
+  Ligne 12 (P12) : pénalité = 1.00
+  Ligne 13 (P13) : pénalité = 1.00
+  Ligne 14 (P14) : pénalité = 1.00
+  Ligne 15 (P15) : pénalité = 1.00
+  Ligne 16 (P16) : pénalité = 1.00
+  Ligne 17 (P17) : pénalité = 1.00
+  Ligne 18 (P18) : pénalité = 1.00
+  Ligne 19 (P19) : pénalité = 1.00
+  Ligne 20 (P20) : pénalité = 1.00
+Pénalités des colonnes actives :
+  Colonne 1 (C1) : pénalité = 10.00
+  Colonne 2 (C2) : pénalité = 10.00
+  Colonne 3 (C3) : pénalité = 10.00
+  Colonne 4 (C4) : pénalité = 10.00
+  Colonne 5 (C5) : pénalité = 10.00
+  Colonne 6 (C6) : pénalité = 10.00
+  Colonne 7 (C7) : pénalité = 10.00
+  Colonne 8 (C8) : pénalité = 10.00
+  Colonne 9 (C9) : pénalité = 10.00
+  Colonne 10 (C10) : pénalité = 10.00
+
+Ligne(s) avec pénalité maximale (1.00) : ['P1', 'P2', 'P3', 'P4', 'P6', 'P7', 'P8', 'P9', 'P10', 'P11', 'P12', 'P13', 'P14', 'P15', 'P16', 'P17', 'P18', 'P19', 'P20']
+Colonne(s) avec pénalité maximale (10.00) : ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10']
+Choix de l'arête à remplir : (1, 1) = P1 -> C1
+  Coût minimal : 1.00
+  Allocation : 10.00
+  Ligne 1 (P1) épuisée, désactivée
+
+--- Itération 2 ---
+Pénalités des lignes actives :
+  Ligne 2 (P2) : pénalité = 1.00
+  Ligne 3 (P3) : pénalité = 1.00
+  Ligne 4 (P4) : pénalité = 1.00
+  Ligne 5 (P5) : pénalité = 0.00
+  Ligne 6 (P6) : pénalité = 1.00
+  Ligne 7 (P7) : pénalité = 1.00
+  Ligne 8 (P8) : pénalité = 1.00
+  Ligne 9 (P9) : pénalité = 1.00
+  Ligne 10 (P10) : pénalité = 1.00
+  Ligne 11 (P11) : pénalité = 1.00
+  Ligne 12 (P12) : pénalité = 1.00
+  Ligne 13 (P13) : pénalité = 1.00
+  Ligne 14 (P14) : pénalité = 1.00
+  Ligne 15 (P15) : pénalité = 1.00
+  Ligne 16 (P16) : pénalité = 1.00
+  Ligne 17 (P17) : pénalité = 1.00
+  Ligne 18 (P18) : pénalité = 1.00
+  Ligne 19 (P19) : pénalité = 1.00
+  Ligne 20 (P20) : pénalité = 1.00
+Pénalités des colonnes actives :
+  Colonne 1 (C1) : pénalité = 10.00
+  Colonne 2 (C2) : pénalité = 10.00
+  Colonne 3 (C3) : pénalité = 10.00
+  Colonne 4 (C4) : pénalité = 10.00
+  Colonne 5 (C5) : pénalité = 10.00
+  Colonne 6 (C6) : pénalité = 10.00
+  Colonne 7 (C7) : pénalité = 10.00
+  Colonne 8 (C8) : pénalité = 10.00
+  Colonne 9 (C9) : pénalité = 10.00
+  Colonne 10 (C10) : pénalité = 10.00
+
+Ligne(s) avec pénalité maximale (1.00) : ['P2', 'P3', 'P4', 'P6', 'P7', 'P8', 'P9', 'P10', 'P11', 'P12', 'P13', 'P14', 'P15', 'P16', 'P17', 'P18', 'P19', 'P20']
+Colonne(s) avec pénalité maximale (10.00) : ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10']
+Choix de l'arête à remplir : (2, 1) = P2 -> C1
+  Coût minimal : 11.00
+  Allocation : 20.00
+  Ligne 2 (P2) épuisée, désactivée
+
+--- Itération 3 ---
+Pénalités des lignes actives :
+  Ligne 3 (P3) : pénalité = 1.00
+  Ligne 4 (P4) : pénalité = 1.00
+  Ligne 5 (P5) : pénalité = 0.00
+  Ligne 6 (P6) : pénalité = 1.00
+  Ligne 7 (P7) : pénalité = 1.00
+  Ligne 8 (P8) : pénalité = 1.00
+  Ligne 9 (P9) : pénalité = 1.00
+  Ligne 10 (P10) : pénalité = 1.00
+  Ligne 11 (P11) : pénalité = 1.00
+  Ligne 12 (P12) : pénalité = 1.00
+  Ligne 13 (P13) : pénalité = 1.00
+  Ligne 14 (P14) : pénalité = 1.00
+  Ligne 15 (P15) : pénalité = 1.00
+  Ligne 16 (P16) : pénalité = 1.00
+  Ligne 17 (P17) : pénalité = 1.00
+  Ligne 18 (P18) : pénalité = 1.00
+  Ligne 19 (P19) : pénalité = 1.00
+  Ligne 20 (P20) : pénalité = 1.00
+Pénalités des colonnes actives :
+  Colonne 1 (C1) : pénalité = 10.00
+  Colonne 2 (C2) : pénalité = 10.00
+  Colonne 3 (C3) : pénalité = 10.00
+  Colonne 4 (C4) : pénalité = 10.00
+  Colonne 5 (C5) : pénalité = 10.00
+  Colonne 6 (C6) : pénalité = 10.00
+  Colonne 7 (C7) : pénalité = 10.00
+  Colonne 8 (C8) : pénalité = 10.00
+  Colonne 9 (C9) : pénalité = 10.00
+  Colonne 10 (C10) : pénalité = 10.00
+
+Ligne(s) avec pénalité maximale (1.00) : ['P3', 'P4', 'P6', 'P7', 'P8', 'P9', 'P10', 'P11', 'P12', 'P13', 'P14', 'P15', 'P16', 'P17', 'P18', 'P19', 'P20']
+Colonne(s) avec pénalité maximale (10.00) : ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10']
+Choix de l'arête à remplir : (3, 1) = P3 -> C1
+  Coût minimal : 21.00
+  Allocation : 30.00
+  Ligne 3 (P3) épuisée, désactivée
+
+--- Itération 4 ---
+Pénalités des lignes actives :
+  Ligne 4 (P4) : pénalité = 1.00
+  Ligne 5 (P5) : pénalité = 0.00
+  Ligne 6 (P6) : pénalité = 1.00
+  Ligne 7 (P7) : pénalité = 1.00
+  Ligne 8 (P8) : pénalité = 1.00
+  Ligne 9 (P9) : pénalité = 1.00
+  Ligne 10 (P10) : pénalité = 1.00
+  Ligne 11 (P11) : pénalité = 1.00
+  Ligne 12 (P12) : pénalité = 1.00
+  Ligne 13 (P13) : pénalité = 1.00
+  Ligne 14 (P14) : pénalité = 1.00
+  Ligne 15 (P15) : pénalité = 1.00
+  Ligne 16 (P16) : pénalité = 1.00
+  Ligne 17 (P17) : pénalité = 1.00
+  Ligne 18 (P18) : pénalité = 1.00
+  Ligne 19 (P19) : pénalité = 1.00
+  Ligne 20 (P20) : pénalité = 1.00
+Pénalités des colonnes actives :
+  Colonne 1 (C1) : pénalité = 10.00
+  Colonne 2 (C2) : pénalité = 9.00
+  Colonne 3 (C3) : pénalité = 10.00
+  Colonne 4 (C4) : pénalité = 10.00
+  Colonne 5 (C5) : pénalité = 10.00
+  Colonne 6 (C6) : pénalité = 10.00
+  Colonne 7 (C7) : pénalité = 10.00
+  Colonne 8 (C8) : pénalité = 10.00
+  Colonne 9 (C9) : pénalité = 10.00
+  Colonne 10 (C10) : pénalité = 10.00
+
+Ligne(s) avec pénalité maximale (1.00) : ['P4', 'P6', 'P7', 'P8', 'P9', 'P10', 'P11', 'P12', 'P13', 'P14', 'P15', 'P16', 'P17', 'P18', 'P19', 'P20']
+Colonne(s) avec pénalité maximale (10.00) : ['C1', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10']
+Choix de l'arête à remplir : (4, 1) = P4 -> C1
+  Coût minimal : 31.00
+  Allocation : 40.00
+  Ligne 4 (P4) épuisée, désactivée
+
+--- Itération 5 ---
+Pénalités des lignes actives :
+  Ligne 5 (P5) : pénalité = 0.00
+  Ligne 6 (P6) : pénalité = 1.00
+  Ligne 7 (P7) : pénalité = 1.00
+  Ligne 8 (P8) : pénalité = 1.00
+  Ligne 9 (P9) : pénalité = 1.00
+  Ligne 10 (P10) : pénalité = 1.00
+  Ligne 11 (P11) : pénalité = 1.00
+  Ligne 12 (P12) : pénalité = 1.00
+  Ligne 13 (P13) : pénalité = 1.00
+  Ligne 14 (P14) : pénalité = 1.00
+  Ligne 15 (P15) : pénalité = 1.00
+  Ligne 16 (P16) : pénalité = 1.00
+  Ligne 17 (P17) : pénalité = 1.00
+  Ligne 18 (P18) : pénalité = 1.00
+  Ligne 19 (P19) : pénalité = 1.00
+  Ligne 20 (P20) : pénalité = 1.00
+Pénalités des colonnes actives :
+  Colonne 1 (C1) : pénalité = 10.00
+  Colonne 2 (C2) : pénalité = 11.00
+  Colonne 3 (C3) : pénalité = 10.00
+  Colonne 4 (C4) : pénalité = 10.00
+  Colonne 5 (C5) : pénalité = 10.00
+  Colonne 6 (C6) : pénalité = 10.00
+  Colonne 7 (C7) : pénalité = 10.00
+  Colonne 8 (C8) : pénalité = 10.00
+  Colonne 9 (C9) : pénalité = 10.00
+  Colonne 10 (C10) : pénalité = 10.00
+
+Ligne(s) avec pénalité maximale (1.00) : ['P6', 'P7', 'P8', 'P9', 'P10', 'P11', 'P12', 'P13', 'P14', 'P15', 'P16', 'P17', 'P18', 'P19', 'P20']
+Colonne(s) avec pénalité maximale (11.00) : ['C2']
+Choix de l'arête à remplir : (5, 2) = P5 -> C2
+  Coût minimal : 41.00
+  Allocation : 50.00
+  Ligne 5 (P5) épuisée, désactivée
+
+--- Itération 6 ---
+Pénalités des lignes actives :
+  Ligne 6 (P6) : pénalité = 1.00
+  Ligne 7 (P7) : pénalité = 1.00
+  Ligne 8 (P8) : pénalité = 1.00
+  Ligne 9 (P9) : pénalité = 1.00
+  Ligne 10 (P10) : pénalité = 1.00
+  Ligne 11 (P11) : pénalité = 1.00
+  Ligne 12 (P12) : pénalité = 1.00
+  Ligne 13 (P13) : pénalité = 1.00
+  Ligne 14 (P14) : pénalité = 1.00
+  Ligne 15 (P15) : pénalité = 1.00
+  Ligne 16 (P16) : pénalité = 1.00
+  Ligne 17 (P17) : pénalité = 1.00
+  Ligne 18 (P18) : pénalité = 1.00
+  Ligne 19 (P19) : pénalité = 1.00
+  Ligne 20 (P20) : pénalité = 1.00
+Pénalités des colonnes actives :
+  Colonne 1 (C1) : pénalité = 10.00
+  Colonne 2 (C2) : pénalité = 10.00
+  Colonne 3 (C3) : pénalité = 10.00
+  Colonne 4 (C4) : pénalité = 10.00
+  Colonne 5 (C5) : pénalité = 10.00
+  Colonne 6 (C6) : pénalité = 10.00
+  Colonne 7 (C7) : pénalité = 10.00
+  Colonne 8 (C8) : pénalité = 10.00
+  Colonne 9 (C9) : pénalité = 10.00
+  Colonne 10 (C10) : pénalité = 10.00
+
+Ligne(s) avec pénalité maximale (1.00) : ['P6', 'P7', 'P8', 'P9', 'P10', 'P11', 'P12', 'P13', 'P14', 'P15', 'P16', 'P17', 'P18', 'P19', 'P20']
+Colonne(s) avec pénalité maximale (10.00) : ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10']
+Choix de l'arête à remplir : (6, 1) = P6 -> C1
+  Coût minimal : 51.00
+  Allocation : 20.00
+  Colonne 1 (C1) épuisée, désactivée
+
+--- Itération 7 ---
+Pénalités des lignes actives :
+  Ligne 6 (P6) : pénalité = 1.00
+  Ligne 7 (P7) : pénalité = 1.00
+  Ligne 8 (P8) : pénalité = 1.00
+  Ligne 9 (P9) : pénalité = 1.00
+  Ligne 10 (P10) : pénalité = 1.00
+  Ligne 11 (P11) : pénalité = 1.00
+  Ligne 12 (P12) : pénalité = 1.00
+  Ligne 13 (P13) : pénalité = 1.00
+  Ligne 14 (P14) : pénalité = 1.00
+  Ligne 15 (P15) : pénalité = 1.00
+  Ligne 16 (P16) : pénalité = 1.00
+  Ligne 17 (P17) : pénalité = 1.00
+  Ligne 18 (P18) : pénalité = 1.00
+  Ligne 19 (P19) : pénalité = 1.00
+  Ligne 20 (P20) : pénalité = 1.00
+Pénalités des colonnes actives :
+  Colonne 2 (C2) : pénalité = 10.00
+  Colonne 3 (C3) : pénalité = 10.00
+  Colonne 4 (C4) : pénalité = 10.00
+  Colonne 5 (C5) : pénalité = 10.00
+  Colonne 6 (C6) : pénalité = 10.00
+  Colonne 7 (C7) : pénalité = 10.00
+  Colonne 8 (C8) : pénalité = 10.00
+  Colonne 9 (C9) : pénalité = 10.00
+  Colonne 10 (C10) : pénalité = 10.00
+
+Ligne(s) avec pénalité maximale (1.00) : ['P6', 'P7', 'P8', 'P9', 'P10', 'P11', 'P12', 'P13', 'P14', 'P15', 'P16', 'P17', 'P18', 'P19', 'P20']
+Colonne(s) avec pénalité maximale (10.00) : ['C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10']
+Choix de l'arête à remplir : (6, 2) = P6 -> C2
+  Coût minimal : 52.00
+  Allocation : 40.00
+  Ligne 6 (P6) épuisée, désactivée
+
+--- Itération 8 ---
+Pénalités des lignes actives :
+  Ligne 7 (P7) : pénalité = 1.00
+  Ligne 8 (P8) : pénalité = 1.00
+  Ligne 9 (P9) : pénalité = 1.00
+  Ligne 10 (P10) : pénalité = 1.00
+  Ligne 11 (P11) : pénalité = 1.00
+  Ligne 12 (P12) : pénalité = 1.00
+  Ligne 13 (P13) : pénalité = 1.00
+  Ligne 14 (P14) : pénalité = 1.00
+  Ligne 15 (P15) : pénalité = 1.00
+  Ligne 16 (P16) : pénalité = 1.00
+  Ligne 17 (P17) : pénalité = 1.00
+  Ligne 18 (P18) : pénalité = 1.00
+  Ligne 19 (P19) : pénalité = 1.00
+  Ligne 20 (P20) : pénalité = 1.00
+Pénalités des colonnes actives :
+  Colonne 2 (C2) : pénalité = 10.00
+  Colonne 3 (C3) : pénalité = 10.00
+  Colonne 4 (C4) : pénalité = 10.00
+  Colonne 5 (C5) : pénalité = 10.00
+  Colonne 6 (C6) : pénalité = 10.00
+  Colonne 7 (C7) : pénalité = 10.00
+  Colonne 8 (C8) : pénalité = 10.00
+  Colonne 9 (C9) : pénalité = 10.00
+  Colonne 10 (C10) : pénalité = 10.00
+
+Ligne(s) avec pénalité maximale (1.00) : ['P7', 'P8', 'P9', 'P10', 'P11', 'P12', 'P13', 'P14', 'P15', 'P16', 'P17', 'P18', 'P19', 'P20']
+Colonne(s) avec pénalité maximale (10.00) : ['C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10']
+Choix de l'arête à remplir : (7, 2) = P7 -> C2
+  Coût minimal : 62.00
+  Allocation : 50.00
+  Colonne 2 (C2) épuisée, désactivée
+
+--- Itération 9 ---
+Pénalités des lignes actives :
+  Ligne 7 (P7) : pénalité = 1.00
+  Ligne 8 (P8) : pénalité = 1.00
+  Ligne 9 (P9) : pénalité = 1.00
+  Ligne 10 (P10) : pénalité = 1.00
+  Ligne 11 (P11) : pénalité = 1.00
+  Ligne 12 (P12) : pénalité = 1.00
+  Ligne 13 (P13) : pénalité = 1.00
+  Ligne 14 (P14) : pénalité = 1.00
+  Ligne 15 (P15) : pénalité = 1.00
+  Ligne 16 (P16) : pénalité = 1.00
+  Ligne 17 (P17) : pénalité = 1.00
+  Ligne 18 (P18) : pénalité = 1.00
+  Ligne 19 (P19) : pénalité = 1.00
+  Ligne 20 (P20) : pénalité = 1.00
+Pénalités des colonnes actives :
+  Colonne 3 (C3) : pénalité = 10.00
+  Colonne 4 (C4) : pénalité = 10.00
+  Colonne 5 (C5) : pénalité = 10.00
+  Colonne 6 (C6) : pénalité = 10.00
+  Colonne 7 (C7) : pénalité = 10.00
+  Colonne 8 (C8) : pénalité = 10.00
+  Colonne 9 (C9) : pénalité = 10.00
+  Colonne 10 (C10) : pénalité = 10.00
+
+Ligne(s) avec pénalité maximale (1.00) : ['P7', 'P8', 'P9', 'P10', 'P11', 'P12', 'P13', 'P14', 'P15', 'P16', 'P17', 'P18', 'P19', 'P20']
+Colonne(s) avec pénalité maximale (10.00) : ['C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10']
+Choix de l'arête à remplir : (7, 3) = P7 -> C3
+  Coût minimal : 63.00
+  Allocation : 20.00
+  Ligne 7 (P7) épuisée, désactivée
+
+--- Itération 10 ---
+Pénalités des lignes actives :
+  Ligne 8 (P8) : pénalité = 1.00
+  Ligne 9 (P9) : pénalité = 1.00
+  Ligne 10 (P10) : pénalité = 1.00
+  Ligne 11 (P11) : pénalité = 1.00
+  Ligne 12 (P12) : pénalité = 1.00
+  Ligne 13 (P13) : pénalité = 1.00
+  Ligne 14 (P14) : pénalité = 1.00
+  Ligne 15 (P15) : pénalité = 1.00
+  Ligne 16 (P16) : pénalité = 1.00
+  Ligne 17 (P17) : pénalité = 1.00
+  Ligne 18 (P18) : pénalité = 1.00
+  Ligne 19 (P19) : pénalité = 1.00
+  Ligne 20 (P20) : pénalité = 1.00
+Pénalités des colonnes actives :
+  Colonne 3 (C3) : pénalité = 10.00
+  Colonne 4 (C4) : pénalité = 10.00
+  Colonne 5 (C5) : pénalité = 10.00
+  Colonne 6 (C6) : pénalité = 10.00
+  Colonne 7 (C7) : pénalité = 10.00
+  Colonne 8 (C8) : pénalité = 10.00
+  Colonne 9 (C9) : pénalité = 10.00
+  Colonne 10 (C10) : pénalité = 10.00
+
+Ligne(s) avec pénalité maximale (1.00) : ['P8', 'P9', 'P10', 'P11', 'P12', 'P13', 'P14', 'P15', 'P16', 'P17', 'P18', 'P19', 'P20']
+Colonne(s) avec pénalité maximale (10.00) : ['C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10']
+Choix de l'arête à remplir : (8, 3) = P8 -> C3
+  Coût minimal : 73.00
+  Allocation : 80.00
+  Ligne 8 (P8) épuisée, désactivée
+
+--- Itération 11 ---
+Pénalités des lignes actives :
+  Ligne 9 (P9) : pénalité = 1.00
+  Ligne 10 (P10) : pénalité = 1.00
+  Ligne 11 (P11) : pénalité = 1.00
+  Ligne 12 (P12) : pénalité = 1.00
+  Ligne 13 (P13) : pénalité = 1.00
+  Ligne 14 (P14) : pénalité = 1.00
+  Ligne 15 (P15) : pénalité = 1.00
+  Ligne 16 (P16) : pénalité = 1.00
+  Ligne 17 (P17) : pénalité = 1.00
+  Ligne 18 (P18) : pénalité = 1.00
+  Ligne 19 (P19) : pénalité = 1.00
+  Ligne 20 (P20) : pénalité = 1.00
+Pénalités des colonnes actives :
+  Colonne 3 (C3) : pénalité = 10.00
+  Colonne 4 (C4) : pénalité = 10.00
+  Colonne 5 (C5) : pénalité = 10.00
+  Colonne 6 (C6) : pénalité = 10.00
+  Colonne 7 (C7) : pénalité = 10.00
+  Colonne 8 (C8) : pénalité = 10.00
+  Colonne 9 (C9) : pénalité = 10.00
+  Colonne 10 (C10) : pénalité = 10.00
+
+Ligne(s) avec pénalité maximale (1.00) : ['P9', 'P10', 'P11', 'P12', 'P13', 'P14', 'P15', 'P16', 'P17', 'P18', 'P19', 'P20']
+Colonne(s) avec pénalité maximale (10.00) : ['C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10']
+Choix de l'arête à remplir : (9, 3) = P9 -> C3
+  Coût minimal : 83.00
+  Allocation : 60.00
+  Colonne 3 (C3) épuisée, désactivée
+
+--- Itération 12 ---
+Pénalités des lignes actives :
+  Ligne 9 (P9) : pénalité = 1.00
+  Ligne 10 (P10) : pénalité = 1.00
+  Ligne 11 (P11) : pénalité = 1.00
+  Ligne 12 (P12) : pénalité = 1.00
+  Ligne 13 (P13) : pénalité = 1.00
+  Ligne 14 (P14) : pénalité = 1.00
+  Ligne 15 (P15) : pénalité = 1.00
+  Ligne 16 (P16) : pénalité = 1.00
+  Ligne 17 (P17) : pénalité = 1.00
+  Ligne 18 (P18) : pénalité = 1.00
+  Ligne 19 (P19) : pénalité = 1.00
+  Ligne 20 (P20) : pénalité = 1.00
+Pénalités des colonnes actives :
+  Colonne 4 (C4) : pénalité = 10.00
+  Colonne 5 (C5) : pénalité = 10.00
+  Colonne 6 (C6) : pénalité = 10.00
+  Colonne 7 (C7) : pénalité = 10.00
+  Colonne 8 (C8) : pénalité = 10.00
+  Colonne 9 (C9) : pénalité = 10.00
+  Colonne 10 (C10) : pénalité = 10.00
+
+Ligne(s) avec pénalité maximale (1.00) : ['P9', 'P10', 'P11', 'P12', 'P13', 'P14', 'P15', 'P16', 'P17', 'P18', 'P19', 'P20']
+Colonne(s) avec pénalité maximale (10.00) : ['C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10']
+Choix de l'arête à remplir : (9, 4) = P9 -> C4
+  Coût minimal : 84.00
+  Allocation : 30.00
+  Ligne 9 (P9) épuisée, désactivée
+
+--- Itération 13 ---
+Pénalités des lignes actives :
+  Ligne 10 (P10) : pénalité = 1.00
+  Ligne 11 (P11) : pénalité = 1.00
+  Ligne 12 (P12) : pénalité = 1.00
+  Ligne 13 (P13) : pénalité = 1.00
+  Ligne 14 (P14) : pénalité = 1.00
+  Ligne 15 (P15) : pénalité = 1.00
+  Ligne 16 (P16) : pénalité = 1.00
+  Ligne 17 (P17) : pénalité = 1.00
+  Ligne 18 (P18) : pénalité = 1.00
+  Ligne 19 (P19) : pénalité = 1.00
+  Ligne 20 (P20) : pénalité = 1.00
+Pénalités des colonnes actives :
+  Colonne 4 (C4) : pénalité = 10.00
+  Colonne 5 (C5) : pénalité = 10.00
+  Colonne 6 (C6) : pénalité = 10.00
+  Colonne 7 (C7) : pénalité = 10.00
+  Colonne 8 (C8) : pénalité = 10.00
+  Colonne 9 (C9) : pénalité = 10.00
+  Colonne 10 (C10) : pénalité = 10.00
+
+Ligne(s) avec pénalité maximale (1.00) : ['P10', 'P11', 'P12', 'P13', 'P14', 'P15', 'P16', 'P17', 'P18', 'P19', 'P20']
+Colonne(s) avec pénalité maximale (10.00) : ['C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10']
+Choix de l'arête à remplir : (10, 4) = P10 -> C4
+  Coût minimal : 94.00
+  Allocation : 100.00
+  Ligne 10 (P10) épuisée, désactivée
+
+--- Itération 14 ---
+Pénalités des lignes actives :
+  Ligne 11 (P11) : pénalité = 1.00
+  Ligne 12 (P12) : pénalité = 1.00
+  Ligne 13 (P13) : pénalité = 1.00
+  Ligne 14 (P14) : pénalité = 1.00
+  Ligne 15 (P15) : pénalité = 1.00
+  Ligne 16 (P16) : pénalité = 1.00
+  Ligne 17 (P17) : pénalité = 1.00
+  Ligne 18 (P18) : pénalité = 1.00
+  Ligne 19 (P19) : pénalité = 1.00
+  Ligne 20 (P20) : pénalité = 1.00
+Pénalités des colonnes actives :
+  Colonne 4 (C4) : pénalité = 10.00
+  Colonne 5 (C5) : pénalité = 10.00
+  Colonne 6 (C6) : pénalité = 10.00
+  Colonne 7 (C7) : pénalité = 10.00
+  Colonne 8 (C8) : pénalité = 10.00
+  Colonne 9 (C9) : pénalité = 10.00
+  Colonne 10 (C10) : pénalité = 10.00
+
+Ligne(s) avec pénalité maximale (1.00) : ['P11', 'P12', 'P13', 'P14', 'P15', 'P16', 'P17', 'P18', 'P19', 'P20']
+Colonne(s) avec pénalité maximale (10.00) : ['C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10']
+Choix de l'arête à remplir : (11, 4) = P11 -> C4
+  Coût minimal : 104.00
+  Allocation : 50.00
+  Colonne 4 (C4) épuisée, désactivée
+
+--- Itération 15 ---
+Pénalités des lignes actives :
+  Ligne 11 (P11) : pénalité = 1.00
+  Ligne 12 (P12) : pénalité = 1.00
+  Ligne 13 (P13) : pénalité = 1.00
+  Ligne 14 (P14) : pénalité = 1.00
+  Ligne 15 (P15) : pénalité = 1.00
+  Ligne 16 (P16) : pénalité = 1.00
+  Ligne 17 (P17) : pénalité = 1.00
+  Ligne 18 (P18) : pénalité = 1.00
+  Ligne 19 (P19) : pénalité = 1.00
+  Ligne 20 (P20) : pénalité = 1.00
+Pénalités des colonnes actives :
+  Colonne 5 (C5) : pénalité = 10.00
+  Colonne 6 (C6) : pénalité = 10.00
+  Colonne 7 (C7) : pénalité = 10.00
+  Colonne 8 (C8) : pénalité = 10.00
+  Colonne 9 (C9) : pénalité = 10.00
+  Colonne 10 (C10) : pénalité = 10.00
+
+Ligne(s) avec pénalité maximale (1.00) : ['P11', 'P12', 'P13', 'P14', 'P15', 'P16', 'P17', 'P18', 'P19', 'P20']
+Colonne(s) avec pénalité maximale (10.00) : ['C5', 'C6', 'C7', 'C8', 'C9', 'C10']
+Choix de l'arête à remplir : (11, 5) = P11 -> C5
+  Coût minimal : 105.00
+  Allocation : 60.00
+  Ligne 11 (P11) épuisée, désactivée
+
+--- Itération 16 ---
+Pénalités des lignes actives :
+  Ligne 12 (P12) : pénalité = 1.00
+  Ligne 13 (P13) : pénalité = 1.00
+  Ligne 14 (P14) : pénalité = 1.00
+  Ligne 15 (P15) : pénalité = 1.00
+  Ligne 16 (P16) : pénalité = 1.00
+  Ligne 17 (P17) : pénalité = 1.00
+  Ligne 18 (P18) : pénalité = 1.00
+  Ligne 19 (P19) : pénalité = 1.00
+  Ligne 20 (P20) : pénalité = 1.00
+Pénalités des colonnes actives :
+  Colonne 5 (C5) : pénalité = 10.00
+  Colonne 6 (C6) : pénalité = 10.00
+  Colonne 7 (C7) : pénalité = 10.00
+  Colonne 8 (C8) : pénalité = 10.00
+  Colonne 9 (C9) : pénalité = 10.00
+  Colonne 10 (C10) : pénalité = 10.00
+
+Ligne(s) avec pénalité maximale (1.00) : ['P12', 'P13', 'P14', 'P15', 'P16', 'P17', 'P18', 'P19', 'P20']
+Colonne(s) avec pénalité maximale (10.00) : ['C5', 'C6', 'C7', 'C8', 'C9', 'C10']
+Choix de l'arête à remplir : (12, 5) = P12 -> C5
+  Coût minimal : 115.00
+  Allocation : 120.00
+  Ligne 12 (P12) épuisée, désactivée
+
+--- Itération 17 ---
+Pénalités des lignes actives :
+  Ligne 13 (P13) : pénalité = 1.00
+  Ligne 14 (P14) : pénalité = 1.00
+  Ligne 15 (P15) : pénalité = 1.00
+  Ligne 16 (P16) : pénalité = 1.00
+  Ligne 17 (P17) : pénalité = 1.00
+  Ligne 18 (P18) : pénalité = 1.00
+  Ligne 19 (P19) : pénalité = 1.00
+  Ligne 20 (P20) : pénalité = 1.00
+Pénalités des colonnes actives :
+  Colonne 5 (C5) : pénalité = 10.00
+  Colonne 6 (C6) : pénalité = 10.00
+  Colonne 7 (C7) : pénalité = 10.00
+  Colonne 8 (C8) : pénalité = 10.00
+  Colonne 9 (C9) : pénalité = 10.00
+  Colonne 10 (C10) : pénalité = 10.00
+
+Ligne(s) avec pénalité maximale (1.00) : ['P13', 'P14', 'P15', 'P16', 'P17', 'P18', 'P19', 'P20']
+Colonne(s) avec pénalité maximale (10.00) : ['C5', 'C6', 'C7', 'C8', 'C9', 'C10']
+Choix de l'arête à remplir : (13, 5) = P13 -> C5
+  Coût minimal : 125.00
+  Allocation : 20.00
+  Colonne 5 (C5) épuisée, désactivée
+
+--- Itération 18 ---
+Pénalités des lignes actives :
+  Ligne 13 (P13) : pénalité = 1.00
+  Ligne 14 (P14) : pénalité = 1.00
+  Ligne 15 (P15) : pénalité = 1.00
+  Ligne 16 (P16) : pénalité = 1.00
+  Ligne 17 (P17) : pénalité = 1.00
+  Ligne 18 (P18) : pénalité = 1.00
+  Ligne 19 (P19) : pénalité = 1.00
+  Ligne 20 (P20) : pénalité = 1.00
+Pénalités des colonnes actives :
+  Colonne 6 (C6) : pénalité = 10.00
+  Colonne 7 (C7) : pénalité = 10.00
+  Colonne 8 (C8) : pénalité = 10.00
+  Colonne 9 (C9) : pénalité = 10.00
+  Colonne 10 (C10) : pénalité = 10.00
+
+Ligne(s) avec pénalité maximale (1.00) : ['P13', 'P14', 'P15', 'P16', 'P17', 'P18', 'P19', 'P20']
+Colonne(s) avec pénalité maximale (10.00) : ['C6', 'C7', 'C8', 'C9', 'C10']
+Choix de l'arête à remplir : (13, 6) = P13 -> C6
+  Coût minimal : 126.00
+  Allocation : 110.00
+  Ligne 13 (P13) épuisée, désactivée
+
+--- Itération 19 ---
+Pénalités des lignes actives :
+  Ligne 14 (P14) : pénalité = 1.00
+  Ligne 15 (P15) : pénalité = 1.00
+  Ligne 16 (P16) : pénalité = 1.00
+  Ligne 17 (P17) : pénalité = 1.00
+  Ligne 18 (P18) : pénalité = 1.00
+  Ligne 19 (P19) : pénalité = 1.00
+  Ligne 20 (P20) : pénalité = 1.00
+Pénalités des colonnes actives :
+  Colonne 6 (C6) : pénalité = 10.00
+  Colonne 7 (C7) : pénalité = 10.00
+  Colonne 8 (C8) : pénalité = 10.00
+  Colonne 9 (C9) : pénalité = 10.00
+  Colonne 10 (C10) : pénalité = 10.00
+
+Ligne(s) avec pénalité maximale (1.00) : ['P14', 'P15', 'P16', 'P17', 'P18', 'P19', 'P20']
+Colonne(s) avec pénalité maximale (10.00) : ['C6', 'C7', 'C8', 'C9', 'C10']
+Choix de l'arête à remplir : (14, 6) = P14 -> C6
+  Coût minimal : 136.00
+  Allocation : 110.00
+  Colonne 6 (C6) épuisée, désactivée
+
+--- Itération 20 ---
+Pénalités des lignes actives :
+  Ligne 14 (P14) : pénalité = 1.00
+  Ligne 15 (P15) : pénalité = 1.00
+  Ligne 16 (P16) : pénalité = 1.00
+  Ligne 17 (P17) : pénalité = 1.00
+  Ligne 18 (P18) : pénalité = 1.00
+  Ligne 19 (P19) : pénalité = 1.00
+  Ligne 20 (P20) : pénalité = 1.00
+Pénalités des colonnes actives :
+  Colonne 7 (C7) : pénalité = 10.00
+  Colonne 8 (C8) : pénalité = 10.00
+  Colonne 9 (C9) : pénalité = 10.00
+  Colonne 10 (C10) : pénalité = 10.00
+
+Ligne(s) avec pénalité maximale (1.00) : ['P14', 'P15', 'P16', 'P17', 'P18', 'P19', 'P20']
+Colonne(s) avec pénalité maximale (10.00) : ['C7', 'C8', 'C9', 'C10']
+Choix de l'arête à remplir : (14, 7) = P14 -> C7
+  Coût minimal : 137.00
+  Allocation : 30.00
+  Ligne 14 (P14) épuisée, désactivée
+
+--- Itération 21 ---
+Pénalités des lignes actives :
+  Ligne 15 (P15) : pénalité = 1.00
+  Ligne 16 (P16) : pénalité = 1.00
+  Ligne 17 (P17) : pénalité = 1.00
+  Ligne 18 (P18) : pénalité = 1.00
+  Ligne 19 (P19) : pénalité = 1.00
+  Ligne 20 (P20) : pénalité = 1.00
+Pénalités des colonnes actives :
+  Colonne 7 (C7) : pénalité = 10.00
+  Colonne 8 (C8) : pénalité = 10.00
+  Colonne 9 (C9) : pénalité = 10.00
+  Colonne 10 (C10) : pénalité = 10.00
+
+Ligne(s) avec pénalité maximale (1.00) : ['P15', 'P16', 'P17', 'P18', 'P19', 'P20']
+Colonne(s) avec pénalité maximale (10.00) : ['C7', 'C8', 'C9', 'C10']
+Choix de l'arête à remplir : (15, 7) = P15 -> C7
+  Coût minimal : 147.00
+  Allocation : 150.00
+  Ligne 15 (P15) épuisée, désactivée
+
+--- Itération 22 ---
+Pénalités des lignes actives :
+  Ligne 16 (P16) : pénalité = 1.00
+  Ligne 17 (P17) : pénalité = 1.00
+  Ligne 18 (P18) : pénalité = 1.00
+  Ligne 19 (P19) : pénalité = 1.00
+  Ligne 20 (P20) : pénalité = 1.00
+Pénalités des colonnes actives :
+  Colonne 7 (C7) : pénalité = 10.00
+  Colonne 8 (C8) : pénalité = 10.00
+  Colonne 9 (C9) : pénalité = 10.00
+  Colonne 10 (C10) : pénalité = 10.00
+
+Ligne(s) avec pénalité maximale (1.00) : ['P16', 'P17', 'P18', 'P19', 'P20']
+Colonne(s) avec pénalité maximale (10.00) : ['C7', 'C8', 'C9', 'C10']
+Choix de l'arête à remplir : (16, 7) = P16 -> C7
+  Coût minimal : 157.00
+  Allocation : 60.00
+  Colonne 7 (C7) épuisée, désactivée
+
+--- Itération 23 ---
+Pénalités des lignes actives :
+  Ligne 16 (P16) : pénalité = 1.00
+  Ligne 17 (P17) : pénalité = 1.00
+  Ligne 18 (P18) : pénalité = 1.00
+  Ligne 19 (P19) : pénalité = 1.00
+  Ligne 20 (P20) : pénalité = 1.00
+Pénalités des colonnes actives :
+  Colonne 8 (C8) : pénalité = 10.00
+  Colonne 9 (C9) : pénalité = 10.00
+  Colonne 10 (C10) : pénalité = 10.00
+
+Ligne(s) avec pénalité maximale (1.00) : ['P16', 'P17', 'P18', 'P19', 'P20']
+Colonne(s) avec pénalité maximale (10.00) : ['C8', 'C9', 'C10']
+Choix de l'arête à remplir : (16, 8) = P16 -> C8
+  Coût minimal : 158.00
+  Allocation : 100.00
+  Ligne 16 (P16) épuisée, désactivée
+
+--- Itération 24 ---
+Pénalités des lignes actives :
+  Ligne 17 (P17) : pénalité = 1.00
+  Ligne 18 (P18) : pénalité = 1.00
+  Ligne 19 (P19) : pénalité = 1.00
+  Ligne 20 (P20) : pénalité = 1.00
+Pénalités des colonnes actives :
+  Colonne 8 (C8) : pénalité = 10.00
+  Colonne 9 (C9) : pénalité = 10.00
+  Colonne 10 (C10) : pénalité = 10.00
+
+Ligne(s) avec pénalité maximale (1.00) : ['P17', 'P18', 'P19', 'P20']
+Colonne(s) avec pénalité maximale (10.00) : ['C8', 'C9', 'C10']
+Choix de l'arête à remplir : (17, 8) = P17 -> C8
+  Coût minimal : 168.00
+  Allocation : 160.00
+  Colonne 8 (C8) épuisée, désactivée
+
+--- Itération 25 ---
+Pénalités des lignes actives :
+  Ligne 17 (P17) : pénalité = 1.00
+  Ligne 18 (P18) : pénalité = 1.00
+  Ligne 19 (P19) : pénalité = 1.00
+  Ligne 20 (P20) : pénalité = 1.00
+Pénalités des colonnes actives :
+  Colonne 9 (C9) : pénalité = 10.00
+  Colonne 10 (C10) : pénalité = 10.00
+
+Ligne(s) avec pénalité maximale (1.00) : ['P17', 'P18', 'P19', 'P20']
+Colonne(s) avec pénalité maximale (10.00) : ['C9', 'C10']
+Choix de l'arête à remplir : (17, 9) = P17 -> C9
+  Coût minimal : 169.00
+  Allocation : 10.00
+  Ligne 17 (P17) épuisée, désactivée
+
+--- Itération 26 ---
+Pénalités des lignes actives :
+  Ligne 18 (P18) : pénalité = 1.00
+  Ligne 19 (P19) : pénalité = 1.00
+  Ligne 20 (P20) : pénalité = 1.00
+Pénalités des colonnes actives :
+  Colonne 9 (C9) : pénalité = 10.00
+  Colonne 10 (C10) : pénalité = 10.00
+
+Ligne(s) avec pénalité maximale (1.00) : ['P18', 'P19', 'P20']
+Colonne(s) avec pénalité maximale (10.00) : ['C9', 'C10']
+Choix de l'arête à remplir : (18, 9) = P18 -> C9
+  Coût minimal : 179.00
+  Allocation : 180.00
+  Ligne 18 (P18) épuisée, désactivée
+
+--- Itération 27 ---
+Pénalités des lignes actives :
+  Ligne 19 (P19) : pénalité = 1.00
+  Ligne 20 (P20) : pénalité = 1.00
+Pénalités des colonnes actives :
+  Colonne 9 (C9) : pénalité = 10.00
+  Colonne 10 (C10) : pénalité = 10.00
+
+Ligne(s) avec pénalité maximale (1.00) : ['P19', 'P20']
+Colonne(s) avec pénalité maximale (10.00) : ['C9', 'C10']
+Choix de l'arête à remplir : (19, 9) = P19 -> C9
+  Coût minimal : 189.00
+  Allocation : 90.00
+  Colonne 9 (C9) épuisée, désactivée
+
+--- Itération 28 ---
+Pénalités des lignes actives :
+  Ligne 19 (P19) : pénalité = 0.00
+  Ligne 20 (P20) : pénalité = 0.00
+Pénalités des colonnes actives :
+  Colonne 10 (C10) : pénalité = 10.00
+Colonne(s) avec pénalité maximale (10.00) : ['C10']
+Choix de l'arête à remplir : (19, 10) = P19 -> C10
+  Coût minimal : 190.00
+  Allocation : 100.00
+  Ligne 19 (P19) épuisée, désactivée
+
+--- Itération 29 ---
+Pénalités des lignes actives :
+  Ligne 20 (P20) : pénalité = 0.00
+Pénalités des colonnes actives :
+  Colonne 10 (C10) : pénalité = 0.00
+Choix de l'arête à remplir : (20, 10) = P20 -> C10
+  Coût minimal : 200.00
+  Allocation : 200.00
+  Ligne 20 (P20) épuisée, désactivée
+  Colonne 10 (C10) épuisée, désactivée
+
+>>> Proposition de transport initiale <<<
+Proposition de transport
+------------------------
+    |    C1 |    C2 |    C3 |     C4 |     C5 |     C6 |     C7 |     C8 |     C9 |    C10
+------------------------------------------------------------------------------------------
+ P1 | 10.00 |  0.00 |  0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00
+ P2 | 20.00 |  0.00 |  0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00
+ P3 | 30.00 |  0.00 |  0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00
+ P4 | 40.00 |  0.00 |  0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00
+ P5 |  0.00 | 50.00 |  0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00
+ P6 | 20.00 | 40.00 |  0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00
+ P7 |  0.00 | 50.00 | 20.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00
+ P8 |  0.00 |  0.00 | 80.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00
+ P9 |  0.00 |  0.00 | 60.00 |  30.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00
+P10 |  0.00 |  0.00 |  0.00 | 100.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00
+P11 |  0.00 |  0.00 |  0.00 |  50.00 |  60.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00
+P12 |  0.00 |  0.00 |  0.00 |   0.00 | 120.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00
+P13 |  0.00 |  0.00 |  0.00 |   0.00 |  20.00 | 110.00 |   0.00 |   0.00 |   0.00 |   0.00
+P14 |  0.00 |  0.00 |  0.00 |   0.00 |   0.00 | 110.00 |  30.00 |   0.00 |   0.00 |   0.00
+P15 |  0.00 |  0.00 |  0.00 |   0.00 |   0.00 |   0.00 | 150.00 |   0.00 |   0.00 |   0.00
+P16 |  0.00 |  0.00 |  0.00 |   0.00 |   0.00 |   0.00 |  60.00 | 100.00 |   0.00 |   0.00
+P17 |  0.00 |  0.00 |  0.00 |   0.00 |   0.00 |   0.00 |   0.00 | 160.00 |  10.00 |   0.00
+P18 |  0.00 |  0.00 |  0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 | 180.00 |   0.00
+P19 |  0.00 |  0.00 |  0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |  90.00 | 100.00
+P20 |  0.00 |  0.00 |  0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 | 200.00
+
+Coût total initial : 279150.00
+
+======================================================================
+>>> MÉTHODE DU MARCHE-PIED AVEC POTENTIEL <<<
+======================================================================
+
+======================================================================
+ITÉRATION 1
+======================================================================
+
+>>> Proposition de transport actuelle <<<
+Proposition de transport
+------------------------
+    |    C1 |    C2 |    C3 |     C4 |     C5 |     C6 |     C7 |     C8 |     C9 |    C10
+------------------------------------------------------------------------------------------
+ P1 | 10.00 |  0.00 |  0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00
+ P2 | 20.00 |  0.00 |  0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00
+ P3 | 30.00 |  0.00 |  0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00
+ P4 | 40.00 |  0.00 |  0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00
+ P5 |  0.00 | 50.00 |  0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00
+ P6 | 20.00 | 40.00 |  0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00
+ P7 |  0.00 | 50.00 | 20.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00
+ P8 |  0.00 |  0.00 | 80.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00
+ P9 |  0.00 |  0.00 | 60.00 |  30.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00
+P10 |  0.00 |  0.00 |  0.00 | 100.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00
+P11 |  0.00 |  0.00 |  0.00 |  50.00 |  60.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00
+P12 |  0.00 |  0.00 |  0.00 |   0.00 | 120.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00
+P13 |  0.00 |  0.00 |  0.00 |   0.00 |  20.00 | 110.00 |   0.00 |   0.00 |   0.00 |   0.00
+P14 |  0.00 |  0.00 |  0.00 |   0.00 |   0.00 | 110.00 |  30.00 |   0.00 |   0.00 |   0.00
+P15 |  0.00 |  0.00 |  0.00 |   0.00 |   0.00 |   0.00 | 150.00 |   0.00 |   0.00 |   0.00
+P16 |  0.00 |  0.00 |  0.00 |   0.00 |   0.00 |   0.00 |  60.00 | 100.00 |   0.00 |   0.00
+P17 |  0.00 |  0.00 |  0.00 |   0.00 |   0.00 |   0.00 |   0.00 | 160.00 |  10.00 |   0.00
+P18 |  0.00 |  0.00 |  0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 | 180.00 |   0.00
+P19 |  0.00 |  0.00 |  0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |  90.00 | 100.00
+P20 |  0.00 |  0.00 |  0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 | 200.00
+
+Coût total actuel : 279150.00
+
+>>> Potentiels par sommet <<<
+Potentiels
+----------
+Sommet |        Type | Potentiel
+--------------------------------
+    P1 | Fournisseur |      0.00
+    P2 | Fournisseur |     10.00
+    P3 | Fournisseur |     20.00
+    P4 | Fournisseur |     30.00
+    P5 | Fournisseur |     39.00
+    P6 | Fournisseur |     50.00
+    P7 | Fournisseur |     60.00
+    P8 | Fournisseur |     70.00
+    P9 | Fournisseur |     80.00
+   P10 | Fournisseur |     90.00
+   P11 | Fournisseur |    100.00
+   P12 | Fournisseur |    110.00
+   P13 | Fournisseur |    120.00
+   P14 | Fournisseur |    130.00
+   P15 | Fournisseur |    140.00
+   P16 | Fournisseur |    150.00
+   P17 | Fournisseur |    160.00
+   P18 | Fournisseur |    170.00
+   P19 | Fournisseur |    180.00
+   P20 | Fournisseur |    190.00
+    C1 |      Client |      1.00
+    C2 |      Client |      2.00
+    C3 |      Client |      3.00
+    C4 |      Client |      4.00
+    C5 |      Client |      5.00
+    C6 |      Client |      6.00
+    C7 |      Client |      7.00
+    C8 |      Client |      8.00
+    C9 |      Client |      9.00
+   C10 |      Client |     10.00
+
+>>> Table des coûts potentiels <<<
+Table des coûts potentiels
+--------------------------
+    |     C1 |     C2 |     C3 |     C4 |     C5 |     C6 |     C7 |     C8 |     C9 |    C10
+---------------------------------------------------------------------------------------------
+ P1 |   1.00 |   2.00 |   3.00 |   4.00 |   5.00 |   6.00 |   7.00 |   8.00 |   9.00 |  10.00
+ P2 |  11.00 |  12.00 |  13.00 |  14.00 |  15.00 |  16.00 |  17.00 |  18.00 |  19.00 |  20.00
+ P3 |  21.00 |  22.00 |  23.00 |  24.00 |  25.00 |  26.00 |  27.00 |  28.00 |  29.00 |  30.00
+ P4 |  31.00 |  32.00 |  33.00 |  34.00 |  35.00 |  36.00 |  37.00 |  38.00 |  39.00 |  40.00
+ P5 |  40.00 |  41.00 |  42.00 |  43.00 |  44.00 |  45.00 |  46.00 |  47.00 |  48.00 |  49.00
+ P6 |  51.00 |  52.00 |  53.00 |  54.00 |  55.00 |  56.00 |  57.00 |  58.00 |  59.00 |  60.00
+ P7 |  61.00 |  62.00 |  63.00 |  64.00 |  65.00 |  66.00 |  67.00 |  68.00 |  69.00 |  70.00
+ P8 |  71.00 |  72.00 |  73.00 |  74.00 |  75.00 |  76.00 |  77.00 |  78.00 |  79.00 |  80.00
+ P9 |  81.00 |  82.00 |  83.00 |  84.00 |  85.00 |  86.00 |  87.00 |  88.00 |  89.00 |  90.00
+P10 |  91.00 |  92.00 |  93.00 |  94.00 |  95.00 |  96.00 |  97.00 |  98.00 |  99.00 | 100.00
+P11 | 101.00 | 102.00 | 103.00 | 104.00 | 105.00 | 106.00 | 107.00 | 108.00 | 109.00 | 110.00
+P12 | 111.00 | 112.00 | 113.00 | 114.00 | 115.00 | 116.00 | 117.00 | 118.00 | 119.00 | 120.00
+P13 | 121.00 | 122.00 | 123.00 | 124.00 | 125.00 | 126.00 | 127.00 | 128.00 | 129.00 | 130.00
+P14 | 131.00 | 132.00 | 133.00 | 134.00 | 135.00 | 136.00 | 137.00 | 138.00 | 139.00 | 140.00
+P15 | 141.00 | 142.00 | 143.00 | 144.00 | 145.00 | 146.00 | 147.00 | 148.00 | 149.00 | 150.00
+P16 | 151.00 | 152.00 | 153.00 | 154.00 | 155.00 | 156.00 | 157.00 | 158.00 | 159.00 | 160.00
+P17 | 161.00 | 162.00 | 163.00 | 164.00 | 165.00 | 166.00 | 167.00 | 168.00 | 169.00 | 170.00
+P18 | 171.00 | 172.00 | 173.00 | 174.00 | 175.00 | 176.00 | 177.00 | 178.00 | 179.00 | 180.00
+P19 | 181.00 | 182.00 | 183.00 | 184.00 | 185.00 | 186.00 | 187.00 | 188.00 | 189.00 | 190.00
+P20 | 191.00 | 192.00 | 193.00 | 194.00 | 195.00 | 196.00 | 197.00 | 198.00 | 199.00 | 200.00
+
+>>> Table des coûts marginaux <<<
+Table des coûts marginaux
+-------------------------
+    |   C1 |   C2 |   C3 |   C4 |   C5 |   C6 |   C7 |   C8 |   C9 |  C10
+-------------------------------------------------------------------------
+ P1 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00
+ P2 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00
+ P3 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00
+ P4 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00
+ P5 | 1.00 | 0.00 | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 | 1.00
+ P6 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00
+ P7 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00
+ P8 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00
+ P9 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00
+P10 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00
+P11 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00
+P12 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00
+P13 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00
+P14 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00
+P15 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00
+P16 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00
+P17 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00
+P18 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00
+P19 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00
+P20 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00
+
+✓ Solution optimale trouvée !
+  Tous les coûts marginaux sont >= 0
+
+======================================================================
+>>> SOLUTION OPTIMALE FINALE <<<
+======================================================================
+
+Proposition de transport optimale :
+Proposition de transport
+------------------------
+    |    C1 |    C2 |    C3 |     C4 |     C5 |     C6 |     C7 |     C8 |     C9 |    C10
+------------------------------------------------------------------------------------------
+ P1 | 10.00 |  0.00 |  0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00
+ P2 | 20.00 |  0.00 |  0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00
+ P3 | 30.00 |  0.00 |  0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00
+ P4 | 40.00 |  0.00 |  0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00
+ P5 |  0.00 | 50.00 |  0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00
+ P6 | 20.00 | 40.00 |  0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00
+ P7 |  0.00 | 50.00 | 20.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00
+ P8 |  0.00 |  0.00 | 80.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00
+ P9 |  0.00 |  0.00 | 60.00 |  30.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00
+P10 |  0.00 |  0.00 |  0.00 | 100.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00
+P11 |  0.00 |  0.00 |  0.00 |  50.00 |  60.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00
+P12 |  0.00 |  0.00 |  0.00 |   0.00 | 120.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00
+P13 |  0.00 |  0.00 |  0.00 |   0.00 |  20.00 | 110.00 |   0.00 |   0.00 |   0.00 |   0.00
+P14 |  0.00 |  0.00 |  0.00 |   0.00 |   0.00 | 110.00 |  30.00 |   0.00 |   0.00 |   0.00
+P15 |  0.00 |  0.00 |  0.00 |   0.00 |   0.00 |   0.00 | 150.00 |   0.00 |   0.00 |   0.00
+P16 |  0.00 |  0.00 |  0.00 |   0.00 |   0.00 |   0.00 |  60.00 | 100.00 |   0.00 |   0.00
+P17 |  0.00 |  0.00 |  0.00 |   0.00 |   0.00 |   0.00 |   0.00 | 160.00 |  10.00 |   0.00
+P18 |  0.00 |  0.00 |  0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 | 180.00 |   0.00
+P19 |  0.00 |  0.00 |  0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |  90.00 | 100.00
+P20 |  0.00 |  0.00 |  0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 | 200.00
+
+Coût total optimal : 279150.00
+Coût initial (Balas-Hammer) : 279150.00
+Amélioration : 0.00 (0.00%)
+Nombre d'itérations : 1

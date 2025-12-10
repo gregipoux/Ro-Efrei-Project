@@ -1,0 +1,400 @@
+
+======================================================================
+TABLEAU DE CONTRAINTES
+======================================================================
+Matrice des coûts
+-----------------
+   |     C1 |    C2 |    C3 |    C4 |    C5 |    C6 |    C7
+-----------------------------------------------------------
+P1 | 300.00 | 20.00 | 15.00 | 16.00 | 17.00 | 18.00 | 20.00
+P2 |   1.00 | 50.00 | 24.00 | 30.00 | 22.00 | 27.00 | 19.00
+P3 |  50.00 | 40.00 | 30.00 |  3.00 | 25.00 | 26.00 |  3.00
+
+Provisions : [500.0, 500.0, 2500.0]
+Commandes  : [500.0, 500.0, 500.0, 500.0, 500.0, 500.0, 500.0]
+Total provisions : 3500.00
+Total commandes  : 3500.00
+
+======================================================================
+>>> ALGORITHME DE BALAS-HAMMER <<<
+======================================================================
+
+--- Itération 1 ---
+Pénalités des lignes actives :
+  Ligne 1 (P1) : pénalité = 1.00
+  Ligne 2 (P2) : pénalité = 18.00
+  Ligne 3 (P3) : pénalité = 0.00
+Pénalités des colonnes actives :
+  Colonne 1 (C1) : pénalité = 49.00
+  Colonne 2 (C2) : pénalité = 20.00
+  Colonne 3 (C3) : pénalité = 9.00
+  Colonne 4 (C4) : pénalité = 13.00
+  Colonne 5 (C5) : pénalité = 5.00
+  Colonne 6 (C6) : pénalité = 8.00
+  Colonne 7 (C7) : pénalité = 16.00
+
+Ligne(s) avec pénalité maximale (18.00) : ['P2']
+Colonne(s) avec pénalité maximale (49.00) : ['C1']
+Choix de l'arête à remplir : (2, 1) = P2 -> C1
+  Coût minimal : 1.00
+  Allocation : 500.00
+  Ligne 2 (P2) épuisée, désactivée
+  Colonne 1 (C1) épuisée, désactivée
+
+--- Itération 2 ---
+Pénalités des lignes actives :
+  Ligne 1 (P1) : pénalité = 1.00
+  Ligne 3 (P3) : pénalité = 0.00
+Pénalités des colonnes actives :
+  Colonne 2 (C2) : pénalité = 20.00
+  Colonne 3 (C3) : pénalité = 15.00
+  Colonne 4 (C4) : pénalité = 13.00
+  Colonne 5 (C5) : pénalité = 8.00
+  Colonne 6 (C6) : pénalité = 8.00
+  Colonne 7 (C7) : pénalité = 17.00
+
+Ligne(s) avec pénalité maximale (1.00) : ['P1']
+Colonne(s) avec pénalité maximale (20.00) : ['C2']
+Choix de l'arête à remplir : (1, 2) = P1 -> C2
+  Coût minimal : 20.00
+  Allocation : 500.00
+  Ligne 1 (P1) épuisée, désactivée
+  Colonne 2 (C2) épuisée, désactivée
+
+--- Itération 3 ---
+Pénalités des lignes actives :
+  Ligne 3 (P3) : pénalité = 0.00
+Pénalités des colonnes actives :
+  Colonne 3 (C3) : pénalité = 0.00
+  Colonne 4 (C4) : pénalité = 0.00
+  Colonne 5 (C5) : pénalité = 0.00
+  Colonne 6 (C6) : pénalité = 0.00
+  Colonne 7 (C7) : pénalité = 0.00
+Choix de l'arête à remplir : (3, 4) = P3 -> C4
+  Coût minimal : 3.00
+  Allocation : 500.00
+  Colonne 4 (C4) épuisée, désactivée
+
+--- Itération 4 ---
+Pénalités des lignes actives :
+  Ligne 3 (P3) : pénalité = 22.00
+Pénalités des colonnes actives :
+  Colonne 3 (C3) : pénalité = 0.00
+  Colonne 5 (C5) : pénalité = 0.00
+  Colonne 6 (C6) : pénalité = 0.00
+  Colonne 7 (C7) : pénalité = 0.00
+
+Ligne(s) avec pénalité maximale (22.00) : ['P3']
+Choix de l'arête à remplir : (3, 7) = P3 -> C7
+  Coût minimal : 3.00
+  Allocation : 500.00
+  Colonne 7 (C7) épuisée, désactivée
+
+--- Itération 5 ---
+Pénalités des lignes actives :
+  Ligne 3 (P3) : pénalité = 1.00
+Pénalités des colonnes actives :
+  Colonne 3 (C3) : pénalité = 0.00
+  Colonne 5 (C5) : pénalité = 0.00
+  Colonne 6 (C6) : pénalité = 0.00
+
+Ligne(s) avec pénalité maximale (1.00) : ['P3']
+Choix de l'arête à remplir : (3, 5) = P3 -> C5
+  Coût minimal : 25.00
+  Allocation : 500.00
+  Colonne 5 (C5) épuisée, désactivée
+
+--- Itération 6 ---
+Pénalités des lignes actives :
+  Ligne 3 (P3) : pénalité = 4.00
+Pénalités des colonnes actives :
+  Colonne 3 (C3) : pénalité = 0.00
+  Colonne 6 (C6) : pénalité = 0.00
+
+Ligne(s) avec pénalité maximale (4.00) : ['P3']
+Choix de l'arête à remplir : (3, 6) = P3 -> C6
+  Coût minimal : 26.00
+  Allocation : 500.00
+  Colonne 6 (C6) épuisée, désactivée
+
+--- Itération 7 ---
+Pénalités des lignes actives :
+  Ligne 3 (P3) : pénalité = 0.00
+Pénalités des colonnes actives :
+  Colonne 3 (C3) : pénalité = 0.00
+Choix de l'arête à remplir : (3, 3) = P3 -> C3
+  Coût minimal : 30.00
+  Allocation : 500.00
+  Ligne 3 (P3) épuisée, désactivée
+  Colonne 3 (C3) épuisée, désactivée
+
+>>> Proposition de transport initiale <<<
+Proposition de transport
+------------------------
+   |     C1 |     C2 |     C3 |     C4 |     C5 |     C6 |     C7
+-----------------------------------------------------------------
+P1 |   0.00 | 500.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00
+P2 | 500.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00
+P3 |   0.00 |   0.00 | 500.00 | 500.00 | 500.00 | 500.00 | 500.00
+
+Coût total initial : 54000.00
+
+======================================================================
+>>> MÉTHODE DU MARCHE-PIED AVEC POTENTIEL <<<
+======================================================================
+
+======================================================================
+ITÉRATION 1
+======================================================================
+
+>>> Proposition de transport actuelle <<<
+Proposition de transport
+------------------------
+   |     C1 |     C2 |     C3 |     C4 |     C5 |     C6 |     C7
+-----------------------------------------------------------------
+P1 |   0.00 | 500.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00
+P2 | 500.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00
+P3 |   0.00 |   0.00 | 500.00 | 500.00 | 500.00 | 500.00 | 500.00
+
+Coût total actuel : 54000.00
+
+⚠ Proposition non connexe
+Sous-graphes connexes :
+Composante 1:
+  Fournisseurs : P0
+  Clients      : C1
+
+Composante 2:
+  Fournisseurs : P1
+  Clients      : C0
+
+Composante 3:
+  Fournisseurs : P2
+  Clients      : C2, C3, C4, C5, C6
+
+Ajout d'arêtes classées par coûts croissants pour rendre connexe...
+  Recherche d'arêtes pour rendre connexe (parmi 14 candidates)...
+  Arête ajoutée : (1, 3) avec coût 15.00
+  Arête ajoutée : (1, 4) avec coût 16.00
+  Arête ajoutée : (1, 5) avec coût 17.00
+  Arête ajoutée : (1, 6) avec coût 18.00
+  Arête ajoutée : (2, 7) avec coût 19.00
+  ✓ Graphe devenu connexe après 5 arête(s) ajoutée(s)
+✓ Proposition rendue connexe
+  Total arêtes ajoutées : 5
+  Arêtes : [(1, 3), (1, 4), (1, 5), (1, 6), (2, 7)]
+
+>>> Potentiels par sommet <<<
+Potentiels
+----------
+Sommet |        Type | Potentiel
+--------------------------------
+    P1 | Fournisseur |      0.00
+    P2 | Fournisseur |     31.00
+    P3 | Fournisseur |     15.00
+    C1 |      Client |    -30.00
+    C2 |      Client |     20.00
+    C3 |      Client |     15.00
+    C4 |      Client |     16.00
+    C5 |      Client |     17.00
+    C6 |      Client |     18.00
+    C7 |      Client |    -12.00
+
+>>> Table des coûts potentiels <<<
+Table des coûts potentiels
+--------------------------
+   |     C1 |    C2 |    C3 |    C4 |    C5 |    C6 |     C7
+------------------------------------------------------------
+P1 | -30.00 | 20.00 | 15.00 | 16.00 | 17.00 | 18.00 | -12.00
+P2 |   1.00 | 51.00 | 46.00 | 47.00 | 48.00 | 49.00 |  19.00
+P3 | -15.00 | 35.00 | 30.00 | 31.00 | 32.00 | 33.00 |   3.00
+
+>>> Table des coûts marginaux <<<
+Table des coûts marginaux
+-------------------------
+   |     C1 |    C2 |     C3 |     C4 |     C5 |     C6 |    C7
+---------------------------------------------------------------
+P1 | 330.00 |  0.00 |   0.00 |   0.00 |   0.00 |   0.00 | 32.00
+P2 |   0.00 | -1.00 | -22.00 | -17.00 | -26.00 | -22.00 |  0.00
+P3 |  65.00 |  5.00 |   0.00 | -28.00 |  -7.00 |  -7.00 |  0.00
+
+>>> Arête améliorante détectée <<<
+  Case : (2, 5) = P2 -> C5
+  Coût marginal : -26.000000
+  Cycle formé : [(1, 4)]
+  Maximisation effectuée avec delta = 0.000000
+
+⚠ Delta = 0 : cas particulier détecté
+  On conserve l'arête améliorante et on enlève les arêtes ajoutées lors du test de connexité
+  Suppression de l'arête (1, 3) ajoutée pour la connexité
+  Suppression de l'arête (1, 4) ajoutée pour la connexité
+  Suppression de l'arête (1, 5) ajoutée pour la connexité
+  Suppression de l'arête (1, 6) ajoutée pour la connexité
+  Suppression de l'arête (2, 7) ajoutée pour la connexité
+  L'arête améliorante est conservée avec valeur epsilon
+
+======================================================================
+ITÉRATION 2
+======================================================================
+
+>>> Proposition de transport actuelle <<<
+Proposition de transport
+------------------------
+   |     C1 |     C2 |     C3 |     C4 |     C5 |     C6 |     C7
+-----------------------------------------------------------------
+P1 |   0.00 | 500.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00
+P2 | 500.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00
+P3 |   0.00 |   0.00 | 500.00 | 500.00 | 500.00 | 500.00 | 500.00
+
+Coût total actuel : 54000.00
+
+⚠ Proposition non connexe
+Sous-graphes connexes :
+Composante 1:
+  Fournisseurs : P0
+  Clients      : C1
+
+Composante 2:
+  Fournisseurs : P1, P2
+  Clients      : C0, C2, C3, C4, C5, C6
+
+Ajout d'arêtes classées par coûts croissants pour rendre connexe...
+  Recherche d'arêtes pour rendre connexe (parmi 13 candidates)...
+  Arête ajoutée : (1, 3) avec coût 15.00
+  ✓ Graphe devenu connexe après 1 arête(s) ajoutée(s)
+✓ Proposition rendue connexe
+  Total arêtes ajoutées : 1
+  Arêtes : [(1, 3)]
+
+>>> Potentiels par sommet <<<
+Potentiels
+----------
+Sommet |        Type | Potentiel
+--------------------------------
+    P1 | Fournisseur |      0.00
+    P2 | Fournisseur |     12.00
+    P3 | Fournisseur |     15.00
+    C1 |      Client |    -11.00
+    C2 |      Client |     20.00
+    C3 |      Client |     15.00
+    C4 |      Client |    -12.00
+    C5 |      Client |     10.00
+    C6 |      Client |     11.00
+    C7 |      Client |    -12.00
+
+>>> Table des coûts potentiels <<<
+Table des coûts potentiels
+--------------------------
+   |     C1 |    C2 |    C3 |     C4 |    C5 |    C6 |     C7
+-------------------------------------------------------------
+P1 | -11.00 | 20.00 | 15.00 | -12.00 | 10.00 | 11.00 | -12.00
+P2 |   1.00 | 32.00 | 27.00 |   0.00 | 22.00 | 23.00 |   0.00
+P3 |   4.00 | 35.00 | 30.00 |   3.00 | 25.00 | 26.00 |   3.00
+
+>>> Table des coûts marginaux <<<
+Table des coûts marginaux
+-------------------------
+   |     C1 |    C2 |    C3 |    C4 |   C5 |   C6 |    C7
+---------------------------------------------------------
+P1 | 311.00 |  0.00 |  0.00 | 28.00 | 7.00 | 7.00 | 32.00
+P2 |   0.00 | 18.00 | -3.00 | 30.00 | 0.00 | 4.00 | 19.00
+P3 |  46.00 |  5.00 |  0.00 |  0.00 | 0.00 | 0.00 |  0.00
+
+>>> Arête améliorante détectée <<<
+  Case : (2, 3) = P2 -> C3
+  Coût marginal : -3.000000
+  Cycle formé : [(1, 2)]
+  Maximisation effectuée avec delta = 0.000000
+
+⚠ Delta = 0 : cas particulier détecté
+  On conserve l'arête améliorante et on enlève les arêtes ajoutées lors du test de connexité
+  Suppression de l'arête (1, 3) ajoutée pour la connexité
+  L'arête améliorante est conservée avec valeur epsilon
+
+======================================================================
+ITÉRATION 3
+======================================================================
+
+>>> Proposition de transport actuelle <<<
+Proposition de transport
+------------------------
+   |     C1 |     C2 |     C3 |     C4 |     C5 |     C6 |     C7
+-----------------------------------------------------------------
+P1 |   0.00 | 500.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00
+P2 | 500.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00
+P3 |   0.00 |   0.00 | 500.00 | 500.00 | 500.00 | 500.00 | 500.00
+
+Coût total actuel : 54000.00
+
+⚠ Proposition non connexe
+Sous-graphes connexes :
+Composante 1:
+  Fournisseurs : P0
+  Clients      : C1
+
+Composante 2:
+  Fournisseurs : P1, P2
+  Clients      : C0, C2, C3, C4, C5, C6
+
+Ajout d'arêtes classées par coûts croissants pour rendre connexe...
+  Recherche d'arêtes pour rendre connexe (parmi 12 candidates)...
+  Arête ajoutée : (1, 3) avec coût 15.00
+  ✓ Graphe devenu connexe après 1 arête(s) ajoutée(s)
+✓ Proposition rendue connexe
+  Total arêtes ajoutées : 1
+  Arêtes : [(1, 3)]
+
+>>> Potentiels par sommet <<<
+Potentiels
+----------
+Sommet |        Type | Potentiel
+--------------------------------
+    P1 | Fournisseur |      0.00
+    P2 | Fournisseur |      9.00
+    P3 | Fournisseur |     15.00
+    C1 |      Client |     -8.00
+    C2 |      Client |     20.00
+    C3 |      Client |     15.00
+    C4 |      Client |    -12.00
+    C5 |      Client |     13.00
+    C6 |      Client |     11.00
+    C7 |      Client |    -12.00
+
+>>> Table des coûts potentiels <<<
+Table des coûts potentiels
+--------------------------
+   |    C1 |    C2 |    C3 |     C4 |    C5 |    C6 |     C7
+------------------------------------------------------------
+P1 | -8.00 | 20.00 | 15.00 | -12.00 | 13.00 | 11.00 | -12.00
+P2 |  1.00 | 29.00 | 24.00 |  -3.00 | 22.00 | 20.00 |  -3.00
+P3 |  7.00 | 35.00 | 30.00 |   3.00 | 28.00 | 26.00 |   3.00
+
+>>> Table des coûts marginaux <<<
+Table des coûts marginaux
+-------------------------
+   |     C1 |    C2 |   C3 |    C4 |    C5 |   C6 |    C7
+---------------------------------------------------------
+P1 | 308.00 |  0.00 | 0.00 | 28.00 |  4.00 | 7.00 | 32.00
+P2 |   0.00 | 21.00 | 0.00 | 33.00 |  0.00 | 7.00 | 22.00
+P3 |  43.00 |  5.00 | 0.00 |  0.00 | -3.00 | 0.00 |  0.00
+
+✓ Solution optimale trouvée !
+  Tous les coûts marginaux sont >= 0
+
+======================================================================
+>>> SOLUTION OPTIMALE FINALE <<<
+======================================================================
+
+Proposition de transport optimale :
+Proposition de transport
+------------------------
+   |     C1 |     C2 |     C3 |     C4 |     C5 |     C6 |     C7
+-----------------------------------------------------------------
+P1 |   0.00 | 500.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00
+P2 | 500.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00 |   0.00
+P3 |   0.00 |   0.00 | 500.00 | 500.00 | 500.00 | 500.00 | 500.00
+
+Coût total optimal : 54000.00
+Coût initial (Balas-Hammer) : 54000.00
+Amélioration : -0.00 (-0.00%)
+Nombre d'itérations : 3

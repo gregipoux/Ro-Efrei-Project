@@ -1,0 +1,173 @@
+
+======================================================================
+TABLEAU DE CONTRAINTES
+======================================================================
+Matrice des coûts
+-----------------
+   |   C1 |   C2 |   C3
+-----------------------
+P1 | 5.00 | 7.00 | 8.00
+P2 | 6.00 | 8.00 | 5.00
+P3 | 6.00 | 7.00 | 7.00
+
+Provisions : [25.0, 25.0, 25.0]
+Commandes  : [35.0, 20.0, 20.0]
+Total provisions : 75.00
+Total commandes  : 75.00
+
+======================================================================
+>>> ALGORITHME DE BALAS-HAMMER <<<
+======================================================================
+
+--- Itération 1 ---
+Pénalités des lignes actives :
+  Ligne 1 (P1) : pénalité = 2.00
+  Ligne 2 (P2) : pénalité = 1.00
+  Ligne 3 (P3) : pénalité = 1.00
+Pénalités des colonnes actives :
+  Colonne 1 (C1) : pénalité = 1.00
+  Colonne 2 (C2) : pénalité = 0.00
+  Colonne 3 (C3) : pénalité = 2.00
+
+Ligne(s) avec pénalité maximale (2.00) : ['P1']
+Colonne(s) avec pénalité maximale (2.00) : ['C3']
+Choix de l'arête à remplir : (1, 1) = P1 -> C1
+  Coût minimal : 5.00
+  Allocation : 25.00
+  Ligne 1 (P1) épuisée, désactivée
+
+--- Itération 2 ---
+Pénalités des lignes actives :
+  Ligne 2 (P2) : pénalité = 1.00
+  Ligne 3 (P3) : pénalité = 1.00
+Pénalités des colonnes actives :
+  Colonne 1 (C1) : pénalité = 0.00
+  Colonne 2 (C2) : pénalité = 1.00
+  Colonne 3 (C3) : pénalité = 2.00
+
+Ligne(s) avec pénalité maximale (1.00) : ['P2', 'P3']
+Colonne(s) avec pénalité maximale (2.00) : ['C3']
+Choix de l'arête à remplir : (2, 3) = P2 -> C3
+  Coût minimal : 5.00
+  Allocation : 20.00
+  Colonne 3 (C3) épuisée, désactivée
+
+--- Itération 3 ---
+Pénalités des lignes actives :
+  Ligne 2 (P2) : pénalité = 2.00
+  Ligne 3 (P3) : pénalité = 1.00
+Pénalités des colonnes actives :
+  Colonne 1 (C1) : pénalité = 0.00
+  Colonne 2 (C2) : pénalité = 1.00
+
+Ligne(s) avec pénalité maximale (2.00) : ['P2']
+Colonne(s) avec pénalité maximale (1.00) : ['C2']
+Choix de l'arête à remplir : (2, 1) = P2 -> C1
+  Coût minimal : 6.00
+  Allocation : 5.00
+  Ligne 2 (P2) épuisée, désactivée
+
+--- Itération 4 ---
+Pénalités des lignes actives :
+  Ligne 3 (P3) : pénalité = 1.00
+Pénalités des colonnes actives :
+  Colonne 1 (C1) : pénalité = 0.00
+  Colonne 2 (C2) : pénalité = 0.00
+
+Ligne(s) avec pénalité maximale (1.00) : ['P3']
+Choix de l'arête à remplir : (3, 1) = P3 -> C1
+  Coût minimal : 6.00
+  Allocation : 5.00
+  Colonne 1 (C1) épuisée, désactivée
+
+--- Itération 5 ---
+Pénalités des lignes actives :
+  Ligne 3 (P3) : pénalité = 0.00
+Pénalités des colonnes actives :
+  Colonne 2 (C2) : pénalité = 0.00
+Choix de l'arête à remplir : (3, 2) = P3 -> C2
+  Coût minimal : 7.00
+  Allocation : 20.00
+  Ligne 3 (P3) épuisée, désactivée
+  Colonne 2 (C2) épuisée, désactivée
+
+>>> Proposition de transport initiale <<<
+Proposition de transport
+------------------------
+   |    C1 |    C2 |    C3
+--------------------------
+P1 | 25.00 |  0.00 |  0.00
+P2 |  5.00 |  0.00 | 20.00
+P3 |  5.00 | 20.00 |  0.00
+
+Coût total initial : 425.00
+
+======================================================================
+>>> MÉTHODE DU MARCHE-PIED AVEC POTENTIEL <<<
+======================================================================
+
+======================================================================
+ITÉRATION 1
+======================================================================
+
+>>> Proposition de transport actuelle <<<
+Proposition de transport
+------------------------
+   |    C1 |    C2 |    C3
+--------------------------
+P1 | 25.00 |  0.00 |  0.00
+P2 |  5.00 |  0.00 | 20.00
+P3 |  5.00 | 20.00 |  0.00
+
+Coût total actuel : 425.00
+
+>>> Potentiels par sommet <<<
+Potentiels
+----------
+Sommet |        Type | Potentiel
+--------------------------------
+    P1 | Fournisseur |      0.00
+    P2 | Fournisseur |      1.00
+    P3 | Fournisseur |      1.00
+    C1 |      Client |      5.00
+    C2 |      Client |      6.00
+    C3 |      Client |      4.00
+
+>>> Table des coûts potentiels <<<
+Table des coûts potentiels
+--------------------------
+   |   C1 |   C2 |   C3
+-----------------------
+P1 | 5.00 | 6.00 | 4.00
+P2 | 6.00 | 7.00 | 5.00
+P3 | 6.00 | 7.00 | 5.00
+
+>>> Table des coûts marginaux <<<
+Table des coûts marginaux
+-------------------------
+   |   C1 |   C2 |   C3
+-----------------------
+P1 | 0.00 | 1.00 | 4.00
+P2 | 0.00 | 1.00 | 0.00
+P3 | 0.00 | 0.00 | 2.00
+
+✓ Solution optimale trouvée !
+  Tous les coûts marginaux sont >= 0
+
+======================================================================
+>>> SOLUTION OPTIMALE FINALE <<<
+======================================================================
+
+Proposition de transport optimale :
+Proposition de transport
+------------------------
+   |    C1 |    C2 |    C3
+--------------------------
+P1 | 25.00 |  0.00 |  0.00
+P2 |  5.00 |  0.00 | 20.00
+P3 |  5.00 | 20.00 |  0.00
+
+Coût total optimal : 425.00
+Coût initial (Balas-Hammer) : 425.00
+Amélioration : 0.00 (0.00%)
+Nombre d'itérations : 1

@@ -2,20 +2,9 @@ from collections import deque
 from typing import List, Tuple, Dict, Optional
 
 def est_cycle_transport_valide(cycle: List[Tuple[int,int]]) -> bool:
-    """
-    Vérifie si un cycle est un cycle valide pour un problème de transport.
-    Un cycle valide doit alterner entre lignes et colonnes (au moins 4 sommets).
+    # Alors là, cette fonction vérifie si un cycle est un cycle valide pour un problème de transport
+    # En clair, un cycle valide doit alterner entre lignes et colonnes (au moins 4 sommets, c'est la règle)
     
-    Paramètres
-    ----------
-    cycle : List[Tuple[int,int]]
-        Liste des cases (i,j) formant le cycle.
-    
-    Retours
-    -------
-    bool
-        True si le cycle est valide pour la redistribution de flux.
-    """
     if len(cycle) < 4:
         return False
     
@@ -32,55 +21,47 @@ def est_cycle_transport_valide(cycle: List[Tuple[int,int]]) -> bool:
             return False
         
         # Vérifier l'alternance: si on est dans une ligne, le suivant doit être dans une colonne différente
-        # et vice versa (sauf pour le dernier qui revient au premier)
+        # et vice versa
         if idx < len(cycle) - 1:
             prev = cycle[idx - 1] if idx > 0 else cycle[-1]
             # Le précédent et le suivant doivent être dans des dimensions différentes
-            if prev[0] == curr[0] and next_cell[0] == curr[0]:  # Tous dans la même ligne
+            if prev[0] == curr[0] and next_cell[0] == curr[0]:  # Tous dans la même ligne (pas bon)
                 return False
-            if prev[1] == curr[1] and next_cell[1] == curr[1]:  # Tous dans la même colonne
+            if prev[1] == curr[1] and next_cell[1] == curr[1]:  # Tous dans la même colonne (pas bon non plus)
                 return False
     
     return True
 
 def tester_acyclique(allocation: List[List[float]]) -> Tuple[bool, List[Tuple[int,int]]]:
-    """
-    Teste si la proposition de transport (allocation) est acyclique en utilisant un parcours en largeur (BFS).
+    # Alors là, cette fonction teste si la proposition de transport est acyclique en utilisant un parcours en largeur (BFS)
+    # En résumé, on construit un graphe d'adjacence et on cherche des cycles avec un BFS
+    # Si on retourne sur un sommet déjà visité qui n'est pas le parent, c'est qu'il y a un cycle
     
-    Paramètres
-    ----------
-    allocation : List[List[float]]
-        Matrice d'allocation de transport.
+    # Pseudo-code :
+    # cellules = toutes les cases (i,j) avec allocation[i][j] > 0
+    # Construire graphe d'adjacence (voisins dans la même ligne ou colonne)
+    # BFS pour détecter cycle
+    # Si cycle détecté : reconstruire le cycle et retourner (False, cycle)
+    # Sinon : retourner (True, [])
     
-    Retours
-    -------
-    Tuple[bool, List[Tuple[int,int]]]
-        (True, []) si acyclique, sinon (False, cycle) où cycle est la liste des cases (i,j) formant un cycle.
-    
-    Détails
-    -------
-    Utilise un parcours en largeur. Lors de la découverte des sommets, on vérifie si on retourne
-    sur un sommet déjà visité et que ce sommet n'est pas le parent du sommet courant.
-    Si c'est le cas, alors il existe un cycle.
-    """
     n = len(allocation)
     m = len(allocation[0]) if n > 0 else 0
 
-    # Construire liste des cellules basiques (cellules avec allocation > 0)
+    # Construire liste des cellules basiques (cellules avec allocation > 0, c'est notre point de départ)
     cellules = [(i,j) for i in range(n) for j in range(m) if allocation[i][j] > 0]
     
     if len(cellules) == 0:
         return True, []
 
-    # Construire liste d'adjacence pour BFS: voisins dans la même ligne ou colonne
+    # Construire liste d'adjacence pour BFS: voisins dans la même ligne ou colonne (on trouve les voisins)
     adj: Dict[Tuple[int,int], List[Tuple[int,int]]] = {}
     for (i,j) in cellules:
         voisins = []
-        # même ligne
+        # même ligne (on cherche dans la ligne i)
         for jj in range(m):
             if jj != j and allocation[i][jj] > 0:
                 voisins.append((i,jj))
-        # même colonne
+        # même colonne (on cherche dans la colonne j)
         for ii in range(n):
             if ii != i and allocation[ii][j] > 0:
                 voisins.append((ii,j))
@@ -89,7 +70,7 @@ def tester_acyclique(allocation: List[List[float]]) -> Tuple[bool, List[Tuple[in
     visite = set()
     parent: Dict[Tuple[int,int], Optional[Tuple[int,int]]] = {}
 
-    # BFS pour détecter cycle
+    # BFS pour détecter cycle (on explore en largeur et on cherche des cycles)
     for start in cellules:
         if start in visite:
             continue
@@ -104,48 +85,34 @@ def tester_acyclique(allocation: List[List[float]]) -> Tuple[bool, List[Tuple[in
                     visite.add(v)
                     parent[v] = u
                     queue.append(v)
-                elif parent.get(u) != v:  # v est visité et n'est pas le parent de u -> cycle détecté
-                    # cycle détecté: on retourne sur un sommet déjà visité qui n'est pas le parent
+                elif parent.get(u) != v:  # v est visité et n'est pas le parent de u -> cycle détecté !
+                    # cycle détecté: on retourne sur un sommet déjà visité qui n'est pas le parent (c'est un cycle !)
                     cycle = reconstruire_cycle(u, v, parent)
-                    # Vérifier que c'est un cycle valide pour le transport
+                    # Vérifier que c'est un cycle valide pour le transport (on vérifie que c'est exploitable)
                     if est_cycle_transport_valide(cycle):
                         return False, cycle
-                    # Sinon, continuer la recherche (ce n'est pas un cycle exploitable)
+                    # Sinon, continuer la recherche (ce n'est pas un cycle exploitable, on continue)
     return True, []
 
 def reconstruire_cycle(u: Tuple[int,int], v: Tuple[int,int], parent: Dict[Tuple[int,int], Optional[Tuple[int,int]]]) -> List[Tuple[int,int]]:
-    """
-    Reconstruit un cycle simple passant par l'arête (u,v) en remontant les chemins vers le LCA.
+    # Alors là, cette fonction reconstruit un cycle simple passant par l'arête (u,v) en remontant les chemins vers le LCA
+    # En clair, on remonte les chemins de u et v vers la racine, on trouve leur ancêtre commun (LCA), et on construit le cycle
     
-    Paramètres
-    ----------
-    u : Tuple[int,int]
-        Premier sommet de l'arête formant le cycle.
-    v : Tuple[int,int]
-        Second sommet de l'arête formant le cycle (déjà visité).
-    parent : Dict[Tuple[int,int], Optional[Tuple[int,int]]]
-        Dictionnaire des parents pour chaque sommet.
-    
-    Retours
-    -------
-    List[Tuple[int,int]]
-        Liste des cases (i,j) formant le cycle.
-    """
-    # Construire le chemin de u vers la racine
+    # Construire le chemin de u vers la racine (on remonte en suivant les parents)
     chemin_u = []
     x: Optional[Tuple[int,int]] = u
     while x is not None:
         chemin_u.append(x)
         x = parent.get(x)
     
-    # Construire le chemin de v vers la racine
+    # Construire le chemin de v vers la racine (on remonte en suivant les parents aussi)
     chemin_v = []
     y: Optional[Tuple[int,int]] = v
     while y is not None:
         chemin_v.append(y)
         y = parent.get(y)
     
-    # Trouver le LCA (Lowest Common Ancestor)
+    # Trouver le LCA (Lowest Common Ancestor, l'ancêtre commun le plus proche)
     set_v = set(chemin_v)
     lca: Optional[Tuple[int,int]] = None
     for node in chemin_u:
@@ -157,7 +124,7 @@ def reconstruire_cycle(u: Tuple[int,int], v: Tuple[int,int], parent: Dict[Tuple[
         # Si pas de LCA trouvé, le cycle est u -> v directement
         return [u, v]
     
-    # Construire le cycle: u -> LCA -> v -> u
+    # Construire le cycle: u -> LCA -> v -> u (cycle = on fait le tour complet)
     cycle = []
     x = u
     while x != lca:
@@ -179,33 +146,21 @@ def reconstruire_cycle(u: Tuple[int,int], v: Tuple[int,int], parent: Dict[Tuple[
     
     return cycle
 
-def maximiser_sur_cycle(allocation: List[List[float]], cycle: List[Tuple[int,int]]) -> float:
-    """
-    Maximisation du transport sur un cycle détecté.
+def maximiser_sur_cycle(allocation: List[List[float]], cycle: List[Tuple[int,int]], verbose: bool = False) -> float:
+    # Alors là, cette fonction maximise le transport sur un cycle détecté
+    # En résumé, on alterne les signes + et - sur le cycle, on calcule delta (minimum des cases -), puis on applique delta
+    # Si delta = 0, aucune modification n'est effectuée (c'est un cas particulier)
     
-    Paramètres
-    ----------
-    allocation : List[List[float]]
-        Matrice d'allocation de transport (modifiée sur place).
-    cycle : List[Tuple[int,int]]
-        Liste des cases (i,j) formant le cycle.
+    # Pseudo-code :
+    # Alterner les signes : cases paires = +, cases impaires = -
+    # Delta = minimum des valeurs dans les cases marquées -
+    # Appliquer delta : ajouter aux cases +, soustraire aux cases -
+    # Si une case devient 0, on la supprime (arête supprimée)
     
-    Retours
-    -------
-    float
-        Delta appliqué (peut être 0 si aucune modification possible).
-    
-    Détails
-    -------
-    On alterne les signes + et - sur le cycle.
-    Delta = minimum des valeurs dans les cases marquées -.
-    On ajoute delta aux cases + et on soustrait delta aux cases -.
-    Si delta = 0, aucune modification n'est effectuée (cas mentionné dans les instructions).
-    """
-    if not cycle or len(cycle) < 4:  # Un cycle doit avoir au moins 4 sommets
+    if not cycle or len(cycle) < 4:  # Un cycle doit avoir au moins 4 sommets (c'est la règle)
         return 0.0
 
-    # Alterner les signes: cases paires = +, cases impaires = -
+    # Alterner les signes: cases paires = +, cases impaires = - (on alterne pour optimiser)
     plus_cases = []
     moins_cases = []
     for idx, (i,j) in enumerate(cycle):
@@ -214,23 +169,59 @@ def maximiser_sur_cycle(allocation: List[List[float]], cycle: List[Tuple[int,int
         else:
             moins_cases.append((i,j))
 
-    # Delta = minimum des valeurs dans les cases marquées -
+    if verbose:
+        print("\n>>> Conditions pour la maximisation sur le cycle <<<")
+        print("Cases marquées + (où on ajoute delta) :")
+        for (i, j) in plus_cases:
+            valeur_avant = allocation[i][j]
+            print(f"  Case ({i+1}, {j+1}) = P{i+1} -> C{j+1} : valeur actuelle = {valeur_avant:.2f}")
+        print("Cases marquées - (où on soustrait delta) :")
+        for (i, j) in moins_cases:
+            valeur_avant = allocation[i][j]
+            print(f"  Case ({i+1}, {j+1}) = P{i+1} -> C{j+1} : valeur actuelle = {valeur_avant:.2f}")
+
+    # Delta = minimum des valeurs dans les cases marquées - (on prend le minimum pour ne pas rendre négatif)
     if not moins_cases:
         return 0.0
     
     delta = min(allocation[i][j] for (i,j) in moins_cases)
     
-    # Si delta = 0, aucune modification (cas mentionné dans les instructions section 2.3)
+    if verbose:
+        print(f"\nDelta calculé = min(valeurs des cases -) = {delta:.6f}")
+    
+    # Si delta = 0, aucune modification (cas mentionné dans les instructions section 2.3, c'est un cas particulier)
     if delta <= 1e-9:
+        if verbose:
+            print("⚠ Delta = 0 : aucune modification possible")
         return 0.0
 
-    # Appliquer delta: ajouter aux cases +, soustraire aux cases -
+    # Appliquer delta: ajouter aux cases +, soustraire aux cases - (on optimise le flux)
+    aretes_supprimees = []
     for (i,j) in plus_cases:
+        valeur_avant = allocation[i][j]
         allocation[i][j] += delta
+        if verbose:
+            print(f"  Case ({i+1}, {j+1}) = P{i+1} -> C{j+1} : {valeur_avant:.2f} -> {allocation[i][j]:.2f} (+{delta:.2f})")
+    
     for (i,j) in moins_cases:
+        valeur_avant = allocation[i][j]
         allocation[i][j] -= delta
-        # Mettre à zéro si très proche de zéro
+        # Mettre à zéro si très proche de zéro (on nettoie les valeurs trop petites)
         if abs(allocation[i][j]) < 1e-9:
             allocation[i][j] = 0.0
+            aretes_supprimees.append((i, j))
+        
+        if verbose:
+            if allocation[i][j] == 0.0:
+                print(f"  Case ({i+1}, {j+1}) = P{i+1} -> C{j+1} : {valeur_avant:.2f} -> 0.00 (-{delta:.2f}) [SUPPRIMÉE]")
+            else:
+                print(f"  Case ({i+1}, {j+1}) = P{i+1} -> C{j+1} : {valeur_avant:.2f} -> {allocation[i][j]:.2f} (-{delta:.2f})")
+    
+    if verbose and aretes_supprimees:
+        print(f"\n>>> Arête(s) supprimée(s) à l'issue de la maximisation <<<")
+        for (i, j) in aretes_supprimees:
+            print(f"  Arête ({i+1}, {j+1}) = P{i+1} -> C{j+1} (mise à zéro)")
+    elif verbose:
+        print("\n>>> Aucune arête supprimée (toutes les cases - restent > 0) <<<")
     
     return delta

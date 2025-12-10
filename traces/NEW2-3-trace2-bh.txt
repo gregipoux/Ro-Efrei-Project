@@ -1,0 +1,138 @@
+
+======================================================================
+TABLEAU DE CONTRAINTES
+======================================================================
+Matrice des coûts
+-----------------
+   |    C1 |    C2
+------------------
+P1 | 10.00 | 20.00
+P2 | 30.00 | 10.00
+
+Provisions : [100.0, 100.0]
+Commandes  : [100.0, 100.0]
+Total provisions : 200.00
+Total commandes  : 200.00
+
+======================================================================
+>>> ALGORITHME DE BALAS-HAMMER <<<
+======================================================================
+
+--- Itération 1 ---
+Pénalités des lignes actives :
+  Ligne 1 (P1) : pénalité = 10.00
+  Ligne 2 (P2) : pénalité = 20.00
+Pénalités des colonnes actives :
+  Colonne 1 (C1) : pénalité = 20.00
+  Colonne 2 (C2) : pénalité = 10.00
+
+Ligne(s) avec pénalité maximale (20.00) : ['P2']
+Colonne(s) avec pénalité maximale (20.00) : ['C1']
+Choix de l'arête à remplir : (2, 2) = P2 -> C2
+  Coût minimal : 10.00
+  Allocation : 100.00
+  Ligne 2 (P2) épuisée, désactivée
+  Colonne 2 (C2) épuisée, désactivée
+
+--- Itération 2 ---
+Pénalités des lignes actives :
+  Ligne 1 (P1) : pénalité = 0.00
+Pénalités des colonnes actives :
+  Colonne 1 (C1) : pénalité = 0.00
+Choix de l'arête à remplir : (1, 1) = P1 -> C1
+  Coût minimal : 10.00
+  Allocation : 100.00
+  Ligne 1 (P1) épuisée, désactivée
+  Colonne 1 (C1) épuisée, désactivée
+
+>>> Proposition de transport initiale <<<
+Proposition de transport
+------------------------
+   |     C1 |     C2
+--------------------
+P1 | 100.00 |   0.00
+P2 |   0.00 | 100.00
+
+Coût total initial : 2000.00
+
+======================================================================
+>>> MÉTHODE DU MARCHE-PIED AVEC POTENTIEL <<<
+======================================================================
+
+======================================================================
+ITÉRATION 1
+======================================================================
+
+>>> Proposition de transport actuelle <<<
+Proposition de transport
+------------------------
+   |     C1 |     C2
+--------------------
+P1 | 100.00 |   0.00
+P2 |   0.00 | 100.00
+
+Coût total actuel : 2000.00
+
+⚠ Proposition non connexe
+Sous-graphes connexes :
+Composante 1:
+  Fournisseurs : P0
+  Clients      : C0
+
+Composante 2:
+  Fournisseurs : P1
+  Clients      : C1
+
+Ajout d'arêtes classées par coûts croissants pour rendre connexe...
+  Recherche d'arêtes pour rendre connexe (parmi 2 candidates)...
+  Arête ajoutée : (1, 2) avec coût 20.00
+  ✓ Graphe devenu connexe après 1 arête(s) ajoutée(s)
+✓ Proposition rendue connexe
+  Total arêtes ajoutées : 1
+  Arêtes : [(1, 2)]
+
+>>> Potentiels par sommet <<<
+Potentiels
+----------
+Sommet |        Type | Potentiel
+--------------------------------
+    P1 | Fournisseur |      0.00
+    P2 | Fournisseur |    -10.00
+    C1 |      Client |     10.00
+    C2 |      Client |     20.00
+
+>>> Table des coûts potentiels <<<
+Table des coûts potentiels
+--------------------------
+   |    C1 |    C2
+------------------
+P1 | 10.00 | 20.00
+P2 |  0.00 | 10.00
+
+>>> Table des coûts marginaux <<<
+Table des coûts marginaux
+-------------------------
+   |    C1 |   C2
+-----------------
+P1 |  0.00 | 0.00
+P2 | 30.00 | 0.00
+
+✓ Solution optimale trouvée !
+  Tous les coûts marginaux sont >= 0
+
+======================================================================
+>>> SOLUTION OPTIMALE FINALE <<<
+======================================================================
+
+Proposition de transport optimale :
+Proposition de transport
+------------------------
+   |     C1 |     C2
+--------------------
+P1 | 100.00 |   0.00
+P2 |   0.00 | 100.00
+
+Coût total optimal : 2000.00
+Coût initial (Balas-Hammer) : 2000.00
+Amélioration : -0.00 (-0.00%)
+Nombre d'itérations : 1
