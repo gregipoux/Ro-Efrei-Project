@@ -81,18 +81,11 @@ Composante 2:
   Clients      : C10, C11, C12, C13, C14, C15, C8, C9
 
 Ajout d'arêtes classées par coûts croissants pour rendre connexe...
-  Recherche d'arêtes pour rendre connexe (parmi 136 candidates)...
-  Arête ajoutée : (10, 14) avec coût 3.00
-  Arête ajoutée : (10, 13) avec coût 4.00
-  Arête ajoutée : (10, 12) avec coût 5.00
-  Arête ajoutée : (10, 11) avec coût 6.00
-  Arête ajoutée : (10, 10) avec coût 7.00
-  Arête ajoutée : (10, 9) avec coût 8.00
+  Recherche d'arêtes pour connecter 2 composantes...
   Arête ajoutée : (10, 8) avec coût 9.00
-  ✓ Graphe devenu connexe après 7 arête(s) ajoutée(s)
 ✓ Proposition rendue connexe
-  Total arêtes ajoutées : 7
-  Arêtes : [(10, 14), (10, 13), (10, 12), (10, 11), (10, 10), (10, 9), (10, 8)]
+  Total arêtes ajoutées : 1
+  Arêtes : [(10, 8)]
 
 >>> Potentiels par sommet <<<
 Potentiels

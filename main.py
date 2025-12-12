@@ -3,6 +3,7 @@
 
 import sys
 import os
+import glob
 from io import StringIO
 from typing import Optional
 
@@ -408,14 +409,12 @@ def resoudre_probleme_transport():
         print("-" * 70)
         print("1. Résoudre un problème individuel")
         print("2. Générer toutes les traces d'exécution (12 problèmes × 2 algorithmes)")
-        print("3. Exécuter l'étude de complexité complète")
-        print("4. Tracer les nuages de points (nécessite des résultats existants)")
-        print("5. Analyser la complexité dans le pire des cas")
-        print("6. Comparer les algorithmes")
-        print("7. Quitter")
+        print("3. Exécuter l'étude de complexité pour une valeur de n")
+        print("4. Analyser les résultats de complexité (choisir un JSON)")
+        print("5. Quitter")
         print("-" * 70)
         
-        choix_menu = input("\nVotre choix (1-7) : ").strip()
+        choix_menu = input("\nVotre choix (1-5) : ").strip()
         
         if choix_menu == '1':
             # Résoudre un problème individuel (on résout juste un problème à la fois)
@@ -487,13 +486,73 @@ def resoudre_probleme_transport():
                 print("Opération annulée.")
         
         elif choix_menu == '3':
-            # Exécuter l'étude de complexité complète (c'est long, mais c'est pour la science !)
+            # Exécuter l'étude de complexité pour une valeur de n spécifique
             print("\n" + "-" * 70)
             print("ÉTUDE DE LA COMPLEXITÉ")
             print("-" * 70)
             print("⚠ Attention : Cette opération peut prendre du temps selon le nombre d'exécutions choisi !")
-            print("Valeurs de n : 10, 40, 102, 400, 1000, 4000, 10000")
-            print("(Le nombre d'exécutions par valeur de n sera choisi ci-dessous)")
+            
+            # Menu de choix de la valeur de n
+            print("\n" + "-" * 70)
+            print("CHOIX DE LA VALEUR DE N")
+            print("-" * 70)
+            print("1. n = 10")
+            print("2. n = 40")
+            print("3. n = 1e2 (100)")
+            print("4. n = 4.1e2 (410)")
+            print("5. n = 1e3 (1000)")
+            print("6. n = 4.1e3 (4100)")
+            print("7. n = 1e4 (10000)")
+            print("8. Tous les n (test d'ensemble)")
+            print("-" * 70)
+            
+            choix_n = input("\nVotre choix (1-8) : ").strip()
+            
+            # Mapping des choix vers les valeurs de n
+            valeurs_n_map = {
+                '1': 10,
+                '2': 40,
+                '3': 100,  # 1e2
+                '4': 410,  # 4.1e2
+                '5': 1000,  # 1e3
+                '6': 4100,  # 4.1e3
+                '7': 10000  # 1e4
+            }
+            
+            # Créer le dossier complexity s'il n'existe pas
+            dossier_complexity = "complexity"
+            os.makedirs(dossier_complexity, exist_ok=True)
+            
+            if choix_n == '8':
+                # Test d'ensemble : toutes les valeurs de n
+                valeurs_n = [10, 40, 100, 410, 1000, 4100, 10000]
+                fichier_json = os.path.join(dossier_complexity, 'complexite_resultats.json')
+                print(f"\n✓ Test d'ensemble sélectionné")
+                print(f"   Valeurs de n : {valeurs_n}")
+                print(f"   Fichier de sortie : {fichier_json}")
+            elif choix_n in valeurs_n_map:
+                n_choisi = valeurs_n_map[choix_n]
+                valeurs_n = [n_choisi]
+                
+                # Générer le nom du fichier JSON basé sur n
+                # Pour les valeurs avec notation scientifique, utiliser une représentation claire
+                noms_fichiers = {
+                    10: 'complexite_resultats_n10.json',
+                    40: 'complexite_resultats_n40.json',
+                    100: 'complexite_resultats_n100.json',
+                    410: 'complexite_resultats_n410.json',
+                    1000: 'complexite_resultats_n1000.json',
+                    4100: 'complexite_resultats_n4100.json',
+                    10000: 'complexite_resultats_n10000.json'
+                }
+                nom_fichier = noms_fichiers[n_choisi]
+                fichier_json = os.path.join(dossier_complexity, nom_fichier)
+                
+                print(f"\n✓ Valeur de n sélectionnée : {n_choisi}")
+                print(f"   Fichier de sortie : {fichier_json}")
+            else:
+                print("⚠ Choix invalide, opération annulée.")
+                continue
             
             # Afficher les informations sur la parallélisation
             from multiprocessing import cpu_count
@@ -550,9 +609,9 @@ def resoudre_probleme_transport():
             print("\n" + "-" * 70)
             print("CHOIX DU NOMBRE D'EXÉCUTIONS")
             print("-" * 70)
-            print("1. Petit (1 exécution par valeur de n - rapide, pour tests)")
-            print("2. Modéré (10 exécutions par valeur de n - équilibré)")
-            print("3. Respecte du cahier des charges (100 exécutions par valeur de n - complet)")
+            print("1. Petit (1 exécution - rapide, pour tests)")
+            print("2. Modéré (10 exécutions - équilibré)")
+            print("3. Respecte du cahier des charges (100 exécutions - complet)")
             print("-" * 70)
             
             choix_nb_executions = input("\nVotre choix (1-3) : ").strip()
@@ -562,39 +621,52 @@ def resoudre_probleme_transport():
                 nb_executions = 1
                 nom_mode_exec = "Petit"
                 print(f"\n✓ Mode {nom_mode_exec} sélectionné")
-                print(f"   Nombre d'exécutions par valeur de n : {nb_executions}")
-                print(f"   Total : 7 × {nb_executions} = {7 * nb_executions} exécutions")
+                if choix_n == '8':
+                    print(f"   Nombre d'exécutions par valeur de n : {nb_executions}")
+                    print(f"   Total : {len(valeurs_n)} × {nb_executions} = {len(valeurs_n) * nb_executions} exécutions")
+                else:
+                    print(f"   Nombre d'exécutions : {nb_executions}")
             elif choix_nb_executions == '2':
                 nb_executions = 10
                 nom_mode_exec = "Modéré"
                 print(f"\n✓ Mode {nom_mode_exec} sélectionné")
-                print(f"   Nombre d'exécutions par valeur de n : {nb_executions}")
-                print(f"   Total : 7 × {nb_executions} = {7 * nb_executions} exécutions")
+                if choix_n == '8':
+                    print(f"   Nombre d'exécutions par valeur de n : {nb_executions}")
+                    print(f"   Total : {len(valeurs_n)} × {nb_executions} = {len(valeurs_n) * nb_executions} exécutions")
+                else:
+                    print(f"   Nombre d'exécutions : {nb_executions}")
             elif choix_nb_executions == '3':
                 nb_executions = 100
                 nom_mode_exec = "Respecte du cahier des charges"
                 print(f"\n✓ Mode {nom_mode_exec} sélectionné")
-                print(f"   Nombre d'exécutions par valeur de n : {nb_executions}")
-                print(f"   Total : 7 × {nb_executions} = {7 * nb_executions} exécutions")
+                if choix_n == '8':
+                    print(f"   Nombre d'exécutions par valeur de n : {nb_executions}")
+                    print(f"   Total : {len(valeurs_n)} × {nb_executions} = {len(valeurs_n) * nb_executions} exécutions")
+                else:
+                    print(f"   Nombre d'exécutions : {nb_executions}")
             else:
                 print("⚠ Choix invalide, utilisation du mode Modéré par défaut (10 exécutions)")
                 nb_executions = 10
                 nom_mode_exec = "Modéré"
             
             # Estimation du temps (approximative, basée sur des estimations)
-            # On suppose que chaque exécution prend environ 0.1s pour n=10, et augmente avec n
-            valeurs_n = [10, 40, 102, 400, 1000, 4000, 10000]
             temps_estime_par_n = {
                 10: 0.01,
                 40: 0.05,
-                102: 0.15,
-                400: 1.0,
+                100: 0.15,
+                410: 0.6,
                 1000: 5.0,
-                4000: 30.0,
+                4100: 20.0,
                 10000: 120.0
             }
             
-            temps_total_estime = sum(temps_estime_par_n.get(n, 1.0) * nb_executions for n in valeurs_n)
+            if choix_n == '8':
+                # Test d'ensemble : calculer pour toutes les valeurs
+                temps_total_estime = sum(temps_estime_par_n.get(n, 1.0) * nb_executions for n in valeurs_n)
+            else:
+                # Une seule valeur de n
+                temps_total_estime = temps_estime_par_n.get(valeurs_n[0], 1.0) * nb_executions
+            
             # Ajuster selon le nombre de processus (accélération approximative)
             acceleration = min(nb_processus_choisi, 0.8)  # Pas de gain linéaire parfait
             temps_total_estime = temps_total_estime / (1 + acceleration * (nb_processus_choisi - 1))
@@ -610,13 +682,16 @@ def resoudre_probleme_transport():
             if confirmer == 'o' or confirmer == 'oui':
                 try:
                     resultats = executer_etude_complexite(
+                        valeurs_n=valeurs_n,
                         utiliser_parallele=True,
                         nb_processus=nb_processus_choisi,
                         taille_lot=taille_lot,
                         pause_entre_lots=pause_entre_lots,
-                        nb_executions=nb_executions
+                        nb_executions=nb_executions,
+                        fichier=fichier_json
                     )
-                    print("\n✓ Étude terminée ! Vous pouvez maintenant utiliser les options 4, 5 et 6 pour analyser les résultats.")
+                    print(f"\n✓ Étude terminée ! Résultats sauvegardés dans '{fichier_json}'")
+                    print("   Vous pouvez maintenant utiliser l'option 4 pour analyser les résultats.")
                 except Exception as e:
                     print(f"\n⚠ Erreur lors de l'étude : {e}")
                     import traceback
@@ -625,62 +700,132 @@ def resoudre_probleme_transport():
                 print("Opération annulée.")
         
         elif choix_menu == '4':
-            # Tracer les nuages de points (on visualise les résultats, c'est joli)
+            # Analyser les résultats de complexité (choisir un JSON puis sous-menu)
             print("\n" + "-" * 70)
-            print("TRACÉ DES NUAGES DE POINTS")
+            print("ANALYSE DES RÉSULTATS DE COMPLEXITÉ")
             print("-" * 70)
+            
+            # Lister les fichiers JSON disponibles dans le dossier complexity
+            dossier_complexity = "complexity"
+            os.makedirs(dossier_complexity, exist_ok=True)
+            pattern = os.path.join(dossier_complexity, "complexite_resultats_n*.json")
+            fichiers_json = glob.glob(pattern)
+            # Ajouter aussi le fichier complexite_resultats.json s'il existe
+            fichier_ensemble = os.path.join(dossier_complexity, "complexite_resultats.json")
+            if os.path.exists(fichier_ensemble):
+                fichiers_json.append(fichier_ensemble)
+            
+            if not fichiers_json:
+                print("⚠ Aucun fichier de résultats trouvé.")
+                print("   Exécutez d'abord l'option 3 pour générer des résultats.")
+                continue
+            
+            # Trier les fichiers pour un affichage cohérent
+            fichiers_json_tries = sorted(fichiers_json)
+            
+            # Afficher les fichiers disponibles
+            print("\nFichiers JSON disponibles :")
+            for idx, fichier in enumerate(fichiers_json_tries, 1):
+                # Afficher seulement le nom du fichier (sans le chemin)
+                nom_affichage = os.path.basename(fichier)
+                print(f"  {idx}. {nom_affichage}")
+            print(f"  {len(fichiers_json_tries) + 1}. Annuler")
+            print("-" * 70)
+            
+            choix_fichier = input(f"\nVotre choix (1-{len(fichiers_json_tries) + 1}) : ").strip()
+            
             try:
-                resultats = charger_resultats_complexite()
-                tracer_nuages_de_points(resultats)
-                print("\n✓ Nuages de points tracés !")
-            except FileNotFoundError as e:
-                print(f"\n⚠ Erreur : {e}")
-                print("   Exécutez d'abord l'option 3 pour générer les résultats.")
-            except Exception as e:
-                print(f"\n⚠ Erreur : {e}")
-                import traceback
-                traceback.print_exc()
+                idx_fichier = int(choix_fichier)
+                if idx_fichier < 1 or idx_fichier > len(fichiers_json_tries) + 1:
+                    print("⚠ Choix invalide, opération annulée.")
+                    continue
+                if idx_fichier == len(fichiers_json_tries) + 1:
+                    continue  # Annuler
+                
+                fichier_selectionne = fichiers_json_tries[idx_fichier - 1]
+                print(f"\n✓ Fichier sélectionné : {fichier_selectionne}")
+                
+                # Charger les résultats
+                try:
+                    resultats = charger_resultats_complexite(fichier=fichier_selectionne)
+                except FileNotFoundError:
+                    print(f"\n⚠ Erreur : Le fichier '{fichier_selectionne}' n'existe pas.")
+                    continue
+                except Exception as e:
+                    print(f"\n⚠ Erreur lors du chargement : {e}")
+                    import traceback
+                    traceback.print_exc()
+                    continue
+                
+                # Sous-menu pour les analyses
+                while True:
+                    print("\n" + "-" * 70)
+                    print("OPTIONS D'ANALYSE")
+                    print("-" * 70)
+                    print("1. Tracer les nuages de points")
+                    print("2. Analyser la complexité dans le pire des cas")
+                    print("3. Comparer les algorithmes")
+                    print("4. Retour au menu principal")
+                    print("-" * 70)
+                    
+                    choix_analyse = input("\nVotre choix (1-4) : ").strip()
+                    
+                    if choix_analyse == '1':
+                        # Tracer les nuages de points
+                        print("\n" + "-" * 70)
+                        print("TRACÉ DES NUAGES DE POINTS")
+                        print("-" * 70)
+                        try:
+                            tracer_nuages_de_points(resultats)
+                            print("\n✓ Nuages de points tracés !")
+                        except Exception as e:
+                            print(f"\n⚠ Erreur : {e}")
+                            import traceback
+                            traceback.print_exc()
+                    
+                    elif choix_analyse == '2':
+                        # Analyser la complexité dans le pire des cas
+                        print("\n" + "-" * 70)
+                        print("ANALYSE DE LA COMPLEXITÉ DANS LE PIRE DES CAS")
+                        print("-" * 70)
+                        try:
+                            max_values = determiner_complexite_pire_cas(resultats)
+                            print("\n✓ Analyse terminée ! Les graphiques montrent les valeurs maximales et les courbes de référence.")
+                        except Exception as e:
+                            print(f"\n⚠ Erreur : {e}")
+                            import traceback
+                            traceback.print_exc()
+                    
+                    elif choix_analyse == '3':
+                        # Comparer les algorithmes
+                        print("\n" + "-" * 70)
+                        print("COMPARAISON DES ALGORITHMES")
+                        print("-" * 70)
+                        try:
+                            comparer_algorithmes(resultats)
+                            print("\n✓ Comparaison terminée !")
+                        except Exception as e:
+                            print(f"\n⚠ Erreur : {e}")
+                            import traceback
+                            traceback.print_exc()
+                    
+                    elif choix_analyse == '4':
+                        # Retour au menu principal
+                        break
+                    
+                    else:
+                        print("⚠ Choix invalide, veuillez choisir un nombre entre 1 et 4")
+            
+            except ValueError:
+                print("⚠ Choix invalide, veuillez entrer un nombre valide")
+                continue
         
         elif choix_menu == '5':
-            # Analyser la complexité dans le pire des cas (on cherche à comprendre la complexité)
-            print("\n" + "-" * 70)
-            print("ANALYSE DE LA COMPLEXITÉ DANS LE PIRE DES CAS")
-            print("-" * 70)
-            try:
-                resultats = charger_resultats_complexite()
-                max_values = determiner_complexite_pire_cas(resultats)
-                print("\n✓ Analyse terminée ! Les graphiques montrent les valeurs maximales et les courbes de référence.")
-            except FileNotFoundError as e:
-                print(f"\n⚠ Erreur : {e}")
-                print("   Exécutez d'abord l'option 3 pour générer les résultats.")
-            except Exception as e:
-                print(f"\n⚠ Erreur : {e}")
-                import traceback
-                traceback.print_exc()
-        
-        elif choix_menu == '6':
-            # Comparer les algorithmes (on veut savoir lequel est le meilleur)
-            print("\n" + "-" * 70)
-            print("COMPARAISON DES ALGORITHMES")
-            print("-" * 70)
-            try:
-                resultats = charger_resultats_complexite()
-                comparer_algorithmes(resultats)
-                print("\n✓ Comparaison terminée !")
-            except FileNotFoundError as e:
-                print(f"\n⚠ Erreur : {e}")
-                print("   Exécutez d'abord l'option 3 pour générer les résultats.")
-            except Exception as e:
-                print(f"\n⚠ Erreur : {e}")
-                import traceback
-                traceback.print_exc()
-        
-        elif choix_menu == '7':
             print("\nAu revoir !")
             break
         
         else:
-            print("⚠ Choix invalide, veuillez choisir un nombre entre 1 et 7")
+            print("⚠ Choix invalide, veuillez choisir un nombre entre 1 et 5")
 
 
 if __name__ == "__main__":

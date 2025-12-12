@@ -513,7 +513,8 @@ def executer_etude_complexite(
     utiliser_parallele: bool = False,  # DÉSACTIVÉ PAR DÉFAUT pour respecter la contrainte "single processor"
     nb_processus: int = None,
     taille_lot: int = 10,
-    pause_entre_lots: float = 0.1
+    pause_entre_lots: float = 0.1,
+    fichier: str = 'complexite_resultats.json'
 ) -> Dict:
     # Alors là, cette fonction exécute toute l'étude de complexité
     # En résumé, pour chaque valeur de n, on génère 100 problèmes aléatoires et on mesure les temps
@@ -904,15 +905,23 @@ def executer_etude_complexite(
         
         # Sauvegarder les résultats intermédiaires (on ne sait jamais, si ça plante)
         if sauvegarder_resultats:
-            charger_resultats_complexite(resultats)
+            # Créer le dossier si nécessaire
+            dossier = os.path.dirname(fichier)
+            if dossier and not os.path.exists(dossier):
+                os.makedirs(dossier, exist_ok=True)
+            charger_resultats_complexite(resultats, fichier)
         
         # OPTIMISATION : Garbage collection après chaque valeur de n pour libérer la mémoire
         # Particulièrement important pour N=10000 où les matrices sont très grandes
         gc.collect()
     
     if sauvegarder_resultats:
-        charger_resultats_complexite(resultats, 'complexite_resultats.json')
-        print(f"\n✓ Résultats sauvegardés dans 'complexite_resultats.json'")
+        # Créer le dossier si nécessaire
+        dossier = os.path.dirname(fichier)
+        if dossier and not os.path.exists(dossier):
+            os.makedirs(dossier, exist_ok=True)
+        charger_resultats_complexite(resultats, fichier)
+        print(f"\n✓ Résultats sauvegardés dans '{fichier}'")
     
     # Dernier garbage collection avant de retourner
     gc.collect()

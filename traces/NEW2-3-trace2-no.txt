@@ -57,9 +57,8 @@ Composante 2:
   Clients      : C1
 
 Ajout d'arêtes classées par coûts croissants pour rendre connexe...
-  Recherche d'arêtes pour rendre connexe (parmi 2 candidates)...
+  Recherche d'arêtes pour connecter 2 composantes...
   Arête ajoutée : (1, 2) avec coût 20.00
-  ✓ Graphe devenu connexe après 1 arête(s) ajoutée(s)
 ✓ Proposition rendue connexe
   Total arêtes ajoutées : 1
   Arêtes : [(1, 2)]

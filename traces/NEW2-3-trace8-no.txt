@@ -66,75 +66,11 @@ Composante 2:
   Clients      : C1
 
 Ajout d'arêtes classées par coûts croissants pour rendre connexe...
-  Recherche d'arêtes pour rendre connexe (parmi 5 candidates)...
-  Arête ajoutée : (5, 1) avec coût 12.00
-  ✓ Graphe devenu connexe après 1 arête(s) ajoutée(s)
+  Recherche d'arêtes pour connecter 2 composantes...
+  Arête ajoutée : (1, 2) avec coût 20.00
 ✓ Proposition rendue connexe
   Total arêtes ajoutées : 1
-  Arêtes : [(5, 1)]
-
->>> Potentiels par sommet <<<
-Potentiels
-----------
-Sommet |        Type | Potentiel
---------------------------------
-    P1 | Fournisseur |      0.00
-    P2 | Fournisseur |    -40.00
-    P3 | Fournisseur |     -6.00
-    P4 | Fournisseur |     -1.00
-    P5 | Fournisseur |    -38.00
-    C1 |      Client |     50.00
-    C2 |      Client |     46.00
-
->>> Table des coûts potentiels <<<
-Table des coûts potentiels
---------------------------
-   |    C1 |    C2
-------------------
-P1 | 50.00 | 46.00
-P2 | 10.00 |  6.00
-P3 | 44.00 | 40.00
-P4 | 49.00 | 45.00
-P5 | 12.00 |  8.00
-
->>> Table des coûts marginaux <<<
-Table des coûts marginaux
--------------------------
-   |     C1 |     C2
---------------------
-P1 |   0.00 | -26.00
-P2 |   0.00 |  44.00
-P3 |  11.00 |   0.00
-P4 | -14.00 |   0.00
-P5 |   0.00 |   0.00
-
->>> Arête améliorante détectée <<<
-  Case : (1, 2) = P1 -> C2
-  Coût marginal : -26.000000
-  Cycle formé : [(0, 1)]
-  Maximisation effectuée avec delta = 0.000000
-
-⚠ Delta = 0 : cas particulier détecté
-  On conserve l'arête améliorante et on enlève les arêtes ajoutées lors du test de connexité
-  Suppression de l'arête (5, 1) ajoutée pour la connexité
-  L'arête améliorante est conservée avec valeur epsilon
-
-======================================================================
-ITÉRATION 2
-======================================================================
-
->>> Proposition de transport actuelle <<<
-Proposition de transport
-------------------------
-   |     C1 |     C2
---------------------
-P1 | 100.00 |   0.00
-P2 | 200.00 |   0.00
-P3 |   0.00 | 100.00
-P4 |   0.00 | 200.00
-P5 |   0.00 | 200.00
-
-Coût total actuel : 21600.00
+  Arêtes : [(1, 2)]
 
 >>> Potentiels par sommet <<<
 Potentiels
@@ -172,14 +108,120 @@ P4 | -40.00 |  0.00
 P5 | -26.00 |  0.00
 
 >>> Arête améliorante détectée <<<
-  Case : (4, 1) = P4 -> C1
-  Coût marginal : -40.000000
-  Cycle formé : [(3, 0)]
-  Maximisation effectuée avec delta = 0.000000
+  Case : (3, 1) = P3 -> C1
+  Coût marginal : -15.000000
+  Cycle formé : [(2, 0), (2, 1), (0, 1), (0, 0)]
 
-⚠ Delta = 0 : cas particulier détecté
-  On conserve l'arête améliorante et on enlève les arêtes ajoutées lors du test de connexité
-  L'arête améliorante est conservée avec valeur epsilon
+>>> Conditions pour la maximisation sur le cycle <<<
+Cases marquées + (où on ajoute delta) :
+  Case (3, 1) = P3 -> C1 : valeur actuelle = 1.00
+  Case (1, 2) = P1 -> C2 : valeur actuelle = 0.00
+Cases marquées - (où on soustrait delta) :
+  Case (3, 2) = P3 -> C2 : valeur actuelle = 100.00
+  Case (1, 1) = P1 -> C1 : valeur actuelle = 100.00
+
+Delta calculé = min(valeurs des cases -) = 100.000000
+  Case (3, 1) = P3 -> C1 : 1.00 -> 101.00 (+100.00)
+  Case (1, 2) = P1 -> C2 : 0.00 -> 100.00 (+100.00)
+  Case (3, 2) = P3 -> C2 : 100.00 -> 0.00 (-100.00) [SUPPRIMÉE]
+  Case (1, 1) = P1 -> C1 : 100.00 -> 0.00 (-100.00) [SUPPRIMÉE]
+
+>>> Arête(s) supprimée(s) à l'issue de la maximisation <<<
+  Arête (3, 2) = P3 -> C2 (mise à zéro)
+  Arête (1, 1) = P1 -> C1 (mise à zéro)
+  Maximisation effectuée avec delta = 100.000000
+
+======================================================================
+ITÉRATION 2
+======================================================================
+
+>>> Proposition de transport actuelle <<<
+Proposition de transport
+------------------------
+   |     C1 |     C2
+--------------------
+P1 |   0.00 | 100.00
+P2 | 200.00 |   0.00
+P3 | 101.00 |   0.00
+P4 |   0.00 | 200.00
+P5 |   0.00 | 200.00
+
+Coût total actuel : 20155.00
+
+⚠ Proposition non connexe
+Sous-graphes connexes :
+Composante 1:
+  Fournisseurs : P0, P3, P4
+  Clients      : C1
+
+Composante 2:
+  Fournisseurs : P1, P2
+  Clients      : C0
+
+Ajout d'arêtes classées par coûts croissants pour rendre connexe...
+  Recherche d'arêtes pour connecter 2 composantes...
+  Arête ajoutée : (5, 1) avec coût 12.00
+✓ Proposition rendue connexe
+  Total arêtes ajoutées : 1
+  Arêtes : [(5, 1)]
+
+>>> Potentiels par sommet <<<
+Potentiels
+----------
+Sommet |        Type | Potentiel
+--------------------------------
+    P1 | Fournisseur |      0.00
+    P2 | Fournisseur |    -14.00
+    P3 | Fournisseur |     31.00
+    P4 | Fournisseur |     25.00
+    P5 | Fournisseur |    -12.00
+    C1 |      Client |     24.00
+    C2 |      Client |     20.00
+
+>>> Table des coûts potentiels <<<
+Table des coûts potentiels
+--------------------------
+   |    C1 |    C2
+------------------
+P1 | 24.00 | 20.00
+P2 | 10.00 |  6.00
+P3 | 55.00 | 51.00
+P4 | 49.00 | 45.00
+P5 | 12.00 |  8.00
+
+>>> Table des coûts marginaux <<<
+Table des coûts marginaux
+-------------------------
+   |     C1 |     C2
+--------------------
+P1 |  26.00 |   0.00
+P2 |   0.00 |  44.00
+P3 |   0.00 | -11.00
+P4 | -14.00 |   0.00
+P5 |   0.00 |   0.00
+
+>>> Arête améliorante détectée <<<
+  Case : (3, 2) = P3 -> C2
+  Coût marginal : -11.000000
+  Cycle formé : [(2, 1), (2, 0), (4, 0), (4, 1)]
+
+>>> Conditions pour la maximisation sur le cycle <<<
+Cases marquées + (où on ajoute delta) :
+  Case (3, 2) = P3 -> C2 : valeur actuelle = 1.00
+  Case (5, 1) = P5 -> C1 : valeur actuelle = 0.00
+Cases marquées - (où on soustrait delta) :
+  Case (3, 1) = P3 -> C1 : valeur actuelle = 101.00
+  Case (5, 2) = P5 -> C2 : valeur actuelle = 200.00
+
+Delta calculé = min(valeurs des cases -) = 101.000000
+  Case (3, 2) = P3 -> C2 : 1.00 -> 102.00 (+101.00)
+  Case (5, 1) = P5 -> C1 : 0.00 -> 101.00 (+101.00)
+  Case (3, 1) = P3 -> C1 : 101.00 -> 0.00 (-101.00) [SUPPRIMÉE]
+  Case (5, 2) = P5 -> C2 : 200.00 -> 99.00 (-101.00)
+
+>>> Arête(s) supprimée(s) à l'issue de la maximisation <<<
+  Arête (3, 1) = P3 -> C1 (mise à zéro)
+  Maximisation effectuée avec delta = 101.000000
 
 ======================================================================
 ITÉRATION 3
@@ -190,35 +232,88 @@ Proposition de transport
 ------------------------
    |     C1 |     C2
 --------------------
-P1 | 100.00 |   0.00
+P1 |   0.00 | 100.00
 P2 | 200.00 |   0.00
-P3 |   0.00 | 100.00
+P3 |   0.00 | 102.00
 P4 |   0.00 | 200.00
-P5 |   0.00 | 200.00
+P5 | 101.00 |  99.00
 
-Coût total actuel : 21600.00
+Coût total actuel : 19084.00
 
-⚠ Cycle détecté : [(3, 0), (0, 0), (0, 1), (3, 1)]
+>>> Potentiels par sommet <<<
+Potentiels
+----------
+Sommet |        Type | Potentiel
+--------------------------------
+    P1 | Fournisseur |      0.00
+    P2 | Fournisseur |    -14.00
+    P3 | Fournisseur |     20.00
+    P4 | Fournisseur |     25.00
+    P5 | Fournisseur |    -12.00
+    C1 |      Client |     24.00
+    C2 |      Client |     20.00
+
+>>> Table des coûts potentiels <<<
+Table des coûts potentiels
+--------------------------
+   |    C1 |    C2
+------------------
+P1 | 24.00 | 20.00
+P2 | 10.00 |  6.00
+P3 | 44.00 | 40.00
+P4 | 49.00 | 45.00
+P5 | 12.00 |  8.00
+
+>>> Table des coûts marginaux <<<
+Table des coûts marginaux
+-------------------------
+   |     C1 |    C2
+-------------------
+P1 |  26.00 |  0.00
+P2 |   0.00 | 44.00
+P3 |  11.00 |  0.00
+P4 | -14.00 |  0.00
+P5 |   0.00 |  0.00
+
+>>> Arête améliorante détectée <<<
+  Case : (4, 1) = P4 -> C1
+  Coût marginal : -14.000000
+  Cycle formé : [(3, 0), (3, 1), (4, 1), (4, 0)]
 
 >>> Conditions pour la maximisation sur le cycle <<<
 Cases marquées + (où on ajoute delta) :
-  Case (4, 1) = P4 -> C1 : valeur actuelle = 0.00
-  Case (1, 2) = P1 -> C2 : valeur actuelle = 0.00
+  Case (4, 1) = P4 -> C1 : valeur actuelle = 1.00
+  Case (5, 2) = P5 -> C2 : valeur actuelle = 99.00
 Cases marquées - (où on soustrait delta) :
-  Case (1, 1) = P1 -> C1 : valeur actuelle = 100.00
   Case (4, 2) = P4 -> C2 : valeur actuelle = 200.00
+  Case (5, 1) = P5 -> C1 : valeur actuelle = 101.00
 
-Delta calculé = min(valeurs des cases -) = 100.000000
-  Case (4, 1) = P4 -> C1 : 0.00 -> 100.00 (+100.00)
-  Case (1, 2) = P1 -> C2 : 0.00 -> 100.00 (+100.00)
-  Case (1, 1) = P1 -> C1 : 100.00 -> 0.00 (-100.00) [SUPPRIMÉE]
-  Case (4, 2) = P4 -> C2 : 200.00 -> 100.00 (-100.00)
+Delta calculé = min(valeurs des cases -) = 101.000001
+  Case (4, 1) = P4 -> C1 : 1.00 -> 102.00 (+101.00)
+  Case (5, 2) = P5 -> C2 : 99.00 -> 200.00 (+101.00)
+  Case (4, 2) = P4 -> C2 : 200.00 -> 99.00 (-101.00)
+  Case (5, 1) = P5 -> C1 : 101.00 -> 0.00 (-101.00) [SUPPRIMÉE]
 
 >>> Arête(s) supprimée(s) à l'issue de la maximisation <<<
-  Arête (1, 1) = P1 -> C1 (mise à zéro)
-  Maximisation effectuée avec delta = 100.000000
+  Arête (5, 1) = P5 -> C1 (mise à zéro)
+  Maximisation effectuée avec delta = 101.000001
 
-✓ Proposition rendue acyclique (1 cycle(s) éliminé(s))
+======================================================================
+ITÉRATION 4
+======================================================================
+
+>>> Proposition de transport actuelle <<<
+Proposition de transport
+------------------------
+   |     C1 |     C2
+--------------------
+P1 |   0.00 | 100.00
+P2 | 200.00 |   0.00
+P3 |   0.00 | 102.00
+P4 | 102.00 |  99.00
+P5 |   0.00 | 200.00
+
+Coût total actuel : 17705.00
 
 >>> Potentiels par sommet <<<
 Potentiels
@@ -269,11 +364,11 @@ Proposition de transport
 --------------------
 P1 |   0.00 | 100.00
 P2 | 200.00 |   0.00
-P3 |   0.00 | 100.00
-P4 | 100.00 | 100.00
+P3 |   0.00 | 102.00
+P4 | 102.00 |  99.00
 P5 |   0.00 | 200.00
 
-Coût total optimal : 17600.00
+Coût total optimal : 17705.00
 Coût initial (Nord-Ouest) : 21600.00
-Amélioration : 4000.00 (18.52%)
-Nombre d'itérations : 3
+Amélioration : 3895.00 (18.03%)
+Nombre d'itérations : 4

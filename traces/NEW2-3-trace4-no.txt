@@ -75,12 +75,25 @@ P2 | -58.00 | 0.00
 >>> Arête améliorante détectée <<<
   Case : (2, 1) = P2 -> C1
   Coût marginal : -58.000000
-  Cycle formé : [(1, 0)]
-  Maximisation effectuée avec delta = 0.000000
+  Cycle formé : [(1, 0), (1, 1), (0, 1), (0, 0)]
 
-⚠ Delta = 0 : cas particulier détecté
-  On conserve l'arête améliorante et on enlève les arêtes ajoutées lors du test de connexité
-  L'arête améliorante est conservée avec valeur epsilon
+>>> Conditions pour la maximisation sur le cycle <<<
+Cases marquées + (où on ajoute delta) :
+  Case (2, 1) = P2 -> C1 : valeur actuelle = 1.00
+  Case (1, 2) = P1 -> C2 : valeur actuelle = 500.00
+Cases marquées - (où on soustrait delta) :
+  Case (2, 2) = P2 -> C2 : valeur actuelle = 500.00
+  Case (1, 1) = P1 -> C1 : valeur actuelle = 100.00
+
+Delta calculé = min(valeurs des cases -) = 100.000000
+  Case (2, 1) = P2 -> C1 : 1.00 -> 101.00 (+100.00)
+  Case (1, 2) = P1 -> C2 : 500.00 -> 600.00 (+100.00)
+  Case (2, 2) = P2 -> C2 : 500.00 -> 400.00 (-100.00)
+  Case (1, 1) = P1 -> C1 : 100.00 -> 0.00 (-100.00) [SUPPRIMÉE]
+
+>>> Arête(s) supprimée(s) à l'issue de la maximisation <<<
+  Arête (1, 1) = P1 -> C1 (mise à zéro)
+  Maximisation effectuée avec delta = 100.000000
 
 ======================================================================
 ITÉRATION 2
@@ -91,32 +104,10 @@ Proposition de transport
 ------------------------
    |     C1 |     C2
 --------------------
-P1 | 100.00 | 500.00
-P2 |   0.00 | 500.00
+P1 |   0.00 | 600.00
+P2 | 101.00 | 400.00
 
-Coût total actuel : 18500.00
-
-⚠ Cycle détecté : [(1, 0), (0, 0), (0, 1), (1, 1)]
-
->>> Conditions pour la maximisation sur le cycle <<<
-Cases marquées + (où on ajoute delta) :
-  Case (2, 1) = P2 -> C1 : valeur actuelle = 0.00
-  Case (1, 2) = P1 -> C2 : valeur actuelle = 500.00
-Cases marquées - (où on soustrait delta) :
-  Case (1, 1) = P1 -> C1 : valeur actuelle = 100.00
-  Case (2, 2) = P2 -> C2 : valeur actuelle = 500.00
-
-Delta calculé = min(valeurs des cases -) = 100.000000
-  Case (2, 1) = P2 -> C1 : 0.00 -> 100.00 (+100.00)
-  Case (1, 2) = P1 -> C2 : 500.00 -> 600.00 (+100.00)
-  Case (1, 1) = P1 -> C1 : 100.00 -> 0.00 (-100.00) [SUPPRIMÉE]
-  Case (2, 2) = P2 -> C2 : 500.00 -> 400.00 (-100.00)
-
->>> Arête(s) supprimée(s) à l'issue de la maximisation <<<
-  Arête (1, 1) = P1 -> C1 (mise à zéro)
-  Maximisation effectuée avec delta = 100.000000
-
-✓ Proposition rendue acyclique (1 cycle(s) éliminé(s))
+Coût total actuel : 12701.00
 
 >>> Potentiels par sommet <<<
 Potentiels
@@ -157,9 +148,9 @@ Proposition de transport
    |     C1 |     C2
 --------------------
 P1 |   0.00 | 600.00
-P2 | 100.00 | 400.00
+P2 | 101.00 | 400.00
 
-Coût total optimal : 12700.00
+Coût total optimal : 12701.00
 Coût initial (Nord-Ouest) : 18500.00
-Amélioration : 5800.00 (31.35%)
+Amélioration : 5799.00 (31.35%)
 Nombre d'itérations : 2

@@ -25,6 +25,7 @@ Total commandes  : 1600.00
 ======================================================================
 >>> ALGORITHME DE BALAS-HAMMER <<<
 ======================================================================
+  Prétraitement Balas-Hammer (tri des coûts)...
 
 --- Itération 1 ---
 Pénalités des lignes actives :
@@ -608,6 +609,7 @@ Pénalités des colonnes actives :
   Colonne 16 (C16) : pénalité = 0.00
 
 Ligne(s) avec pénalité maximale (1.00) : ['P1']
+Colonne(s) avec pénalité maximale (0.00) : ['C15', 'C16']
 Choix de l'arête à remplir : (1, 16) = P1 -> C16
   Coût minimal : 171.00
   Allocation : 100.00
@@ -618,6 +620,9 @@ Pénalités des lignes actives :
   Ligne 1 (P1) : pénalité = 0.00
 Pénalités des colonnes actives :
   Colonne 15 (C15) : pénalité = 0.00
+
+Ligne(s) avec pénalité maximale (0.00) : ['P1']
+Colonne(s) avec pénalité maximale (0.00) : ['C15']
 Choix de l'arête à remplir : (1, 15) = P1 -> C15
   Coût minimal : 172.00
   Allocation : 60.00
@@ -679,9 +684,8 @@ Composante 2:
   Clients      : C0, C1, C2, C3, C4, C5, C6, C7
 
 Ajout d'arêtes classées par coûts croissants pour rendre connexe...
-  Recherche d'arêtes pour rendre connexe (parmi 136 candidates)...
+  Recherche d'arêtes pour connecter 2 composantes...
   Arête ajoutée : (10, 16) avec coût 1.00
-  ✓ Graphe devenu connexe après 1 arête(s) ajoutée(s)
 ✓ Proposition rendue connexe
   Total arêtes ajoutées : 1
   Arêtes : [(10, 16)]

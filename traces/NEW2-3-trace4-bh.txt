@@ -17,6 +17,7 @@ Total commandes  : 1100.00
 ======================================================================
 >>> ALGORITHME DE BALAS-HAMMER <<<
 ======================================================================
+  Prétraitement Balas-Hammer (tri des coûts)...
 
 --- Itération 1 ---
 Pénalités des lignes actives :
@@ -41,6 +42,7 @@ Pénalités des colonnes actives :
   Colonne 2 (C2) : pénalité = 0.00
 
 Ligne(s) avec pénalité maximale (29.00) : ['P2']
+Colonne(s) avec pénalité maximale (0.00) : ['C1', 'C2']
 Choix de l'arête à remplir : (2, 1) = P2 -> C1
   Coût minimal : 1.00
   Allocation : 100.00
@@ -51,6 +53,9 @@ Pénalités des lignes actives :
   Ligne 2 (P2) : pénalité = 0.00
 Pénalités des colonnes actives :
   Colonne 2 (C2) : pénalité = 0.00
+
+Ligne(s) avec pénalité maximale (0.00) : ['P2']
+Colonne(s) avec pénalité maximale (0.00) : ['C2']
 Choix de l'arête à remplir : (2, 2) = P2 -> C2
   Coût minimal : 30.00
   Allocation : 400.00
