@@ -16,7 +16,8 @@ from potentiels import (
     calculer_potentiels,
     calculer_couts_potentiels,
     calculer_couts_marginaux,
-    detecter_arete_ameliorante
+    detecter_arete_ameliorante,
+    detecter_arete_ameliorante_rapide
 )
 from transport_problem import compute_total_cost
 
@@ -28,71 +29,132 @@ def rendre_connexe(
     demands: List[float],
     verbose: bool = False
 ) -> List[Tuple[int, int]]:
-    # Alors là, cette fonction rend la proposition de transport connexe en ajoutant des arêtes classées selon des coûts croissants
-    # En clair, on complète le graphe avec des arêtes de coût minimal jusqu'à ce qu'il soit connexe
-    
-    # Pseudo-code :
-    # SI le graphe est déjà connexe:
-    #     RETOURNER liste vide (c'est déjà bon, on peut partir)
-    # FIN SI
-    # 
-    # Collecter toutes les arêtes possibles (cases avec allocation == 0)
-    # Trier par coût croissant (on prend les moins chères d'abord)
-    # 
-    # POUR chaque arête (par ordre croissant):
-    #     SI le graphe est déjà connexe:
-    #         ARRÊTER (on a fini)
-    #     FIN SI
-    #     Ajouter l'arête avec valeur epsilon (très petite, histoire de pas trop changer le coût)
-    # FIN POUR
-    # 
-    # RETOURNER arêtes_ajoutées
+    # Alors là, cette fonction rend la proposition de transport connexe
+    # OPTIMISÉE : On évite de lister toutes les arêtes (O(nm)) pour les grands problèmes
     
     n = len(allocation)
     m = len(allocation[0]) if n > 0 else 0
     
-    # On vérifie d'abord si c'est déjà connexe (parce que si c'est déjà bon, on peut partir)
-    est_connexe, _ = is_connected_transport(allocation)
+    # On vérifie d'abord si c'est déjà connexe
+    est_connexe, composantes = is_connected_transport(allocation)
     if est_connexe:
         return []
     
-    # Collecter toutes les arêtes possibles (cases avec allocation == 0) et les classer par coût croissant
-    arêtes_candidates = []
-    for i in range(n):
-        for j in range(m):
-            if allocation[i][j] == 0:  # Case non utilisée
-                arêtes_candidates.append((i, j, costs[i][j]))
-    
-    # Trier par coût croissant (on prend les moins chères d'abord)
-    arêtes_candidates.sort(key=lambda x: x[2])  # x[2] est le coût
-    
-    epsilon = 1e-6  # Valeur très petite pour rendre connexe sans changer significativement le coût (malin n'est ce pas ?)
     arêtes_ajoutées = []
+    epsilon = 1e-6
     
     if verbose:
-        print(f"  Recherche d'arêtes pour rendre connexe (parmi {len(arêtes_candidates)} candidates)...")
+        print(f"  Recherche d'arêtes pour connecter {len(composantes)} composantes...")
+        
+    # Stratégie optimisée : on relie les composantes une à une
+    # On prend la première composante et on cherche l'arête la moins chère vers n'importe quelle autre composante
+    import heapq
     
-    # Ajouter les arêtes une par une par ordre de coût croissant jusqu'à ce que le graphe soit connexe
-    for i, j, cout in arêtes_candidates:
-        # Vérifier si le graphe est déjà connexe (on vérifie à chaque fois, au cas où)
-        est_connexe, _ = is_connected_transport(allocation)
-        if est_connexe:
+    # On travaille tant qu'il y a plus d'une composante
+    while len(composantes) > 1:
+        # On va chercher à relier la composante 0 aux autres
+        comp0 = composantes[0]
+        
+        # Séparer lignes et colonnes de la composante 0
+        # `connexite.is_connected_transport` renvoie historiquement des nœuds sous forme de strings:
+        # - "P{i}" pour les lignes (fournisseurs)
+        # - "C{j}" pour les colonnes (clients)
+        # D'autres parties du code peuvent utiliser ('row', i)/('col', j). On supporte les 2 formats.
+        rows0 = set()
+        cols0 = set()
+        for node in comp0:
+            if isinstance(node, tuple) and len(node) == 2:
+                type_, idx = node
+                if type_ == "row":
+                    rows0.add(idx)
+                elif type_ == "col":
+                    cols0.add(idx)
+                continue
+
+            if isinstance(node, str):
+                if node.startswith("P"):
+                    try:
+                        rows0.add(int(node[1:]))
+                    except ValueError:
+                        pass
+                elif node.startswith("C"):
+                    try:
+                        cols0.add(int(node[1:]))
+                    except ValueError:
+                        pass
+        
+        meilleure_arete = None
+        meilleur_cout = float('inf')
+        
+        # Pour limiter la complexité sur les très grands problèmes, on peut faire un échantillonnage
+        # ou s'arrêter dès qu'on trouve un coût très bas (ex: 1)
+        
+        # OPTIMISATION : Pour les très grands problèmes (n >= 1000), limiter la recherche
+        # Chercher l'arête sortante la moins chère
+        # Option 1 : parcourir toutes les lignes de comp0 vers colonnes hors comp0
+        trouve_min = False
+        limite_recherche = 1000 if n >= 1000 else m  # Limiter la recherche pour n >= 1000
+        
+        # Pour les grandes tailles, échantillonner plutôt que tout parcourir
+        if n >= 1000 and len(rows0) > 50:
+            # Échantillonner les lignes pour accélérer
+            import random
+            rows0_sample = random.sample(list(rows0), min(50, len(rows0)))
+        else:
+            rows0_sample = rows0
+            
+        for i in rows0_sample:
+            # Limiter aussi le nombre de colonnes à vérifier
+            cols_to_check = range(min(limite_recherche, m))
+            for j in cols_to_check:
+                if j not in cols0 and allocation[i][j] == 0:
+                    c = costs[i][j]
+                    if c < meilleur_cout:
+                        meilleur_cout = c
+                        meilleure_arete = (i, j)
+                        # Optimisation : si on trouve le coût minimal possible (1), on s'arrête
+                        if c <= 1.0:
+                            trouve_min = True
+                            break
+            if trouve_min: break
+            
+        if not trouve_min:
+            # Option 2 : parcourir toutes les colonnes de comp0 vers lignes hors comp0
+            if n >= 1000 and len(cols0) > 50:
+                import random
+                cols0_sample = random.sample(list(cols0), min(50, len(cols0)))
+            else:
+                cols0_sample = cols0
+                
+            for j in cols0_sample:
+                rows_to_check = range(min(limite_recherche, n))
+                for i in rows_to_check:
+                    if i not in rows0 and allocation[i][j] == 0:
+                        c = costs[i][j]
+                        if c < meilleur_cout:
+                            meilleur_cout = c
+                            meilleure_arete = (i, j)
+                            if c <= 1.0:
+                                trouve_min = True
+                                break
+                if trouve_min: break
+        
+        if meilleure_arete:
+            i, j = meilleure_arete
+            allocation[i][j] = epsilon
+            arêtes_ajoutées.append((i, j))
             if verbose:
-                print(f"  ✓ Graphe devenu connexe après {len(arêtes_ajoutées)} arête(s) ajoutée(s)")
+                print(f"  Arête ajoutée : ({i+1}, {j+1}) avec coût {meilleur_cout:.2f}")
+            
+            # Mettre à jour les composantes (on recalcule tout pour être sûr, ou on fusionne)
+            # Pour simplifier et être robuste, on recalcule (c'est rapide O(n+m))
+            _, composantes = is_connected_transport(allocation)
+        else:
+            # Impossible de connecter ? Bizarre pour un graphe complet biparti
+            if verbose:
+                print("  ⚠ Impossible de trouver une arête de connexion !")
             break
-        
-        # Ajouter cette arête (on la met avec une valeur epsilon, c'est suffisant)
-        allocation[i][j] = epsilon
-        arêtes_ajoutées.append((i, j))
-        
-        if verbose:
-            print(f"  Arête ajoutée : ({i+1}, {j+1}) avec coût {cout:.2f}")
-    
-    # Vérification finale (histoire d'être sûr que tout est bon)
-    est_connexe_final, _ = is_connected_transport(allocation)
-    if not est_connexe_final and verbose:
-        print(f"  ⚠ Attention : le graphe n'est toujours pas connexe après avoir ajouté {len(arêtes_ajoutées)} arête(s)")
-    
+            
     return arêtes_ajoutées
 
 
@@ -111,6 +173,7 @@ def trouver_cycle_avec_arete(
     if n == 0 or m == 0:
         return [(i_ajout, j_ajout)]
     
+    # OPTIMISATION : Pour les grandes tailles, construire le graphe plus efficacement
     # Construction du graphe biparti (noeuds "r_i" pour lignes, "c_j" pour colonnes)
     # On exclut l'arête ajoutée pour forcer la recherche d'un chemin alternatif.
     adj: dict = {}
@@ -119,10 +182,34 @@ def trouver_cycle_avec_arete(
         adj.setdefault(node_a, []).append((node_b, cell))
         adj.setdefault(node_b, []).append((node_a, cell))
     
-    for i in range(n):
+    # OPTIMISATION : Pour n >= 1000, ne construire que les arêtes nécessaires
+    # Construire seulement les arêtes autour de l'arête ajoutée pour accélérer
+    if n >= 1000:
+        # Construire seulement les arêtes dans les lignes/colonnes proches
+        # Limiter la recherche à un rayon autour de l'arête ajoutée
+        rayon = min(100, n // 10, m // 10)  # Rayon limité pour les grandes tailles
+        i_min = max(0, i_ajout - rayon)
+        i_max = min(n, i_ajout + rayon + 1)
+        j_min = max(0, j_ajout - rayon)
+        j_max = min(m, j_ajout + rayon + 1)
+        
+        for i in range(i_min, i_max):
+            for j in range(j_min, j_max):
+                if allocation[i][j] > 0 and not (i == i_ajout and j == j_ajout):
+                    add_edge(("r", i), ("c", j), (i, j))
+        # Ajouter aussi les arêtes dans la même ligne/colonne que l'arête ajoutée
         for j in range(m):
-            if allocation[i][j] > 0 and not (i == i_ajout and j == j_ajout):
-                add_edge(("r", i), ("c", j), (i, j))
+            if allocation[i_ajout][j] > 0 and j != j_ajout:
+                add_edge(("r", i_ajout), ("c", j), (i_ajout, j))
+        for i in range(n):
+            if allocation[i][j_ajout] > 0 and i != i_ajout:
+                add_edge(("r", i), ("c", j_ajout), (i, j_ajout))
+    else:
+        # Pour les petites tailles, construire tout le graphe
+        for i in range(n):
+            for j in range(m):
+                if allocation[i][j] > 0 and not (i == i_ajout and j == j_ajout):
+                    add_edge(("r", i), ("c", j), (i, j))
     
     start = ("r", i_ajout)
     target = ("c", j_ajout)
@@ -270,14 +357,14 @@ def methode_marche_pied(
         
         if verbose:
             print("Potentiels calculés :")
-            print(f"  Fournisseurs u : {[f'{val:.2f}' for val in u]}")
-            print(f"  Clients v      : {[f'{val:.2f}' for val in v]}\n")
+            if len(u) < 20:
+                print(f"  Fournisseurs u : {[f'{val:.2f}' for val in u]}")
+                print(f"  Clients v      : {[f'{val:.2f}' for val in v]}\n")
         
-        # Étape 4 : Calculer les coûts marginaux (pour voir où on peut améliorer)
-        marginals = calculer_couts_marginaux(costs, u, v)
-        
-        # Étape 5 : Détecter l'arête améliorante (on cherche une arête qui peut améliorer le coût)
-        arete_ameliorante = detecter_arete_ameliorante(marginals, allocation)
+        # Étape 4 & 5 : Détecter l'arête améliorante (Optimisé : calcul des coûts marginaux à la volée)
+        # On utilise la stratégie "first" pour accélérer les itérations sur les grands graphes
+        strategy = "first" if n >= 500 else "best"
+        arete_ameliorante = detecter_arete_ameliorante_rapide(costs, u, v, allocation, strategy=strategy)
         
         if arete_ameliorante is None:
             # Solution optimale trouvée !

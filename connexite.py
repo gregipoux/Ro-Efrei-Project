@@ -20,7 +20,9 @@ def build_graph_from_transport(transport):
                 graph[p_node].append(c_node)
                 graph[c_node].append(p_node)
 
-    # On s'assure que tous les sommets existent, même s'ils sont isolés (histoire d'être complet)
+    # Important : on s'assure que tous les sommets existent, même s'ils sont isolés.
+    # Sinon, `is_connected_transport` peut déclarer "connexe" alors qu'il existe des lignes/colonnes isolées,
+    # et `rendre_connexe` ne peut pas reconnecter ce qui n'apparait pas dans les composantes.
     for i in range(n):
         graph[f"P{i}"]
     for j in range(m):

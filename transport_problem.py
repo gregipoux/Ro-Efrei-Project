@@ -219,11 +219,12 @@ def balas_hammer_method(
     supplies: List[float],
     demands: List[float],
     verbose: bool = False,
-    max_duration: float = None  # Ajout du paramètre de durée maximale
+    max_duration: float = None
 ) -> List[List[float]]:
     """
-    Calcule une solution initiale de transport avec l'algorithme de Balas-Hammer.
-    Optimisé pour éviter de trier inutilement et avec une protection timeout.
+    Calcule une solution initiale avec l'algorithme de Balas-Hammer.
+    OPTIMISÉ : Utilise des listes triées pré-calculées pour éviter la complexité O(n^3).
+    Complexité ramenée à environ O(n^2 log n) pour le tri initial, puis O(n^2) pour l'exécution.
     """
     import time
     start_time = time.perf_counter()
@@ -231,117 +232,276 @@ def balas_hammer_method(
     n = len(supplies)
     m = len(demands)
     
-    # Initialiser la matrice d'allocation à zéro (on part de rien)
     allocation = [[0.0 for _ in range(m)] for _ in range(n)]
-    
-    # Copier les supplies et demands pour les modifier (on ne veut pas toucher aux originaux)
     remaining_supplies = supplies.copy()
     remaining_demands = demands.copy()
     
-    # Initialiser les listes de lignes et colonnes actives (toutes actives au début)
+    # Indicateurs d'activité
     active_rows = [True] * n
     active_cols = [True] * m
-    
-    iteration = 0
-    
-    # Compteurs pour savoir combien il reste d'actifs (pour éviter any())
     nb_active_rows = n
     nb_active_cols = m
+    
+    # Pour les très grands problèmes, on évite le tri complet si possible ou on le fait intelligemment
+    # Mais le tri complet est la meilleure garantie de performance algorithmique ici.
+    
+    if verbose:
+        print(f"  Prétraitement Balas-Hammer (tri des coûts)...")
 
-    # Continuer jusqu'à ce que toutes les provisions et commandes soient satisfaites
+    # Pré-calculer les indices triés pour chaque ligne et colonne
+    # sorted_rows[i] contient les indices de colonnes j triés par cost[i][j]
+    # sorted_cols[j] contient les indices de lignes i triés par cost[i][j]
+    
+    # Optimisation : Si n est très grand, le tri peut prendre du temps.
+    # On vérifie le timeout pendant le tri
+    
+    try:
+        sorted_rows = []
+        for i in range(n):
+            if max_duration and (time.perf_counter() - start_time) > max_duration:
+                raise TimeoutError("Timeout pendant le tri des lignes")
+            # On trie les indices des colonnes selon le coût
+            sorted_rows.append(sorted(range(m), key=lambda j: costs[i][j]))
+            
+        sorted_cols = []
+        for j in range(m):
+            if max_duration and (time.perf_counter() - start_time) > max_duration:
+                raise TimeoutError("Timeout pendant le tri des colonnes")
+            # On trie les indices des lignes selon le coût
+            sorted_cols.append(sorted(range(n), key=lambda i: costs[i][j]))
+    except TimeoutError:
+        if verbose:
+            print("⚠️ Timeout pendant le pré-calcul, bascule vers Nord-Ouest")
+        # On complète avec une méthode rapide (Nord-Ouest adapté aux restes)
+        for i in range(n):
+            if remaining_supplies[i] > 1e-9:
+                for j in range(m):
+                    if remaining_demands[j] > 1e-9:
+                        qty = min(remaining_supplies[i], remaining_demands[j])
+                        allocation[i][j] += qty
+                        remaining_supplies[i] -= qty
+                        remaining_demands[j] -= qty
+                        if remaining_supplies[i] < 1e-9: break
+        return allocation
+
+    # Pointeurs pour savoir où on en est dans les listes triées
+    # ptr_rows[i] indique l'index dans sorted_rows[i] du prochain élément potentiellement valide
+    ptr_rows = [0] * n
+    ptr_cols = [0] * m
+    
+    # OPTIMISATION : Cache des pénalités pour éviter de recalculer à chaque itération
+    # On ne recalcule que lorsque nécessaire (quand une colonne/ligne devient inactive)
+    row_penalties_cache = [None] * n  # None signifie "non calculé"
+    col_penalties_cache = [None] * m
+    penalty_cache_valid = False  # Flag pour savoir si le cache est valide
+    
+    # Fonction helper pour trouver les 2 plus petits coûts valides d'une ligne
+    def get_row_penalty(i, force_recalc=False):
+        # Si le cache est valide et qu'on n'a pas besoin de recalculer, utiliser le cache
+        if not force_recalc and row_penalties_cache[i] is not None:
+            return row_penalties_cache[i]
+        
+        # Trouver le 1er min
+        idx1 = -1
+        cost1 = float('inf')
+        
+        # Avancer le pointeur jusqu'à trouver une colonne active
+        k = ptr_rows[i]
+        while k < m:
+            col_idx = sorted_rows[i][k]
+            if active_cols[col_idx]:
+                idx1 = col_idx
+                cost1 = costs[i][col_idx]
+                ptr_rows[i] = k # Mise à jour du pointeur pour la prochaine fois
+                break
+            k += 1
+            
+        if idx1 == -1:
+            penalty = 0.0
+            row_penalties_cache[i] = penalty
+            return penalty
+        
+        # Trouver le 2ème min (on continue à partir de k+1)
+        idx2 = -1
+        cost2 = float('inf')
+        k2 = k + 1
+        while k2 < m:
+            col_idx = sorted_rows[i][k2]
+            if active_cols[col_idx]:
+                idx2 = col_idx
+                cost2 = costs[i][col_idx]
+                break
+            k2 += 1
+            
+        if idx2 == -1:
+            penalty = 0.0  # Un seul élément restant, pénalité = 0 (standard)
+        else:
+            penalty = cost2 - cost1
+        
+        # Mettre en cache
+        row_penalties_cache[i] = penalty
+        return penalty
+
+    # Fonction helper pour trouver les 2 plus petits coûts valides d'une colonne
+    def get_col_penalty(j, force_recalc=False):
+        # Si le cache est valide et qu'on n'a pas besoin de recalculer, utiliser le cache
+        if not force_recalc and col_penalties_cache[j] is not None:
+            return col_penalties_cache[j]
+        
+        # Trouver le 1er min
+        idx1 = -1
+        cost1 = float('inf')
+        
+        k = ptr_cols[j]
+        while k < n:
+            row_idx = sorted_cols[j][k]
+            if active_rows[row_idx]:
+                idx1 = row_idx
+                cost1 = costs[row_idx][j]
+                ptr_cols[j] = k
+                break
+            k += 1
+            
+        if idx1 == -1:
+            penalty = 0.0
+            col_penalties_cache[j] = penalty
+            return penalty
+        
+        idx2 = -1
+        cost2 = float('inf')
+        k2 = k + 1
+        while k2 < n:
+            row_idx = sorted_cols[j][k2]
+            if active_rows[row_idx]:
+                idx2 = row_idx
+                cost2 = costs[row_idx][j]
+                break
+            k2 += 1
+            
+        if idx2 == -1:
+            penalty = 0.0
+        else:
+            penalty = cost2 - cost1
+        
+        # Mettre en cache
+        col_penalties_cache[j] = penalty
+        return penalty
+    
+    # Initialiser le cache des pénalités (calcul initial)
+    for i in range(n):
+        if active_rows[i]:
+            get_row_penalty(i)
+    for j in range(m):
+        if active_cols[j]:
+            get_col_penalty(j)
+
+    # Boucle principale
     while nb_active_rows > 0 and nb_active_cols > 0:
-        # Vérification du timeout
         if max_duration and (time.perf_counter() - start_time) > max_duration:
-            if verbose:
-                print("⚠️ Timeout Balas-Hammer atteint, complétion par Nord-Ouest sur le reste")
+            if verbose: print("⚠️ Timeout Balas-Hammer atteint")
             break
 
-        iteration += 1
+        # OPTIMISATION : On utilise le cache des pénalités au lieu de tout recalculer
+        # On ne recalcule que si nécessaire (lorsqu'une ligne/colonne devient inactive)
         
-        # Étape 1 : Calculer les pénalités
-        row_penalties = compute_row_penalties(costs, active_rows, active_cols)
-        col_penalties = compute_col_penalties(costs, active_rows, active_cols)
+        best_penalty = -1.0
+        target_type = None # 'row' ou 'col'
+        target_idx = -1
         
-        # Étape 2 : Trouver la pénalité maximale
-        # On cherche le max tout en gardant l'indice
-        max_row_penalty = -1.0
-        best_row_idx = -1
+        # Scanner lignes (utiliser le cache)
         for i in range(n):
             if active_rows[i]:
-                if row_penalties[i] > max_row_penalty:
-                    max_row_penalty = row_penalties[i]
-                    best_row_idx = i
-                # En cas d'égalité, on garde le premier trouvé (indice min)
+                p = get_row_penalty(i)
+                if p > best_penalty:
+                    best_penalty = p
+                    target_type = 'row'
+                    target_idx = i
+                elif p == best_penalty and target_type is None:
+                    # En cas d'égalité, prendre le premier
+                    target_type = 'row'
+                    target_idx = i
         
-        max_col_penalty = -1.0
-        best_col_idx = -1
+        # Scanner colonnes (utiliser le cache)
         for j in range(m):
             if active_cols[j]:
-                if col_penalties[j] > max_col_penalty:
-                    max_col_penalty = col_penalties[j]
-                    best_col_idx = j
+                p = get_col_penalty(j)
+                if p > best_penalty:
+                    best_penalty = p
+                    target_type = 'col'
+                    target_idx = j
         
-        if best_row_idx == -1 and best_col_idx == -1:
-            break # Plus rien à faire
-
-        # Étape 3 : Choisir ligne ou colonne
-        target_row = -1
-        target_col = -1
+        if target_idx == -1: break
         
-        # Priorité à la pénalité max. En cas d'égalité entre ligne et colonne, on peut privilégier ligne par ex.
-        if max_row_penalty >= max_col_penalty:
-            # On a choisi la ligne 'best_row_idx'
-            target_row = best_row_idx
-            # Trouver la colonne active avec le coût minimal dans cette ligne
-            min_cost = float('inf')
+        # Trouver la meilleure case pour l'élément choisi
+        r, c = -1, -1
+        if target_type == 'row':
+            r = target_idx
+            # Trouver la colonne active avec le coût min (c'est le 1er élément valide de la liste triée)
+            # get_row_penalty a mis à jour ptr_rows[r], donc on regarde là
+            col_idx = sorted_rows[r][ptr_rows[r]]
+            # Vérification de sécurité (normalement ptr pointe sur actif)
+            if not active_cols[col_idx]:
+                # On doit chercher (ne devrait pas arriver si get_row_penalty appelé juste avant)
+                k = ptr_rows[r]
+                while k < m:
+                    if active_cols[sorted_rows[r][k]]:
+                        col_idx = sorted_rows[r][k]
+                        ptr_rows[r] = k
+                        break
+                    k += 1
+            c = col_idx
+        else:
+            c = target_idx
+            # Trouver la ligne active avec coût min
+            row_idx = sorted_cols[c][ptr_cols[c]]
+            if not active_rows[row_idx]:
+                k = ptr_cols[c]
+                while k < n:
+                    if active_rows[sorted_cols[c][k]]:
+                        row_idx = sorted_cols[c][k]
+                        ptr_cols[c] = k
+                        break
+                    k += 1
+            r = row_idx
+            
+        # Allouer
+        qty = min(remaining_supplies[r], remaining_demands[c])
+        allocation[r][c] = qty
+        remaining_supplies[r] -= qty
+        remaining_demands[c] -= qty
+        
+        # Mettre à jour statuts et invalider le cache des pénalités affectées
+        if remaining_supplies[r] < 1e-9:
+            active_rows[r] = False
+            nb_active_rows -= 1
+            # Invalider le cache de cette ligne
+            row_penalties_cache[r] = None
+            # Invalider les caches des colonnes (car elles peuvent être affectées)
             for j in range(m):
                 if active_cols[j]:
-                    if costs[target_row][j] < min_cost:
-                        min_cost = costs[target_row][j]
-                        target_col = j
-        else:
-            # On a choisi la colonne 'best_col_idx'
-            target_col = best_col_idx
-            # Trouver la ligne active avec le coût minimal dans cette colonne
-            min_cost = float('inf')
+                    col_penalties_cache[j] = None
+        
+        if remaining_demands[c] < 1e-9:
+            active_cols[c] = False
+            nb_active_cols -= 1
+            # Invalider le cache de cette colonne
+            col_penalties_cache[c] = None
+            # Invalider les caches des lignes (car elles peuvent être affectées)
             for i in range(n):
                 if active_rows[i]:
-                    if costs[i][target_col] < min_cost:
-                        min_cost = costs[i][target_col]
-                        target_row = i
-        
-        # Étape 4 : Allouer
-        x = min(remaining_supplies[target_row], remaining_demands[target_col])
-        allocation[target_row][target_col] = x
-        remaining_supplies[target_row] -= x
-        remaining_demands[target_col] -= x
-        
-        # Étape 5 : Désactiver si épuisé
-        # On utilise une tolérance pour les flottants
-        if remaining_supplies[target_row] < 1e-9:
-            active_rows[target_row] = False
-            nb_active_rows -= 1
-            remaining_supplies[target_row] = 0.0 # Clean up
+                    row_penalties_cache[i] = None
             
-        if remaining_demands[target_col] < 1e-9:
-            active_cols[target_col] = False
-            nb_active_cols -= 1
-            remaining_demands[target_col] = 0.0 # Clean up
-
-    # Si on est sorti à cause du timeout ou s'il reste des éléments non alloués (cas rares d'arrondi ou autre),
-    # on complète avec une logique simple (type Nord-Ouest sur les restants) pour avoir une solution réalisable.
-    # Pour simplifier, on parcourt ce qui reste.
+    # Complétion finale si nécessaire
     if any(s > 1e-9 for s in remaining_supplies) and any(d > 1e-9 for d in remaining_demands):
-         for i in range(n):
-             if remaining_supplies[i] > 1e-9:
-                 for j in range(m):
-                     if remaining_demands[j] > 1e-9:
-                         x = min(remaining_supplies[i], remaining_demands[j])
-                         allocation[i][j] += x
-                         remaining_supplies[i] -= x
-                         remaining_demands[j] -= x
-                         if remaining_supplies[i] < 1e-9: break
-
+        for i in range(n):
+            if remaining_supplies[i] > 1e-9:
+                for j in range(m):
+                    if remaining_demands[j] > 1e-9:
+                        qty = min(remaining_supplies[i], remaining_demands[j])
+                        allocation[i][j] += qty
+                        remaining_supplies[i] -= qty
+                        remaining_demands[j] -= qty
+    
     return allocation
 
 

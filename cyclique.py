@@ -1,5 +1,6 @@
 from collections import deque
 from typing import List, Tuple, Dict, Optional
+from collections import defaultdict
 
 def est_cycle_transport_valide(cycle: List[Tuple[int,int]]) -> bool:
     # Alors là, cette fonction vérifie si un cycle est un cycle valide pour un problème de transport
@@ -36,6 +37,7 @@ def tester_acyclique(allocation: List[List[float]]) -> Tuple[bool, List[Tuple[in
     # Alors là, cette fonction teste si la proposition de transport est acyclique en utilisant un parcours en largeur (BFS)
     # En résumé, on construit un graphe d'adjacence et on cherche des cycles avec un BFS
     # Si on retourne sur un sommet déjà visité qui n'est pas le parent, c'est qu'il y a un cycle
+    # OPTIMISÉ : Utilise des sets et des structures de données plus efficaces pour les grandes tailles
     
     # Pseudo-code :
     # cellules = toutes les cases (i,j) avec allocation[i][j] > 0
@@ -47,24 +49,43 @@ def tester_acyclique(allocation: List[List[float]]) -> Tuple[bool, List[Tuple[in
     n = len(allocation)
     m = len(allocation[0]) if n > 0 else 0
 
+    # OPTIMISATION : Construire les listes de cellules actives par ligne et colonne pour éviter O(n²) complet
     # Construire liste des cellules basiques (cellules avec allocation > 0, c'est notre point de départ)
-    cellules = [(i,j) for i in range(n) for j in range(m) if allocation[i][j] > 0]
+    cellules = []
+    # Pré-calculer les cellules actives par ligne et colonne pour accélérer la construction du graphe
+    cellules_par_ligne: Dict[int, List[Tuple[int,int]]] = {}
+    cellules_par_colonne: Dict[int, List[Tuple[int,int]]] = {}
+    
+    for i in range(n):
+        for j in range(m):
+            if allocation[i][j] > 0:
+                cell = (i, j)
+                cellules.append(cell)
+                if i not in cellules_par_ligne:
+                    cellules_par_ligne[i] = []
+                cellules_par_ligne[i].append(cell)
+                if j not in cellules_par_colonne:
+                    cellules_par_colonne[j] = []
+                cellules_par_colonne[j].append(cell)
     
     if len(cellules) == 0:
         return True, []
 
+    # OPTIMISATION : Construire liste d'adjacence plus efficacement en utilisant les pré-calculs
     # Construire liste d'adjacence pour BFS: voisins dans la même ligne ou colonne (on trouve les voisins)
     adj: Dict[Tuple[int,int], List[Tuple[int,int]]] = {}
     for (i,j) in cellules:
         voisins = []
-        # même ligne (on cherche dans la ligne i)
-        for jj in range(m):
-            if jj != j and allocation[i][jj] > 0:
-                voisins.append((i,jj))
-        # même colonne (on cherche dans la colonne j)
-        for ii in range(n):
-            if ii != i and allocation[ii][j] > 0:
-                voisins.append((ii,j))
+        # même ligne (on utilise la liste pré-calculée)
+        if i in cellules_par_ligne:
+            for cell in cellules_par_ligne[i]:
+                if cell[1] != j:  # Exclure la cellule elle-même
+                    voisins.append(cell)
+        # même colonne (on utilise la liste pré-calculée)
+        if j in cellules_par_colonne:
+            for cell in cellules_par_colonne[j]:
+                if cell[0] != i:  # Exclure la cellule elle-même
+                    voisins.append(cell)
         adj[(i,j)] = voisins
 
     visite = set()

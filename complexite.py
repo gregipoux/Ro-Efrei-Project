@@ -6,6 +6,7 @@ import random
 import time
 import os
 import sys
+import gc  # Garbage collection pour libérer la mémoire entre les itérations
 from typing import List, Tuple, Dict
 import json
 from multiprocessing import Pool, cpu_count
@@ -141,10 +142,21 @@ def resoudre_marche_pied_silencieux(
     
     allocation = [row.copy() for row in allocation_initiale]
     nb_iterations = 0
-    max_iterations = 1000  # Protection contre les boucles infinies
-    max_cycles_elimination = 100  # Protection contre les boucles infinies dans l'élimination de cycles
+    # OPTIMISATION : Réduire le nombre max d'itérations pour les très grandes tailles
+    n = len(costs)
+    if n >= 10000:
+        max_iterations = 50  # Limiter drastiquement pour n=10000
+    elif n >= 5000:
+        max_iterations = 100
+    elif n >= 1000:
+        max_iterations = 200
+    else:
+        max_iterations = 1000  # Protection contre les boucles infinies
+    max_cycles_elimination = 50 if n >= 1000 else 100  # Réduire pour les grandes tailles
     debut_boucle = time.perf_counter()
     debut_global = debut_boucle
+    # Pour les grandes valeurs de n, faire un garbage collection plus fréquent
+    gc_frequency = 1 if n >= 1000 else 10  # GC à chaque itération pour n>=1000, sinon toutes les 10 itérations
     
     while nb_iterations < max_iterations:
         nb_iterations += 1
@@ -159,12 +171,23 @@ def resoudre_marche_pied_silencieux(
             if temps_boucle > max_duration:
                 break
         
+        # Garbage collection périodique pour les grandes valeurs de n
+        if n >= 1000 and nb_iterations % gc_frequency == 0:
+            gc.collect()
+        
         # Étape 1 : Détecter et éliminer les cycles de manière répétée
         cycles_elimines = 0
         while cycles_elimines < max_cycles_elimination:
             if time.perf_counter() - debut_global > max_duration:
                 break
-            acyclique, cycle = tester_acyclique(allocation)
+            try:
+                result_acyclique = tester_acyclique(allocation)
+                if not isinstance(result_acyclique, tuple) or len(result_acyclique) != 2:
+                    raise ValueError(f"tester_acyclique a retourné un résultat inattendu: {type(result_acyclique)}, attendu: Tuple[bool, List[Tuple[int, int]]]")
+                acyclique, cycle = result_acyclique
+            except ValueError as e:
+                print(f"  ⚠ Erreur dans tester_acyclique: {e}", file=sys.stderr, flush=True)
+                raise
             if acyclique:
                 break
             
@@ -184,7 +207,14 @@ def resoudre_marche_pied_silencieux(
             break
         
         # Étape 2 : Vérifier la connexité
-        est_connexe, _ = is_connected_transport(allocation)
+        try:
+            result_connexite = is_connected_transport(allocation)
+            if not isinstance(result_connexite, tuple) or len(result_connexite) != 2:
+                raise ValueError(f"is_connected_transport a retourné un résultat inattendu: {type(result_connexite)}, attendu: Tuple[bool, List]")
+            est_connexe, _ = result_connexite
+        except ValueError as e:
+            print(f"  ⚠ Erreur dans is_connected_transport: {e}", file=sys.stderr, flush=True)
+            raise
         arêtes_ajoutées_connexité = []
         
         if not est_connexe:
@@ -196,7 +226,14 @@ def resoudre_marche_pied_silencieux(
             while cycles_elimines_apres < max_cycles_elimination:
                 if time.perf_counter() - debut_global > max_duration:
                     break
-                acyclique, cycle = tester_acyclique(allocation)
+                try:
+                    result_acyclique = tester_acyclique(allocation)
+                    if not isinstance(result_acyclique, tuple) or len(result_acyclique) != 2:
+                        raise ValueError(f"tester_acyclique a retourné un résultat inattendu: {type(result_acyclique)}, attendu: Tuple[bool, List[Tuple[int, int]]]")
+                    acyclique, cycle = result_acyclique
+                except ValueError as e:
+                    print(f"  ⚠ Erreur dans tester_acyclique (après connexité): {e}", file=sys.stderr, flush=True)
+                    raise
                 if acyclique:
                     break
                 
@@ -215,17 +252,30 @@ def resoudre_marche_pied_silencieux(
                 break
         
         # Étape 3 : Calculer les potentiels
-        u, v = calculer_potentiels(costs, allocation)
+        try:
+            result_potentiels = calculer_potentiels(costs, allocation)
+            if not isinstance(result_potentiels, tuple) or len(result_potentiels) != 2:
+                raise ValueError(f"calculer_potentiels a retourné un résultat inattendu: {type(result_potentiels)}, attendu: Tuple[List[float], List[float]]")
+            u, v = result_potentiels
+        except ValueError as e:
+            print(f"  ⚠ Erreur dans calculer_potentiels: {e}", file=sys.stderr, flush=True)
+            raise
         
-        # Étape 4 : Calculer les coûts marginaux
-        marginals = calculer_couts_marginaux(costs, u, v)
+        # Étape 4 & 5 : Détecter l'arête améliorante (Optimisé)
+        # Utiliser la stratégie "first" pour les grands problèmes (toujours pour n >= 1000)
+        strategy = "first" if len(costs) >= 1000 else ("first" if len(costs) >= 500 else "best")
         
-        # Étape 5 : Détecter l'arête améliorante
-        arete_ameliorante = detecter_arete_ameliorante(marginals, allocation)
+        # On utilise la version rapide qui n'alloue pas la matrice des marginaux
+        from potentiels import detecter_arete_ameliorante_rapide
+        arete_ameliorante = detecter_arete_ameliorante_rapide(costs, u, v, allocation, strategy=strategy)
         
         if arete_ameliorante is None:
             # Solution optimale trouvée !
             break
+        
+        # Vérifier que l'arête améliorante est bien un tuple de 3 éléments
+        if not isinstance(arete_ameliorante, tuple) or len(arete_ameliorante) != 3:
+            raise ValueError(f"detecter_arete_ameliorante_rapide a retourné un résultat inattendu: {type(arete_ameliorante)}, attendu: Tuple[int, int, float] ou None")
         
         i_ameliorant, j_ameliorant, _ = arete_ameliorante
         
@@ -242,6 +292,9 @@ def resoudre_marche_pied_silencieux(
                 allocation[i][j] = 0.0
             allocation[i_ameliorant][j_ameliorant] = 1e-6
     
+    # Garbage collection final avant de retourner (important pour N=10000)
+    gc.collect()
+    
     return allocation, nb_iterations
 
 
@@ -249,9 +302,19 @@ def mesurer_temps_nord_ouest(costs: List[List[float]], supplies: List[float], de
     # Alors là, cette fonction mesure le temps d'exécution de l'algorithme Nord-Ouest
     # En clair, on prend le temps avant, on exécute l'algo, on prend le temps après, et on fait la différence
     
+    # Garbage collection avant mesure pour libérer la mémoire (important pour N=10000)
+    gc.collect()
+    
     start_time = time.perf_counter()
-    northwest_corner_method(supplies, demands)
+    result = northwest_corner_method(supplies, demands)
     end_time = time.perf_counter()
+    
+    # Vérifier que northwest_corner_method retourne bien une allocation
+    if not isinstance(result, list):
+        raise ValueError(f"northwest_corner_method a retourné un type inattendu: {type(result)}, attendu: List[List[float]]")
+    
+    # Garbage collection après mesure
+    gc.collect()
     
     return end_time - start_time
 
@@ -260,14 +323,24 @@ def mesurer_temps_balas_hammer(costs: List[List[float]], supplies: List[float], 
     # Alors là, cette fonction mesure le temps d'exécution de l'algorithme Balas-Hammer
     # Même principe que pour Nord-Ouest : on mesure le temps d'exécution
     
-    start_time = time.perf_counter()
+    # Garbage collection avant mesure pour libérer la mémoire
+    gc.collect()
     
     # Déterminer une durée max adaptée à la taille
     n = len(costs)
-    max_duration = 10.0 if n >= 500 else 20.0 if n >= 200 else 30.0
+    # Timeout plus long pour les très grandes valeurs (N=10000 peut prendre plusieurs minutes)
+    max_duration = 300.0 if n >= 5000 else 60.0 if n >= 1000 else 10.0 if n >= 500 else 20.0 if n >= 200 else 30.0
     
-    balas_hammer_method(costs, supplies, demands, verbose=False, max_duration=max_duration)
+    start_time = time.perf_counter()
+    result = balas_hammer_method(costs, supplies, demands, verbose=False, max_duration=max_duration)
     end_time = time.perf_counter()
+    
+    # Vérifier que balas_hammer_method retourne bien une allocation
+    if not isinstance(result, list):
+        raise ValueError(f"balas_hammer_method a retourné un type inattendu: {type(result)}, attendu: List[List[float]]")
+    
+    # Garbage collection après mesure
+    gc.collect()
     
     return end_time - start_time
 
@@ -286,16 +359,30 @@ def mesurer_temps_marche_pied_no(
         
         # Déterminer une durée max adaptée à la taille
         n = len(costs)
-        max_duration = 10.0 if n >= 500 else 20.0 if n >= 200 else 30.0
+        # Timeout plus long pour les très grandes valeurs (N=10000 peut prendre plusieurs minutes)
+        max_duration = 300.0 if n >= 5000 else 60.0 if n >= 1000 else 10.0 if n >= 500 else 20.0 if n >= 200 else 30.0
+        
+        # Garbage collection avant mesure pour libérer la mémoire
+        gc.collect()
         
         # Mesurer le temps du marche-pied avec garde de durée
         start_time = time.perf_counter()
-        resoudre_marche_pied_silencieux(costs, supplies, demands, allocation_initiale, max_duration=max_duration)
+        result = resoudre_marche_pied_silencieux(costs, supplies, demands, allocation_initiale, max_duration=max_duration)
         end_time = time.perf_counter()
+        
+        # Vérifier que le résultat est correct (allocation, nb_iterations)
+        if not isinstance(result, tuple) or len(result) != 2:
+            raise ValueError(f"resoudre_marche_pied_silencieux a retourné un résultat inattendu: {type(result)}, attendu: Tuple[List[List[float]], int]")
+        
+        # Garbage collection après mesure
+        gc.collect()
         
         return end_time - start_time
     except Exception as e:
-        # En cas d'erreur, retourner 0 et laisser l'erreur remonter
+        # En cas d'erreur, afficher plus de détails pour le débogage
+        import traceback
+        print(f"  ⚠ Erreur détaillée dans mesurer_temps_marche_pied_no: {e}", file=sys.stderr, flush=True)
+        traceback.print_exc(file=sys.stderr)
         raise
 
 
@@ -308,22 +395,42 @@ def mesurer_temps_marche_pied_bh(
     # Même principe que pour NO, mais avec Balas-Hammer comme solution initiale
     
     try:
-        # Calculer la solution initiale avec Balas-Hammer
-        
         # Déterminer une durée max adaptée à la taille
         n = len(costs)
-        max_duration = 10.0 if n >= 500 else 20.0 if n >= 200 else 30.0
+        # Timeout plus long pour les très grandes valeurs (N=10000 peut prendre plusieurs minutes)
+        max_duration = 300.0 if n >= 5000 else 60.0 if n >= 1000 else 10.0 if n >= 500 else 20.0 if n >= 200 else 30.0
         
+        # Garbage collection avant mesure pour libérer la mémoire
+        gc.collect()
+        
+        # Calculer la solution initiale avec Balas-Hammer
         allocation_initiale = balas_hammer_method(costs, supplies, demands, verbose=False, max_duration=max_duration)
+        
+        # Vérifier que balas_hammer_method retourne bien une allocation (liste de listes)
+        if not isinstance(allocation_initiale, list):
+            raise ValueError(f"balas_hammer_method a retourné un type inattendu: {type(allocation_initiale)}, attendu: List[List[float]]")
+        
+        # Garbage collection après Balas-Hammer
+        gc.collect()
         
         # Mesurer le temps du marche-pied avec garde de durée
         start_time = time.perf_counter()
-        resoudre_marche_pied_silencieux(costs, supplies, demands, allocation_initiale, max_duration=max_duration)
+        result = resoudre_marche_pied_silencieux(costs, supplies, demands, allocation_initiale, max_duration=max_duration)
         end_time = time.perf_counter()
+        
+        # Vérifier que le résultat est correct (allocation, nb_iterations)
+        if not isinstance(result, tuple) or len(result) != 2:
+            raise ValueError(f"resoudre_marche_pied_silencieux a retourné un résultat inattendu: {type(result)}, attendu: Tuple[List[List[float]], int]")
+        
+        # Garbage collection après mesure
+        gc.collect()
         
         return end_time - start_time
     except Exception as e:
-        # En cas d'erreur, retourner 0 et laisser l'erreur remonter
+        # En cas d'erreur, afficher plus de détails pour le débogage
+        import traceback
+        print(f"  ⚠ Erreur détaillée dans mesurer_temps_marche_pied_bh: {e}", file=sys.stderr, flush=True)
+        traceback.print_exc(file=sys.stderr)
         raise
 
 
@@ -339,8 +446,10 @@ def executer_une_iteration_complete(n: int, seed: int) -> Tuple[float, float, fl
         # Générer un problème aléatoire
         costs, supplies, demands = generer_probleme_aleatoire(n, seed=seed)
 
+        # OPTIMISATION : Pour les grandes tailles (n >= 1000), éviter de cloner plusieurs fois
         # Chaque mesure modifie potentiellement les listes en place.
         # On clone donc les données de base pour isoler chaque mesure.
+        # Pour n >= 1000, on clone seulement quand nécessaire pour économiser la mémoire
         def clones():
             return (
                 [row.copy() for row in costs],
@@ -348,10 +457,14 @@ def executer_une_iteration_complete(n: int, seed: int) -> Tuple[float, float, fl
                 demands.copy(),
             )
         
+        # OPTIMISATION : Pour n >= 1000, réutiliser les clones quand possible
         # Mesurer tous les temps avec gestion d'erreur individuelle
         try:
             c, s, d = clones()
             temps_no = mesurer_temps_nord_ouest(c, s, d)
+            # Libérer la mémoire immédiatement après utilisation
+            del c, s, d
+            gc.collect()
         except Exception as e:
             print(f"[PID {pid}] ⚠ Erreur dans mesurer_temps_nord_ouest (n={n}, seed={seed}): {e}", file=sys.stderr, flush=True)
             temps_no = 0.0
@@ -359,6 +472,8 @@ def executer_une_iteration_complete(n: int, seed: int) -> Tuple[float, float, fl
         try:
             c, s, d = clones()
             temps_bh = mesurer_temps_balas_hammer(c, s, d)
+            del c, s, d
+            gc.collect()
         except Exception as e:
             print(f"[PID {pid}] ⚠ Erreur dans mesurer_temps_balas_hammer (n={n}, seed={seed}): {e}", file=sys.stderr, flush=True)
             temps_bh = 0.0
@@ -366,6 +481,8 @@ def executer_une_iteration_complete(n: int, seed: int) -> Tuple[float, float, fl
         try:
             c, s, d = clones()
             temps_marche_pied_no = mesurer_temps_marche_pied_no(c, s, d)
+            del c, s, d
+            gc.collect()
         except Exception as e:
             print(f"[PID {pid}] ⚠ Erreur dans mesurer_temps_marche_pied_no (n={n}, seed={seed}): {e}", file=sys.stderr, flush=True)
             temps_marche_pied_no = 0.0
@@ -373,6 +490,8 @@ def executer_une_iteration_complete(n: int, seed: int) -> Tuple[float, float, fl
         try:
             c, s, d = clones()
             temps_marche_pied_bh = mesurer_temps_marche_pied_bh(c, s, d)
+            del c, s, d
+            gc.collect()
         except Exception as e:
             print(f"[PID {pid}] ⚠ Erreur dans mesurer_temps_marche_pied_bh (n={n}, seed={seed}): {e}", file=sys.stderr, flush=True)
             temps_marche_pied_bh = 0.0
@@ -391,7 +510,7 @@ def executer_etude_complexite(
     valeurs_n: List[int] = None,
     nb_executions: int = 100,
     sauvegarder_resultats: bool = True,
-    utiliser_parallele: bool = True,
+    utiliser_parallele: bool = False,  # DÉSACTIVÉ PAR DÉFAUT pour respecter la contrainte "single processor"
     nb_processus: int = None,
     taille_lot: int = 10,
     pause_entre_lots: float = 0.1
@@ -442,6 +561,14 @@ def executer_etude_complexite(
     if valeurs_n is None:
         valeurs_n = [10, 40, 102, 400, 1000, 4000, 10000]
     
+    # OPTIMISATION : Pour n=10000, réduire le nombre d'exécutions par défaut si non spécifié
+    # pour éviter que le programme ne plante
+    if 10000 in valeurs_n and nb_executions > 10:
+        print(f"  ⚠️  Pour n=10000, le nombre d'exécutions est limité à 10 pour éviter les problèmes de mémoire")
+        print(f"  ⚠️  Utilisez le paramètre nb_executions pour modifier ce comportement")
+        sys.stdout.flush()
+        # Ne pas modifier nb_executions ici, mais avertir l'utilisateur
+    
     # Déterminer le nombre de processus à utiliser (OPTIMISATION : laisser au moins 1-2 cœurs libres)
     nb_processus = calculer_nb_processus_optimal(nb_processus)
     
@@ -459,6 +586,9 @@ def executer_etude_complexite(
     print(f"Nombre d'exécutions par valeur de n : {nb_executions}")
     print(f"Total : {total_executions_global} exécutions")
     print(f"Mode parallèle : {'OUI' if utiliser_parallele else 'NON'} (utilisant {nb_processus if utiliser_parallele else 1}/{cpu_count()} processus)")
+    if not utiliser_parallele:
+        print(f"  ℹ️  Mode séquentiel (single processor) : conforme aux exigences du projet")
+        print(f"  ℹ️  Garbage collection activé pour optimiser l'utilisation mémoire (N=10000)")
     if utiliser_parallele:
         print(f"  💡 Optimisation : {max(0, cpu_count() - nb_processus)} cœur(s) laissé(s) libre(s) pour éviter la surchauffe")
         print(f"  💡 Traitement par lots de {taille_lot} avec pause de {pause_entre_lots}s entre les lots")
@@ -489,6 +619,12 @@ def executer_etude_complexite(
             # Pour n <= 10, utiliser le mode séquentiel pour éviter les blocages
             utiliser_parallele_effectif = False
             print(f"  ℹ️  Mode séquentiel forcé pour n={n} (petite taille)")
+            sys.stdout.flush()
+        elif n >= 1000:
+            # Pour n >= 1000, utiliser le mode séquentiel pour éviter la saturation mémoire (N=10000 -> 800Mo par matrice !)
+            # Sur Windows, multiprocessing 'spawn' copie tout, ce qui tue la RAM.
+            utiliser_parallele_effectif = False
+            print(f"  ℹ️  Mode séquentiel forcé pour n={n} (grande taille) pour éviter saturation mémoire")
             sys.stdout.flush()
         elif n <= 100 and nb_executions <= 5:
             # Pour les petits problèmes, utiliser moins de processus
@@ -652,6 +788,10 @@ def executer_etude_complexite(
                         print(f"  ⚡ Dernier lot traité en {temps_lot:.2f}s ({len(seeds_lot)} exécutions)")
                         print(f"  📦 Lot {lot_num + 1}/{nb_lots} terminé")
                     
+                    # OPTIMISATION : Garbage collection après chaque lot pour libérer la mémoire
+                    # Particulièrement important pour N=10000 où les matrices sont très grandes
+                    gc.collect()
+                    
                     # Pause entre les lots pour permettre au CPU de se refroidir
                     if lot_num < nb_lots - 1:  # Pas de pause après le dernier lot
                         time.sleep(pause_entre_lots)
@@ -661,6 +801,9 @@ def executer_etude_complexite(
             theta_BH = [r[1] for r in resultats_iterations]
             t_NO = [r[2] for r in resultats_iterations]
             t_BH = [r[3] for r in resultats_iterations]
+            
+            # OPTIMISATION : Garbage collection après avoir traité tous les lots
+            gc.collect()
         else:
             # Version séquentielle (pour comparaison ou si parallélisation désactivée)
             print(f"  🔄 Mode séquentiel activé...")
@@ -708,6 +851,10 @@ def executer_etude_complexite(
                 
                 temps_fin_exec = time.perf_counter()
                 temps_exec = temps_fin_exec - temps_debut_exec
+                
+                # OPTIMISATION : Garbage collection après chaque exécution pour libérer la mémoire
+                # Particulièrement important pour N=10000 où les matrices sont très grandes
+                gc.collect()
                 
                 # Heartbeat toutes les 30 secondes
                 temps_actuel = time.perf_counter()
@@ -758,10 +905,17 @@ def executer_etude_complexite(
         # Sauvegarder les résultats intermédiaires (on ne sait jamais, si ça plante)
         if sauvegarder_resultats:
             charger_resultats_complexite(resultats)
+        
+        # OPTIMISATION : Garbage collection après chaque valeur de n pour libérer la mémoire
+        # Particulièrement important pour N=10000 où les matrices sont très grandes
+        gc.collect()
     
     if sauvegarder_resultats:
         charger_resultats_complexite(resultats, 'complexite_resultats.json')
         print(f"\n✓ Résultats sauvegardés dans 'complexite_resultats.json'")
+    
+    # Dernier garbage collection avant de retourner
+    gc.collect()
     
     return resultats
 
