@@ -372,6 +372,349 @@ def generer_toutes_les_traces():
     print(f"Total : {compteur} fichier(s) généré(s)")
 
 
+def analyser_toutes_les_traces():
+    # Alors là, cette fonction analyse tous les fichiers .txt dans le dossier traces
+    # En clair, on lit chaque fichier, on extrait les infos importantes, et on affiche des stats avec matplotlib comme l'option 5
+    
+    import re
+    
+    # Vérifier si matplotlib est disponible
+    try:
+        import matplotlib.pyplot as plt
+        MATPLOTLIB_AVAILABLE = True
+    except ImportError:
+        MATPLOTLIB_AVAILABLE = False
+    
+    if not MATPLOTLIB_AVAILABLE:
+        print("⚠ Matplotlib n'est pas installé. Impossible de créer les visualisations.")
+        return
+    
+    print("\n" + "=" * 100)
+    print(" " * 30 + "ANALYSE COMPLÈTE DES TRACES D'EXÉCUTION")
+    print("=" * 100)
+    
+    # Créer le répertoire traces s'il n'existe pas
+    dossier_traces = "traces"
+    os.makedirs(dossier_traces, exist_ok=True)
+    
+    # Trouver tous les fichiers .txt
+    pattern = os.path.join(dossier_traces, "*.txt")
+    fichiers_txt = glob.glob(pattern)
+    
+    if not fichiers_txt:
+        print(f"\n⚠ Aucun fichier .txt trouvé dans le dossier '{dossier_traces}'")
+        print("   Exécutez d'abord l'option 2 pour générer des traces.")
+        return
+    
+    # Trier les fichiers par nom
+    fichiers_txt_tries = sorted(fichiers_txt)
+    
+    print(f"\n✓ {len(fichiers_txt_tries)} fichier(s) .txt trouvé(s)")
+    print("\nFichiers analysés :")
+    for fichier in fichiers_txt_tries:
+        print(f"  - {os.path.basename(fichier)}")
+    
+    # Extraire les informations de chaque fichier
+    donnees_traces = []
+    
+    for fichier in fichiers_txt_tries:
+        try:
+            with open(fichier, 'r', encoding='utf-8') as f:
+                contenu = f.read()
+            
+            # Extraire le numéro du problème et la méthode du nom de fichier
+            nom_fichier = os.path.basename(fichier)
+            match = re.search(r'trace(\d+)-(no|bh)\.txt', nom_fichier)
+            if not match:
+                continue
+            
+            num_probleme = int(match.group(1))
+            methode_abrev = match.group(2)
+            methode = "NO" if methode_abrev == "no" else "BH"
+            
+            # Extraire le coût initial
+            match_cout_initial = re.search(r'Coût initial \(.*?\) : ([\d.]+)', contenu)
+            cout_initial = float(match_cout_initial.group(1)) if match_cout_initial else None
+            
+            # Extraire le coût final
+            match_cout_final = re.search(r'Coût total optimal : ([\d.]+)', contenu)
+            cout_final = float(match_cout_final.group(1)) if match_cout_final else None
+            
+            # Extraire l'amélioration
+            match_amelioration = re.search(r'Amélioration : ([\d.]+) \(([\d.]+)%\)', contenu)
+            amelioration_absolue = float(match_amelioration.group(1)) if match_amelioration else None
+            amelioration_pourcentage = float(match_amelioration.group(2)) if match_amelioration else None
+            
+            # Extraire le nombre d'itérations
+            match_iterations = re.search(r'Nombre d\'itérations : (\d+)', contenu)
+            nb_iterations = int(match_iterations.group(1)) if match_iterations else None
+            
+            if cout_initial is not None and cout_final is not None:
+                donnees_traces.append({
+                    'fichier': nom_fichier,
+                    'probleme': num_probleme,
+                    'methode': methode,
+                    'cout_initial': cout_initial,
+                    'cout_final': cout_final,
+                    'amelioration_absolue': amelioration_absolue,
+                    'amelioration_pourcentage': amelioration_pourcentage,
+                    'nb_iterations': nb_iterations
+                })
+        except Exception as e:
+            print(f"\n⚠ Erreur lors de l'analyse de {fichier}: {e}")
+            continue
+    
+    if not donnees_traces:
+        print("\n⚠ Aucune donnée valide extraite des traces.")
+        return
+    
+    # Organiser les données par problème
+    donnees_par_probleme = {}
+    for donnee in donnees_traces:
+        num_pb = donnee['probleme']
+        if num_pb not in donnees_par_probleme:
+            donnees_par_probleme[num_pb] = {'NO': None, 'BH': None}
+        donnees_par_probleme[num_pb][donnee['methode']] = donnee
+    
+    # Fonction pour calculer les statistiques
+    def calculer_stats(valeurs):
+        if not valeurs:
+            return {'moyenne': 0, 'mediane': 0, 'min': 0, 'max': 0, 'ecart_type': 0}
+        valeurs_triees = sorted(valeurs)
+        moyenne = sum(valeurs) / len(valeurs)
+        mediane = valeurs_triees[len(valeurs_triees) // 2] if len(valeurs_triees) % 2 == 1 else (valeurs_triees[len(valeurs_triees) // 2 - 1] + valeurs_triees[len(valeurs_triees) // 2]) / 2
+        min_val = min(valeurs)
+        max_val = max(valeurs)
+        variance = sum((x - moyenne) ** 2 for x in valeurs) / len(valeurs)
+        ecart_type = variance ** 0.5
+        return {'moyenne': moyenne, 'mediane': mediane, 'min': min_val, 'max': max_val, 'ecart_type': ecart_type}
+    
+    # ========== VISUALISATION 1 : Tableau détaillé par problème ==========
+    print("\n📊 Génération du tableau détaillé par problème...")
+    
+    # Préparer les données pour le tableau
+    table_data = []
+    for num_pb in sorted(donnees_par_probleme.keys()):
+        for methode in ['NO', 'BH']:
+            donnee = donnees_par_probleme[num_pb][methode]
+            if donnee:
+                table_data.append([
+                    f"P{num_pb}",
+                    methode,
+                    f"{donnee['cout_initial']:.2f}",
+                    f"{donnee['cout_final']:.2f}",
+                    f"{donnee['amelioration_absolue']:.2f}" if donnee['amelioration_absolue'] is not None else "N/A",
+                    f"{donnee['amelioration_pourcentage']:.2f}%" if donnee['amelioration_pourcentage'] is not None else "N/A",
+                    f"{donnee['nb_iterations']}" if donnee['nb_iterations'] is not None else "N/A"
+                ])
+    
+    if table_data:
+        fig, ax = plt.subplots(figsize=(18, max(8, len(table_data) * 0.4 + 2)))
+        ax.axis('tight')
+        ax.axis('off')
+        
+        headers = ['Problème', 'Méthode', 'Coût init.', 'Coût final', 'Amélioration', 'Amélioration %', 'Itérations']
+        table = ax.table(cellText=table_data, colLabels=headers, cellLoc='center', loc='center')
+        table.auto_set_font_size(False)
+        table.set_fontsize(9)
+        table.scale(1, 1.8)
+        
+        # Style de l'en-tête
+        for i in range(len(headers)):
+            table[(0, i)].set_facecolor('#9C27B0')
+            table[(0, i)].set_text_props(weight='bold', color='white')
+        
+        # Colorer les lignes selon la méthode
+        for i in range(1, len(table_data) + 1):
+            methode = table_data[i-1][1]
+            couleur = '#E1BEE7' if methode == 'NO' else '#BBDEFB'  # Violet clair pour NO, Bleu clair pour BH
+            for j in range(len(headers)):
+                table[(i, j)].set_facecolor(couleur)
+        
+        plt.title('Analyse Détaillée par Problème', fontsize=14, fontweight='bold', pad=20)
+        plt.tight_layout()
+        plt.show()
+    
+    # ========== VISUALISATION 2 : Tableau récapitulatif global par méthode ==========
+    print("\n📊 Génération du tableau récapitulatif global...")
+    
+    donnees_no = [d for d in donnees_traces if d['methode'] == 'NO']
+    donnees_bh = [d for d in donnees_traces if d['methode'] == 'BH']
+    
+    # Calculer les statistiques globales
+    stats_globales = {}
+    for methode, donnees_methode in [('NO', donnees_no), ('BH', donnees_bh)]:
+        if not donnees_methode:
+            continue
+        
+        couts_initiaux = [d['cout_initial'] for d in donnees_methode if d['cout_initial'] is not None]
+        couts_finaux = [d['cout_final'] for d in donnees_methode if d['cout_final'] is not None]
+        ameliorations_abs = [d['amelioration_absolue'] for d in donnees_methode if d['amelioration_absolue'] is not None]
+        ameliorations_pct = [d['amelioration_pourcentage'] for d in donnees_methode if d['amelioration_pourcentage'] is not None]
+        iterations = [d['nb_iterations'] for d in donnees_methode if d['nb_iterations'] is not None]
+        
+        stats_globales[methode] = {
+            'cout_initial': calculer_stats(couts_initiaux) if couts_initiaux else None,
+            'cout_final': calculer_stats(couts_finaux) if couts_finaux else None,
+            'amelioration_abs': calculer_stats(ameliorations_abs) if ameliorations_abs else None,
+            'amelioration_pct': calculer_stats(ameliorations_pct) if ameliorations_pct else None,
+            'iterations': calculer_stats(iterations) if iterations else None
+        }
+    
+    # Créer le tableau récapitulatif
+    table_data_recap = []
+    for methode in ['NO', 'BH']:
+        if methode not in stats_globales:
+            continue
+        
+        stats = stats_globales[methode]
+        
+        # Coût initial
+        if stats['cout_initial']:
+            table_data_recap.append([
+                methode,
+                'Coût initial',
+                f"{stats['cout_initial']['moyenne']:.2f}",
+                f"{stats['cout_initial']['mediane']:.2f}",
+                f"{stats['cout_initial']['min']:.2f}",
+                f"{stats['cout_initial']['max']:.2f}",
+                f"{stats['cout_initial']['ecart_type']:.2f}"
+            ])
+        
+        # Coût final
+        if stats['cout_final']:
+            table_data_recap.append([
+                methode,
+                'Coût final',
+                f"{stats['cout_final']['moyenne']:.2f}",
+                f"{stats['cout_final']['mediane']:.2f}",
+                f"{stats['cout_final']['min']:.2f}",
+                f"{stats['cout_final']['max']:.2f}",
+                f"{stats['cout_final']['ecart_type']:.2f}"
+            ])
+        
+        # Amélioration absolue
+        if stats['amelioration_abs']:
+            table_data_recap.append([
+                methode,
+                'Amélioration (abs)',
+                f"{stats['amelioration_abs']['moyenne']:.2f}",
+                f"{stats['amelioration_abs']['mediane']:.2f}",
+                f"{stats['amelioration_abs']['min']:.2f}",
+                f"{stats['amelioration_abs']['max']:.2f}",
+                f"{stats['amelioration_abs']['ecart_type']:.2f}"
+            ])
+        
+        # Amélioration pourcentage
+        if stats['amelioration_pct']:
+            table_data_recap.append([
+                methode,
+                'Amélioration (%)',
+                f"{stats['amelioration_pct']['moyenne']:.2f}",
+                f"{stats['amelioration_pct']['mediane']:.2f}",
+                f"{stats['amelioration_pct']['min']:.2f}",
+                f"{stats['amelioration_pct']['max']:.2f}",
+                f"{stats['amelioration_pct']['ecart_type']:.2f}"
+            ])
+        
+        # Itérations
+        if stats['iterations']:
+            table_data_recap.append([
+                methode,
+                'Itérations',
+                f"{stats['iterations']['moyenne']:.2f}",
+                f"{stats['iterations']['mediane']:.2f}",
+                f"{stats['iterations']['min']:.2f}",
+                f"{stats['iterations']['max']:.2f}",
+                f"{stats['iterations']['ecart_type']:.2f}"
+            ])
+    
+    if table_data_recap:
+        fig, ax = plt.subplots(figsize=(16, max(6, len(table_data_recap) * 0.5 + 2)))
+        ax.axis('tight')
+        ax.axis('off')
+        
+        headers_recap = ['Méthode', 'Métrique', 'Moyenne', 'Médiane', 'Min', 'Max', 'Écart-type']
+        table_recap = ax.table(cellText=table_data_recap, colLabels=headers_recap, cellLoc='center', loc='center')
+        table_recap.auto_set_font_size(False)
+        table_recap.set_fontsize(10)
+        table_recap.scale(1, 2)
+        
+        # Style de l'en-tête
+        for i in range(len(headers_recap)):
+            table_recap[(0, i)].set_facecolor('#9C27B0')
+            table_recap[(0, i)].set_text_props(weight='bold', color='white')
+        
+        # Colorer les lignes selon la méthode
+        for i in range(1, len(table_data_recap) + 1):
+            methode = table_data_recap[i-1][0]
+            couleur = '#E1BEE7' if methode == 'NO' else '#BBDEFB'
+            for j in range(len(headers_recap)):
+                table_recap[(i, j)].set_facecolor(couleur)
+        
+        plt.title('Statistiques Globales par Méthode', fontsize=14, fontweight='bold', pad=20)
+        plt.tight_layout()
+        plt.show()
+    
+    # ========== VISUALISATION 3 : Tableau de comparaison NO vs BH ==========
+    print("\n📊 Génération du tableau de comparaison NO vs BH...")
+    
+    table_data_comparaison = []
+    for num_pb in sorted(donnees_par_probleme.keys()):
+        no = donnees_par_probleme[num_pb]['NO']
+        bh = donnees_par_probleme[num_pb]['BH']
+        
+        if no and bh:
+            meilleur = "NO" if no['cout_final'] < bh['cout_final'] else "BH" if bh['cout_final'] < no['cout_final'] else "Égal"
+            table_data_comparaison.append([
+                f"P{num_pb}",
+                f"{no['cout_initial']:.2f}",
+                f"{bh['cout_initial']:.2f}",
+                f"{no['cout_final']:.2f}",
+                f"{bh['cout_final']:.2f}",
+                f"{no['nb_iterations']}" if no['nb_iterations'] is not None else "N/A",
+                f"{bh['nb_iterations']}" if bh['nb_iterations'] is not None else "N/A",
+                meilleur
+            ])
+    
+    if table_data_comparaison:
+        fig, ax = plt.subplots(figsize=(18, max(8, len(table_data_comparaison) * 0.4 + 2)))
+        ax.axis('tight')
+        ax.axis('off')
+        
+        headers_comparaison = ['Problème', 'Coût init. NO', 'Coût init. BH', 'Coût final NO', 'Coût final BH', 'It. NO', 'It. BH', 'Meilleur']
+        table_comparaison = ax.table(cellText=table_data_comparaison, colLabels=headers_comparaison, cellLoc='center', loc='center')
+        table_comparaison.auto_set_font_size(False)
+        table_comparaison.set_fontsize(9)
+        table_comparaison.scale(1, 1.8)
+        
+        # Style de l'en-tête
+        for i in range(len(headers_comparaison)):
+            table_comparaison[(0, i)].set_facecolor('#9C27B0')
+            table_comparaison[(0, i)].set_text_props(weight='bold', color='white')
+        
+        # Colorer selon le meilleur résultat
+        for i in range(1, len(table_data_comparaison) + 1):
+            meilleur = table_data_comparaison[i-1][7]
+            if meilleur == "NO":
+                couleur = '#c8e6c9'  # Vert clair : NO meilleur
+            elif meilleur == "BH":
+                couleur = '#fff9c4'  # Jaune clair : BH meilleur
+            else:
+                couleur = '#e0e0e0'  # Gris : Égal
+            
+            for j in range(len(headers_comparaison)):
+                table_comparaison[(i, j)].set_facecolor(couleur)
+        
+        plt.title('Comparaison NO vs BH', fontsize=14, fontweight='bold', pad=20)
+        plt.tight_layout()
+        plt.show()
+    
+    print("\n" + "=" * 100)
+    print("✅ Analyse terminée ! Toutes les visualisations ont été générées.")
+    print("=" * 100)
+
+
 def resoudre_probleme_transport():
     # Alors là, c'est la fonction principale qui gère le menu et tout ça
     # En résumé : on affiche un menu, l'utilisateur choisit, on fait le boulot, sauf qu'on est pas payer pour
@@ -413,10 +756,11 @@ def resoudre_probleme_transport():
         print("3. Exécuter l'étude de complexité pour une valeur de n")
         print("4. Analyser les résultats de complexité (choisir un JSON)")
         print("5. Statistiques complètes et comparaison de tous les JSON")
-        print("6. Quitter")
+        print("6. Analyser tous les .txt de /traces")
+        print("7. Quitter")
         print("-" * 70)
         
-        choix_menu = input("\nVotre choix (1-6) : ").strip()
+        choix_menu = input("\nVotre choix (1-7) : ").strip()
         
         if choix_menu == '1':
             # Résoudre un problème individuel (on résout juste un problème à la fois)
@@ -832,11 +1176,20 @@ def resoudre_probleme_transport():
                 traceback.print_exc()
         
         elif choix_menu == '6':
+            # Analyser tous les .txt de /traces
+            try:
+                analyser_toutes_les_traces()
+            except Exception as e:
+                print(f"\n⚠ Erreur : {e}")
+                import traceback
+                traceback.print_exc()
+        
+        elif choix_menu == '7':
             print("\nAu revoir !")
             break
         
         else:
-            print("⚠ Choix invalide, veuillez choisir un nombre entre 1 et 6")
+            print("⚠ Choix invalide, veuillez choisir un nombre entre 1 et 7")
 
 
 if __name__ == "__main__":
