@@ -1099,3 +1099,258 @@ def comparer_algorithmes(resultats: Dict):
     
     plt.tight_layout()
     plt.show()
+
+
+def calculer_statistiques(liste_valeurs: List[float]) -> Dict[str, float]:
+    """
+    Calcule les statistiques d'une liste de valeurs.
+    """
+    if not liste_valeurs or len(liste_valeurs) == 0:
+        return {
+            'moyenne': 0.0,
+            'mediane': 0.0,
+            'min': 0.0,
+            'max': 0.0,
+            'ecart_type': 0.0,
+            'nb_valeurs': 0
+        }
+    
+    liste_triee = sorted(liste_valeurs)
+    nb = len(liste_valeurs)
+    moyenne = sum(liste_valeurs) / nb
+    
+    # Médiane
+    if nb % 2 == 0:
+        mediane = (liste_triee[nb // 2 - 1] + liste_triee[nb // 2]) / 2
+    else:
+        mediane = liste_triee[nb // 2]
+    
+    # Écart-type
+    variance = sum((x - moyenne) ** 2 for x in liste_valeurs) / nb
+    ecart_type = variance ** 0.5
+    
+    return {
+        'moyenne': moyenne,
+        'mediane': mediane,
+        'min': min(liste_valeurs),
+        'max': max(liste_valeurs),
+        'ecart_type': ecart_type,
+        'nb_valeurs': nb
+    }
+
+
+def analyser_tous_les_resultats(dossier: str = "complexity"):
+    """
+    Analyse tous les fichiers JSON de résultats dans le dossier complexity
+    et affiche des visualisations matplotlib avec tableaux comparatifs et graphiques.
+    """
+    import glob
+    
+    if not MATPLOTLIB_AVAILABLE:
+        print("⚠ Matplotlib n'est pas installé. Impossible de créer les visualisations.")
+        return
+    
+    print("\n" + "=" * 100)
+    print(" " * 30 + "ANALYSE COMPLÈTE DES RÉSULTATS DE COMPLEXITÉ")
+    print("=" * 100)
+    
+    # Créer le dossier s'il n'existe pas
+    os.makedirs(dossier, exist_ok=True)
+    
+    # Trouver tous les fichiers JSON
+    pattern = os.path.join(dossier, "*.json")
+    fichiers_json = glob.glob(pattern)
+    
+    if not fichiers_json:
+        print(f"\n⚠ Aucun fichier JSON trouvé dans le dossier '{dossier}'")
+        print("   Exécutez d'abord l'option 3 pour générer des résultats.")
+        return
+    
+    # Trier les fichiers par nom
+    fichiers_json_tries = sorted(fichiers_json)
+    
+    print(f"\n✓ {len(fichiers_json_tries)} fichier(s) JSON trouvé(s)")
+    print("\nFichiers analysés :")
+    for fichier in fichiers_json_tries:
+        print(f"  - {os.path.basename(fichier)}")
+    
+    # Charger tous les résultats
+    tous_les_resultats = {}
+    for fichier in fichiers_json_tries:
+        try:
+            resultats = charger_resultats_complexite(fichier=fichier)
+            nom_fichier = os.path.basename(fichier)
+            tous_les_resultats[nom_fichier] = resultats
+        except Exception as e:
+            print(f"\n⚠ Erreur lors du chargement de {fichier}: {e}")
+            continue
+    
+    if not tous_les_resultats:
+        print("\n⚠ Aucun résultat valide chargé.")
+        return
+    
+    # Extraire toutes les valeurs de n présentes
+    toutes_les_valeurs_n = set()
+    for resultats in tous_les_resultats.values():
+        toutes_les_valeurs_n.update(int(k) for k in resultats.keys() if k.isdigit())
+    
+    valeurs_n_triees = sorted(toutes_les_valeurs_n)
+    
+    # Métriques à analyser
+    metriques = {
+        'theta_NO': 'θNO',
+        'theta_BH': 'θBH',
+        't_NO': 'tNO',
+        't_BH': 'tBH',
+        'theta_NO_plus_t_NO': 'Total NO',
+        'theta_BH_plus_t_BH': 'Total BH'
+    }
+    
+    # Agréger toutes les données par valeur de n pour le résumé global
+    resume_global = {}
+    for n in valeurs_n_triees:
+        resume_global[n] = {
+            'theta_NO': [],
+            'theta_BH': [],
+            't_NO': [],
+            't_BH': [],
+            'theta_NO_plus_t_NO': [],
+            'theta_BH_plus_t_BH': []
+        }
+        
+        for resultats in tous_les_resultats.values():
+            if str(n) in resultats:
+                data = resultats[str(n)]
+                for cle in resume_global[n].keys():
+                    if cle in data:
+                        resume_global[n][cle].extend(data[cle])
+    
+    # ========== VISUALISATION 1 : Tableaux comparatifs pour chaque n ==========
+    print("\n📊 Génération des tableaux comparatifs...")
+    
+    for n in valeurs_n_triees:
+        print("\n" + "=" * 100)
+        print(f" ANALYSE POUR n = {n}")
+        print("=" * 100)
+        
+        # Tableau principal : une ligne par fichier, une colonne par métrique
+        print("\n" + "-" * 100)
+        print(f"{'Fichier':<40} | {'θNO (moy)':<12} | {'θBH (moy)':<12} | {'tNO (moy)':<12} | {'tBH (moy)':<12} | {'Total NO':<12} | {'Total BH':<12}")
+        print("-" * 100)
+        
+        for nom_fichier, resultats in sorted(tous_les_resultats.items()):
+            if str(n) not in resultats:
+                continue
+            
+            data = resultats[str(n)]
+            ligne = f"{nom_fichier:<40} | "
+            
+            for cle_metrique in ['theta_NO', 'theta_BH', 't_NO', 't_BH', 'theta_NO_plus_t_NO', 'theta_BH_plus_t_BH']:
+                if cle_metrique in data and len(data[cle_metrique]) > 0:
+                    moyenne = sum(data[cle_metrique]) / len(data[cle_metrique])
+                    ligne += f"{moyenne:>10.6f} | "
+                else:
+                    ligne += f"{'N/A':>12} | "
+            
+            print(ligne)
+        
+        print("-" * 100)
+        
+        # Tableau détaillé avec statistiques pour chaque métrique
+        print(f"\n{'─' * 100}")
+        print(f" STATISTIQUES DÉTAILLÉES POUR n = {n}")
+        print(f"{'─' * 100}\n")
+        
+        for cle_metrique, nom_metrique in metriques.items():
+            print(f"\n{nom_metrique} ({cle_metrique}):")
+            print("-" * 100)
+            print(f"{'Fichier':<40} | {'Moyenne':<12} | {'Médiane':<12} | {'Min':<12} | {'Max':<12} | {'Écart-type':<12} | {'Nb':<6}")
+            print("-" * 100)
+            
+            for nom_fichier, resultats in sorted(tous_les_resultats.items()):
+                if str(n) not in resultats:
+                    continue
+                
+                data = resultats[str(n)]
+                if cle_metrique in data and len(data[cle_metrique]) > 0:
+                    stats = calculer_statistiques(data[cle_metrique])
+                    print(f"{nom_fichier:<40} | "
+                          f"{stats['moyenne']:>10.6f} | "
+                          f"{stats['mediane']:>10.6f} | "
+                          f"{stats['min']:>10.6f} | "
+                          f"{stats['max']:>10.6f} | "
+                          f"{stats['ecart_type']:>10.6f} | "
+                          f"{stats['nb_valeurs']:>6}")
+                else:
+                    print(f"{nom_fichier:<40} | {'N/A':<12} | {'N/A':<12} | {'N/A':<12} | {'N/A':<12} | {'N/A':<12} | {'0':>6}")
+            
+            print("-" * 100)
+    
+    # ========== VISUALISATION 5 : Tableau récapitulatif global ==========
+    print("\n📊 Génération du tableau récapitulatif global...")
+    
+    fig, ax = plt.subplots(figsize=(16, max(6, len(valeurs_n_triees) * 0.6 + 2)))
+    ax.axis('tight')
+    ax.axis('off')
+    
+    headers_recap = ['Valeur n', 'θNO moyen', 'θBH moyen', 'tNO moyen', 'tBH moyen', 'Total NO', 'Total BH', 'Ratio BH/NO']
+    table_data_recap = []
+    
+    for n in valeurs_n_triees:
+        data = resume_global[n]
+        
+        theta_NO_moy = sum(data['theta_NO']) / len(data['theta_NO']) if data['theta_NO'] else 0
+        theta_BH_moy = sum(data['theta_BH']) / len(data['theta_BH']) if data['theta_BH'] else 0
+        t_NO_moy = sum(data['t_NO']) / len(data['t_NO']) if data['t_NO'] else 0
+        t_BH_moy = sum(data['t_BH']) / len(data['t_BH']) if data['t_BH'] else 0
+        total_NO = sum(data['theta_NO_plus_t_NO']) / len(data['theta_NO_plus_t_NO']) if data['theta_NO_plus_t_NO'] else 0
+        total_BH = sum(data['theta_BH_plus_t_BH']) / len(data['theta_BH_plus_t_BH']) if data['theta_BH_plus_t_BH'] else 0
+        ratio_total = (theta_BH_moy + t_BH_moy) / (theta_NO_moy + t_NO_moy) if (theta_NO_moy + t_NO_moy) > 0 else 0
+        
+        table_data_recap.append([
+            str(n),
+            f"{theta_NO_moy:.6f}",
+            f"{theta_BH_moy:.6f}",
+            f"{t_NO_moy:.6f}",
+            f"{t_BH_moy:.6f}",
+            f"{total_NO:.6f}",
+            f"{total_BH:.6f}",
+            f"{ratio_total:.4f}x"
+        ])
+    
+    if table_data_recap:
+        table_recap = ax.table(cellText=table_data_recap, colLabels=headers_recap, 
+                                cellLoc='center', loc='center')
+        table_recap.auto_set_font_size(False)
+        table_recap.set_fontsize(10)
+        table_recap.scale(1, 2)
+        
+        # Style
+        for i in range(len(headers_recap)):
+            table_recap[(0, i)].set_facecolor('#9C27B0')
+            table_recap[(0, i)].set_text_props(weight='bold', color='white')
+        
+        # Colorer selon le ratio
+        for i in range(1, len(table_data_recap) + 1):
+            ratio_str = table_data_recap[i-1][7]
+            try:
+                ratio_val = float(ratio_str.replace('x', ''))
+                if ratio_val < 1.0:
+                    couleur = '#c8e6c9'  # Vert clair : BH plus rapide
+                elif ratio_val < 1.5:
+                    couleur = '#fff9c4'  # Jaune clair : proche
+                else:
+                    couleur = '#ffcdd2'  # Rouge clair : BH plus lent
+            except:
+                couleur = 'white'
+            
+            for j in range(len(headers_recap)):
+                table_recap[(i, j)].set_facecolor(couleur)
+        
+        plt.title('Résumé Global - Comparaison des Algorithmes', fontsize=14, fontweight='bold', pad=20)
+        plt.tight_layout()
+        plt.show()
+    
+    print("\n" + "=" * 100)
+    print("✅ Analyse terminée ! Toutes les visualisations ont été générées.")
+    print("=" * 100)

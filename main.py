@@ -34,7 +34,8 @@ from complexite import (
     charger_resultats_complexite,
     tracer_nuages_de_points,
     determiner_complexite_pire_cas,
-    comparer_algorithmes
+    comparer_algorithmes,
+    analyser_tous_les_resultats
 )
 
 
@@ -411,10 +412,11 @@ def resoudre_probleme_transport():
         print("2. Générer toutes les traces d'exécution (12 problèmes × 2 algorithmes)")
         print("3. Exécuter l'étude de complexité pour une valeur de n")
         print("4. Analyser les résultats de complexité (choisir un JSON)")
-        print("5. Quitter")
+        print("5. Statistiques complètes et comparaison de tous les JSON")
+        print("6. Quitter")
         print("-" * 70)
         
-        choix_menu = input("\nVotre choix (1-5) : ").strip()
+        choix_menu = input("\nVotre choix (1-6) : ").strip()
         
         if choix_menu == '1':
             # Résoudre un problème individuel (on résout juste un problème à la fois)
@@ -821,11 +823,20 @@ def resoudre_probleme_transport():
                 continue
         
         elif choix_menu == '5':
+            # Statistiques complètes et comparaison de tous les JSON
+            try:
+                analyser_tous_les_resultats()
+            except Exception as e:
+                print(f"\n⚠ Erreur : {e}")
+                import traceback
+                traceback.print_exc()
+        
+        elif choix_menu == '6':
             print("\nAu revoir !")
             break
         
         else:
-            print("⚠ Choix invalide, veuillez choisir un nombre entre 1 et 5")
+            print("⚠ Choix invalide, veuillez choisir un nombre entre 1 et 6")
 
 
 if __name__ == "__main__":
