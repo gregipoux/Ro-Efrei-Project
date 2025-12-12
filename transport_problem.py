@@ -395,6 +395,13 @@ def balas_hammer_method(
         if active_cols[j]:
             get_col_penalty(j)
 
+    # Générer les labels pour l'affichage (P1, P2, ..., C1, C2, ...)
+    row_labels = [f"P{i+1}" for i in range(n)]
+    col_labels = [f"C{j+1}" for j in range(m)]
+    
+    # Compteur d'itération pour l'affichage
+    iteration_num = 0
+
     # Boucle principale
     while nb_active_rows > 0 and nb_active_cols > 0:
         if max_duration and (time.perf_counter() - start_time) > max_duration:
@@ -403,6 +410,22 @@ def balas_hammer_method(
 
         # OPTIMISATION : On utilise le cache des pénalités au lieu de tout recalculer
         # On ne recalcule que si nécessaire (lorsqu'une ligne/colonne devient inactive)
+        
+        iteration_num += 1
+        
+        # AFFICHAGE DES PÉNALITÉS (conforme au cahier des charges)
+        if verbose:
+            print(f"\n--- Itération {iteration_num} ---")
+            print("Pénalités des lignes actives :")
+            for i in range(n):
+                if active_rows[i]:
+                    penalty_val = row_penalties_cache[i] if row_penalties_cache[i] is not None else get_row_penalty(i)
+                    print(f"  Ligne {i+1} ({row_labels[i]}) : pénalité = {penalty_val:.2f}")
+            print("Pénalités des colonnes actives :")
+            for j in range(m):
+                if active_cols[j]:
+                    penalty_val = col_penalties_cache[j] if col_penalties_cache[j] is not None else get_col_penalty(j)
+                    print(f"  Colonne {j+1} ({col_labels[j]}) : pénalité = {penalty_val:.2f}")
         
         best_penalty = -1.0
         target_type = None # 'row' ou 'col'
@@ -431,6 +454,25 @@ def balas_hammer_method(
                     target_idx = j
         
         if target_idx == -1: break
+        
+        # AFFICHAGE DES LIGNES/COLONNES AVEC PÉNALITÉ MAXIMALE (conforme au cahier des charges)
+        if verbose:
+            # Calculer les pénalités maximales
+            active_row_penalties = [row_penalties_cache[i] if row_penalties_cache[i] is not None else get_row_penalty(i) 
+                                  for i in range(n) if active_rows[i]]
+            active_col_penalties = [col_penalties_cache[j] if col_penalties_cache[j] is not None else get_col_penalty(j) 
+                                   for j in range(m) if active_cols[j]]
+            
+            max_row_penalty = max(active_row_penalties) if active_row_penalties else 0.0
+            max_col_penalty = max(active_col_penalties) if active_col_penalties else 0.0
+            
+            max_row_indices = [i for i in range(n) if active_rows[i] and 
+                              (row_penalties_cache[i] if row_penalties_cache[i] is not None else get_row_penalty(i)) == max_row_penalty]
+            max_col_indices = [j for j in range(m) if active_cols[j] and 
+                              (col_penalties_cache[j] if col_penalties_cache[j] is not None else get_col_penalty(j)) == max_col_penalty]
+            
+            print(f"\nLigne(s) avec pénalité maximale ({max_row_penalty:.2f}) : {[row_labels[i] for i in max_row_indices]}")
+            print(f"Colonne(s) avec pénalité maximale ({max_col_penalty:.2f}) : {[col_labels[j] for j in max_col_indices]}")
         
         # Trouver la meilleure case pour l'élément choisi
         r, c = -1, -1
@@ -463,17 +505,28 @@ def balas_hammer_method(
                         break
                     k += 1
             r = row_idx
-            
+        
+        # AFFICHAGE DU CHOIX DE L'ARÊTE À REMPLIR (conforme au cahier des charges)
+        if verbose:
+            cost_min = costs[r][c]
+            print(f"Choix de l'arête à remplir : ({r+1}, {c+1}) = {row_labels[r]} -> {col_labels[c]}")
+            print(f"  Coût minimal : {cost_min:.2f}")
+        
         # Allouer
         qty = min(remaining_supplies[r], remaining_demands[c])
         allocation[r][c] = qty
         remaining_supplies[r] -= qty
         remaining_demands[c] -= qty
         
+        if verbose:
+            print(f"  Allocation : {qty:.2f}")
+        
         # Mettre à jour statuts et invalider le cache des pénalités affectées
         if remaining_supplies[r] < 1e-9:
             active_rows[r] = False
             nb_active_rows -= 1
+            if verbose:
+                print(f"  Ligne {r+1} ({row_labels[r]}) épuisée, désactivée")
             # Invalider le cache de cette ligne
             row_penalties_cache[r] = None
             # Invalider les caches des colonnes (car elles peuvent être affectées)
@@ -484,6 +537,8 @@ def balas_hammer_method(
         if remaining_demands[c] < 1e-9:
             active_cols[c] = False
             nb_active_cols -= 1
+            if verbose:
+                print(f"  Colonne {c+1} ({col_labels[c]}) épuisée, désactivée")
             # Invalider le cache de cette colonne
             col_penalties_cache[c] = None
             # Invalider les caches des lignes (car elles peuvent être affectées)
