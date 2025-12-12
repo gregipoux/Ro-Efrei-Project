@@ -859,6 +859,8 @@ def executer_etude_complexite(
                 
                 # Heartbeat toutes les 30 secondes
                 temps_actuel = time.perf_counter()
+                # Calculer le temps écoulé depuis le début du traitement de cette valeur de n
+                temps_ecoule_total = temps_actuel - temps_debut_n
                 if temps_actuel - dernier_heartbeat >= 30.0:
                     print(f"  💓 Programme actif... (exécution {execution + 1}/{nb_executions}, {temps_ecoule_total:.1f}s écoulées)")
                     sys.stdout.flush()
