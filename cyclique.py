@@ -213,7 +213,7 @@ def maximiser_sur_cycle(allocation: List[List[float]], cycle: List[Tuple[int,int
     # Si delta = 0, aucune modification (cas mentionné dans les instructions section 2.3, c'est un cas particulier)
     if delta <= 1e-9:
         if verbose:
-            print("⚠ Delta = 0 : aucune modification possible")
+            print("! Delta = 0 : aucune modification possible")
         return 0.0
 
     # Appliquer delta: ajouter aux cases +, soustraire aux cases - (on optimise le flux)

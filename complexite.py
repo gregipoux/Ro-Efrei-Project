@@ -186,7 +186,7 @@ def resoudre_marche_pied_silencieux(
                     raise ValueError(f"tester_acyclique a retourné un résultat inattendu: {type(result_acyclique)}, attendu: Tuple[bool, List[Tuple[int, int]]]")
                 acyclique, cycle = result_acyclique
             except ValueError as e:
-                print(f"  ⚠ Erreur dans tester_acyclique: {e}", file=sys.stderr, flush=True)
+                print(f"  ! Erreur dans tester_acyclique: {e}", file=sys.stderr, flush=True)
                 raise
             if acyclique:
                 break
@@ -213,7 +213,7 @@ def resoudre_marche_pied_silencieux(
                 raise ValueError(f"is_connected_transport a retourné un résultat inattendu: {type(result_connexite)}, attendu: Tuple[bool, List]")
             est_connexe, _ = result_connexite
         except ValueError as e:
-            print(f"  ⚠ Erreur dans is_connected_transport: {e}", file=sys.stderr, flush=True)
+            print(f"  ! Erreur dans is_connected_transport: {e}", file=sys.stderr, flush=True)
             raise
         arêtes_ajoutées_connexité = []
         
@@ -232,7 +232,7 @@ def resoudre_marche_pied_silencieux(
                         raise ValueError(f"tester_acyclique a retourné un résultat inattendu: {type(result_acyclique)}, attendu: Tuple[bool, List[Tuple[int, int]]]")
                     acyclique, cycle = result_acyclique
                 except ValueError as e:
-                    print(f"  ⚠ Erreur dans tester_acyclique (après connexité): {e}", file=sys.stderr, flush=True)
+                    print(f"  ! Erreur dans tester_acyclique (après connexité): {e}", file=sys.stderr, flush=True)
                     raise
                 if acyclique:
                     break
@@ -258,7 +258,7 @@ def resoudre_marche_pied_silencieux(
                 raise ValueError(f"calculer_potentiels a retourné un résultat inattendu: {type(result_potentiels)}, attendu: Tuple[List[float], List[float]]")
             u, v = result_potentiels
         except ValueError as e:
-            print(f"  ⚠ Erreur dans calculer_potentiels: {e}", file=sys.stderr, flush=True)
+            print(f"  ! Erreur dans calculer_potentiels: {e}", file=sys.stderr, flush=True)
             raise
         
         # Étape 4 & 5 : Détecter l'arête améliorante (Optimisé)
@@ -381,7 +381,7 @@ def mesurer_temps_marche_pied_no(
     except Exception as e:
         # En cas d'erreur, afficher plus de détails pour le débogage
         import traceback
-        print(f"  ⚠ Erreur détaillée dans mesurer_temps_marche_pied_no: {e}", file=sys.stderr, flush=True)
+        print(f"  ! Erreur détaillée dans mesurer_temps_marche_pied_no: {e}", file=sys.stderr, flush=True)
         traceback.print_exc(file=sys.stderr)
         raise
 
@@ -429,7 +429,7 @@ def mesurer_temps_marche_pied_bh(
     except Exception as e:
         # En cas d'erreur, afficher plus de détails pour le débogage
         import traceback
-        print(f"  ⚠ Erreur détaillée dans mesurer_temps_marche_pied_bh: {e}", file=sys.stderr, flush=True)
+        print(f"  ! Erreur détaillée dans mesurer_temps_marche_pied_bh: {e}", file=sys.stderr, flush=True)
         traceback.print_exc(file=sys.stderr)
         raise
 
@@ -466,7 +466,7 @@ def executer_une_iteration_complete(n: int, seed: int) -> Tuple[float, float, fl
             del c, s, d
             gc.collect()
         except Exception as e:
-            print(f"[PID {pid}] ⚠ Erreur dans mesurer_temps_nord_ouest (n={n}, seed={seed}): {e}", file=sys.stderr, flush=True)
+            print(f"[PID {pid}] ! Erreur dans mesurer_temps_nord_ouest (n={n}, seed={seed}): {e}", file=sys.stderr, flush=True)
             temps_no = 0.0
         
         try:
@@ -475,7 +475,7 @@ def executer_une_iteration_complete(n: int, seed: int) -> Tuple[float, float, fl
             del c, s, d
             gc.collect()
         except Exception as e:
-            print(f"[PID {pid}] ⚠ Erreur dans mesurer_temps_balas_hammer (n={n}, seed={seed}): {e}", file=sys.stderr, flush=True)
+            print(f"[PID {pid}] ! Erreur dans mesurer_temps_balas_hammer (n={n}, seed={seed}): {e}", file=sys.stderr, flush=True)
             temps_bh = 0.0
         
         try:
@@ -484,7 +484,7 @@ def executer_une_iteration_complete(n: int, seed: int) -> Tuple[float, float, fl
             del c, s, d
             gc.collect()
         except Exception as e:
-            print(f"[PID {pid}] ⚠ Erreur dans mesurer_temps_marche_pied_no (n={n}, seed={seed}): {e}", file=sys.stderr, flush=True)
+            print(f"[PID {pid}] ! Erreur dans mesurer_temps_marche_pied_no (n={n}, seed={seed}): {e}", file=sys.stderr, flush=True)
             temps_marche_pied_no = 0.0
         
         try:
@@ -493,14 +493,14 @@ def executer_une_iteration_complete(n: int, seed: int) -> Tuple[float, float, fl
             del c, s, d
             gc.collect()
         except Exception as e:
-            print(f"[PID {pid}] ⚠ Erreur dans mesurer_temps_marche_pied_bh (n={n}, seed={seed}): {e}", file=sys.stderr, flush=True)
+            print(f"[PID {pid}] ! Erreur dans mesurer_temps_marche_pied_bh (n={n}, seed={seed}): {e}", file=sys.stderr, flush=True)
             temps_marche_pied_bh = 0.0
         
-        print(f"[PID {pid}] ✓ Terminé (n={n}, seed={seed}): NO={temps_no:.6f}, BH={temps_bh:.6f}, MP_NO={temps_marche_pied_no:.6f}, MP_BH={temps_marche_pied_bh:.6f}", file=sys.stderr, flush=True)
+        print(f"[PID {pid}] Terminé (n={n}, seed={seed}): NO={temps_no:.6f}, BH={temps_bh:.6f}, MP_NO={temps_marche_pied_no:.6f}, MP_BH={temps_marche_pied_bh:.6f}", file=sys.stderr, flush=True)
         return temps_no, temps_bh, temps_marche_pied_no, temps_marche_pied_bh
     except Exception as e:
         # En cas d'erreur, retourner des valeurs par défaut pour éviter de bloquer tout le processus
-        print(f"[PID {pid}] ⚠ Erreur dans l'exécution (n={n}, seed={seed}): {e}", file=sys.stderr, flush=True)
+        print(f"[PID {pid}] ! Erreur dans l'exécution (n={n}, seed={seed}): {e}", file=sys.stderr, flush=True)
         import traceback
         traceback.print_exc(file=sys.stderr)
         return 0.0, 0.0, 0.0, 0.0
@@ -565,8 +565,8 @@ def executer_etude_complexite(
     # OPTIMISATION : Pour n=10000, réduire le nombre d'exécutions par défaut si non spécifié
     # pour éviter que le programme ne plante
     if 10000 in valeurs_n and nb_executions > 10:
-        print(f"  ⚠️  Pour n=10000, le nombre d'exécutions est limité à 10 pour éviter les problèmes de mémoire")
-        print(f"  ⚠️  Utilisez le paramètre nb_executions pour modifier ce comportement")
+        print(f"  ! Pour n=10000, le nombre d'exécutions est limité à 10 pour éviter les problèmes de mémoire")
+        print(f"  ! Utilisez le paramètre nb_executions pour modifier ce comportement")
         sys.stdout.flush()
         # Ne pas modifier nb_executions ici, mais avertir l'utilisateur
     
@@ -588,12 +588,12 @@ def executer_etude_complexite(
     print(f"Total : {total_executions_global} exécutions")
     print(f"Mode parallèle : {'OUI' if utiliser_parallele else 'NON'} (utilisant {nb_processus if utiliser_parallele else 1}/{cpu_count()} processus)")
     if not utiliser_parallele:
-        print(f"  ℹ️  Mode séquentiel (single processor) : conforme aux exigences du projet")
-        print(f"  ℹ️  Garbage collection activé pour optimiser l'utilisation mémoire (N=10000)")
+        print(f"  ! Mode séquentiel (single processor) : conforme aux exigences du projet")
+        print(f"  ! Garbage collection activé pour optimiser l'utilisation mémoire (N=10000)")
     if utiliser_parallele:
-        print(f"  💡 Optimisation : {max(0, cpu_count() - nb_processus)} cœur(s) laissé(s) libre(s) pour éviter la surchauffe")
-        print(f"  💡 Traitement par lots de {taille_lot} avec pause de {pause_entre_lots}s entre les lots")
-    print(f"\n⚠ Attention : Cette opération peut prendre beaucoup de temps !")
+        print(f"  ! Optimisation : {max(0, cpu_count() - nb_processus)} cœur(s) laissé(s) libre(s) pour éviter la surchauffe")
+        print(f"  ! Traitement par lots de {taille_lot} avec pause de {pause_entre_lots}s entre les lots")
+    print(f"\n! Attention : Cette opération peut prendre beaucoup de temps !")
     print(f"======================================================================\n")
     sys.stdout.flush()
     
@@ -604,7 +604,7 @@ def executer_etude_complexite(
         
         temps_debut_n = time.perf_counter()
         
-        print(f"  🚀 Démarrage du traitement pour n={n}...")
+        print(f"  ! Démarrage du traitement pour n={n}...")
         sys.stdout.flush()
         
         theta_NO = []
@@ -619,13 +619,13 @@ def executer_etude_complexite(
         if n <= 10:
             # Pour n <= 10, utiliser le mode séquentiel pour éviter les blocages
             utiliser_parallele_effectif = False
-            print(f"  ℹ️  Mode séquentiel forcé pour n={n} (petite taille)")
+            print(f"  ! Mode séquentiel forcé pour n={n} (petite taille)")
             sys.stdout.flush()
         elif n >= 1000:
             # Pour n >= 1000, utiliser le mode séquentiel pour éviter la saturation mémoire (N=10000 -> 800Mo par matrice !)
             # Sur Windows, multiprocessing 'spawn' copie tout, ce qui tue la RAM.
             utiliser_parallele_effectif = False
-            print(f"  ℹ️  Mode séquentiel forcé pour n={n} (grande taille) pour éviter saturation mémoire")
+            print(f"  ! Mode séquentiel forcé pour n={n} (grande taille) pour éviter saturation mémoire")
             sys.stdout.flush()
         elif n <= 100 and nb_executions <= 5:
             # Pour les petits problèmes, utiliser moins de processus
@@ -640,7 +640,7 @@ def executer_etude_complexite(
             # On crée une liste de seeds pour chaque exécution
             seeds = list(range(nb_executions))
             
-            print(f"  🔄 Initialisation du pool de {nb_processus_effectif} processus (sur {nb_processus} disponibles)...")
+            print(f"  ! Initialisation du pool de {nb_processus_effectif} processus (sur {nb_processus} disponibles)...")
             sys.stdout.flush()
             
             # Utiliser multiprocessing pour paralléliser les exécutions
@@ -652,7 +652,7 @@ def executer_etude_complexite(
                 resultats_iterations = []
                 nb_lots = (nb_executions + taille_lot - 1) // taille_lot  # Arrondi supérieur
                 
-                print(f"  📦 Traitement en {nb_lots} lot(s)...")
+                print(f"  ! Traitement en {nb_lots} lot(s)...")
                 sys.stdout.flush()
                 
                 for lot_num in range(nb_lots):
@@ -661,7 +661,7 @@ def executer_etude_complexite(
                     seeds_lot = seeds[debut_lot:fin_lot]
                     temps_debut_lot = time.perf_counter()
                     
-                    print(f"  ⚙️  Démarrage du lot {lot_num + 1}/{nb_lots} ({len(seeds_lot)} exécution(s))...")
+                    print(f"  ! Démarrage du lot {lot_num + 1}/{nb_lots} ({len(seeds_lot)} exécution(s))...")
                     sys.stdout.flush()
                     
                     # Exécuter le lot en parallèle avec suivi de progression
@@ -679,7 +679,7 @@ def executer_etude_complexite(
                         timeout_estime = max(60, n * n * 0.003 * len(seeds_lot))  # Timeout adaptatif
                     timeout_max = 3600  # Maximum 1 heure par lot
                     timeout_final = min(timeout_estime, timeout_max)
-                    print(f"  ⏱ Timeout configuré : {timeout_final:.0f}s pour n={n} ({len(seeds_lot)} exécution(s))")
+                    print(f"  ! Timeout configuré : {timeout_final:.0f}s pour n={n} ({len(seeds_lot)} exécution(s))")
                     sys.stdout.flush()
                     
                     # Attendre avec heartbeat toutes les 30 secondes
@@ -695,8 +695,8 @@ def executer_etude_complexite(
                         
                         # Vérifier le timeout
                         if temps_attente > timeout_final:
-                            print(f"  ⚠ Timeout atteint pour le lot {lot_num + 1}/{nb_lots} (>{timeout_final:.0f}s)")
-                            print(f"  ⚠ Tentative d'annulation des tâches...")
+                            print(f"  ! Timeout atteint pour le lot {lot_num + 1}/{nb_lots} (>{timeout_final:.0f}s)")
+                            print(f"  ! Tentative d'annulation des tâches...")
                             sys.stdout.flush()
                             
                             # Essayer d'annuler les tâches si possible
@@ -709,23 +709,23 @@ def executer_etude_complexite(
                             time.sleep(2)
                             
                             if not resultat_async.ready():
-                                print(f"  ⚠ Les processus sont bloqués, passage au lot suivant avec valeurs par défaut...")
+                                print(f"  ! Les processus sont bloqués, passage au lot suivant avec valeurs par défaut...")
                                 sys.stdout.flush()
                                 # Remplir avec des valeurs par défaut pour ne pas bloquer
                                 resultats_lot = [(0.0, 0.0, 0.0, 0.0) for _ in seeds_lot]
                                 timeout_atteint = True
-                                print(f"  ⚠ Lot {lot_num + 1} ignoré à cause du timeout")
+                                print(f"  ! Lot {lot_num + 1} ignoré à cause du timeout")
                                 sys.stdout.flush()
                                 break  # Sortir de la boucle d'attente
                             else:
                                 # Les tâches se sont terminées entre-temps
-                                print(f"  ✓ Les tâches se sont terminées après l'annonce du timeout")
+                                print(f"  Les tâches se sont terminées après l'annonce du timeout")
                                 sys.stdout.flush()
                                 break
                         
                         # Heartbeat toutes les 30 secondes
                         if temps_actuel - dernier_heartbeat >= 30.0:
-                            print(f"  💓 Programme actif... (lot {lot_num + 1}/{nb_lots} en cours depuis {temps_attente:.1f}s)")
+                            print(f"  ! Programme actif... (lot {lot_num + 1}/{nb_lots} en cours depuis {temps_attente:.1f}s)")
                             sys.stdout.flush()
                             dernier_heartbeat = temps_actuel
                     
@@ -735,13 +735,13 @@ def executer_etude_complexite(
                             # Timeout plus long pour permettre aux calculs de se terminer
                             resultats_lot = resultat_async.get(timeout=300)  # 5 minutes max pour récupérer
                         except Exception as e:
-                            print(f"  ⚠ Erreur lors de la récupération des résultats du lot {lot_num + 1}: {e}")
+                            print(f"  ! Erreur lors de la récupération des résultats du lot {lot_num + 1}: {e}")
                             sys.stdout.flush()
                             # Réessayer une fois avec un timeout plus long
                             try:
                                 resultats_lot = resultat_async.get(timeout=600)  # 10 minutes
                             except Exception as e2:
-                                print(f"  ✗ Échec définitif pour le lot {lot_num + 1}: {e2}")
+                                print(f"  ! Échec définitif pour le lot {lot_num + 1}: {e2}")
                                 sys.stdout.flush()
                                 # Remplir avec des valeurs par défaut pour ne pas bloquer
                                 resultats_lot = [(0.0, 0.0, 0.0, 0.0) for _ in seeds_lot]
@@ -751,7 +751,7 @@ def executer_etude_complexite(
                     temps_fin_lot = time.perf_counter()
                     temps_lot = temps_fin_lot - temps_debut_lot
                     
-                    print(f"  ✓ Lot {lot_num + 1}/{nb_lots} terminé en {temps_lot:.2f}s")
+                    print(f"  Lot {lot_num + 1}/{nb_lots} terminé en {temps_lot:.2f}s")
                     sys.stdout.flush()
                     
                     # Mise à jour de la progression globale
@@ -781,13 +781,13 @@ def executer_etude_complexite(
                         progression_n = (fin_lot / nb_executions) * 100
                         progression_globale = (execution_globale_actuelle / total_executions_global) * 100
                         
-                        print(f"\n  📊 Progression pour n={n}: {fin_lot}/{nb_executions} ({progression_n:.1f}%)")
-                        print(f"  📊 Progression globale: {execution_globale_actuelle}/{total_executions_global} ({progression_globale:.1f}%)")
-                        print(f"  ⏱ Temps écoulé pour n={n}: {temps_ecoule_total:.1f}s")
-                        print(f"  ⏳ Temps restant estimé: {heures_restantes}h {minutes_restantes}min {secondes_restantes}s")
-                        print(f"  🔄 Calculs restants: {executions_restantes_global} exécutions")
-                        print(f"  ⚡ Dernier lot traité en {temps_lot:.2f}s ({len(seeds_lot)} exécutions)")
-                        print(f"  📦 Lot {lot_num + 1}/{nb_lots} terminé")
+                        print(f"\n  ! Progression pour n={n}: {fin_lot}/{nb_executions} ({progression_n:.1f}%)")
+                        print(f"  Progression globale: {execution_globale_actuelle}/{total_executions_global} ({progression_globale:.1f}%)")
+                        print(f"  Temps écoulé pour n={n}: {temps_ecoule_total:.1f}s")
+                        print(f"  Temps restant estimé: {heures_restantes}h {minutes_restantes}min {secondes_restantes}s")
+                        print(f"  Calculs restants: {executions_restantes_global} exécutions")
+                        print(f"  Dernier lot traité en {temps_lot:.2f}s ({len(seeds_lot)} exécutions)")
+                        print(f"  Lot {lot_num + 1}/{nb_lots} terminé")
                     
                     # OPTIMISATION : Garbage collection après chaque lot pour libérer la mémoire
                     # Particulièrement important pour N=10000 où les matrices sont très grandes
@@ -807,7 +807,7 @@ def executer_etude_complexite(
             gc.collect()
         else:
             # Version séquentielle (pour comparaison ou si parallélisation désactivée)
-            print(f"  🔄 Mode séquentiel activé...")
+            print(f"  ! Mode séquentiel activé...")
             sys.stdout.flush()
             
             theta_NO = []
@@ -820,7 +820,7 @@ def executer_etude_complexite(
             for execution in range(nb_executions):
                 temps_debut_exec = time.perf_counter()
                 
-                print(f"  ⚙️  Exécution {execution + 1}/{nb_executions} en cours...")
+                print(f"  ! Exécution {execution + 1}/{nb_executions} en cours...")
                 sys.stdout.flush()
                 
                 # Générer un problème aléatoire (on utilise execution comme seed pour reproductibilité)
@@ -862,7 +862,7 @@ def executer_etude_complexite(
                 # Calculer le temps écoulé depuis le début du traitement de cette valeur de n
                 temps_ecoule_total = temps_actuel - temps_debut_n
                 if temps_actuel - dernier_heartbeat >= 30.0:
-                    print(f"  💓 Programme actif... (exécution {execution + 1}/{nb_executions}, {temps_ecoule_total:.1f}s écoulées)")
+                    print(f"  ! Programme actif... (exécution {execution + 1}/{nb_executions}, {temps_ecoule_total:.1f}s écoulées)")
                     sys.stdout.flush()
                     dernier_heartbeat = temps_actuel
         
@@ -884,8 +884,8 @@ def executer_etude_complexite(
             'theta_BH_plus_t_BH': [a+b for a,b in zip(theta_BH, t_BH)]
         }
         
-        print(f"\n  ✓ Terminé pour n={n} ({nb_executions} exécutions)")
-        print(f"  ⏱ Temps total: {int(temps_total_n // 3600)}h {int((temps_total_n % 3600) // 60)}min {int(temps_total_n % 60)}s ({temps_total_n:.2f}s)")
+        print(f"\n  Terminé pour n={n} ({nb_executions} exécutions)")
+        print(f"  Temps total: {int(temps_total_n // 3600)}h {int((temps_total_n % 3600) // 60)}min {int(temps_total_n % 60)}s ({temps_total_n:.2f}s)")
         
         # Estimation du temps restant global
         if idx_n < len(valeurs_n) - 1:
@@ -923,7 +923,7 @@ def executer_etude_complexite(
         if dossier and not os.path.exists(dossier):
             os.makedirs(dossier, exist_ok=True)
         charger_resultats_complexite(resultats, fichier)
-        print(f"\n✓ Résultats sauvegardés dans '{fichier}'")
+        print(f"\nRésultats sauvegardés dans '{fichier}'")
     
     # Dernier garbage collection avant de retourner
     gc.collect()
@@ -957,7 +957,7 @@ def tracer_nuages_de_points(resultats: Dict):
     Trace les nuages de points des temps d'exécution en fonction de n.
     """
     if not MATPLOTLIB_AVAILABLE:
-        print("⚠ Matplotlib n'est pas installé. Impossible de tracer les graphiques.")
+        print("! Matplotlib n'est pas installé. Impossible de tracer les graphiques.")
         return
 
     # Préparation des données
@@ -1009,6 +1009,27 @@ def tracer_nuages_de_points(resultats: Dict):
     plt.legend()
     plt.grid(True)
     
+    # 4. Ratio Total NO / Total BH
+    plt.subplot(2, 2, 4)
+    max_ratios = []
+    for n in valeurs_n:
+        data = resultats[str(n)]
+        total_no = data['theta_NO_plus_t_NO']
+        total_bh = data['theta_BH_plus_t_BH']
+        # Calculer le ratio pour chaque exécution
+        # Eviter la division par zéro (ajouter epsilon)
+        ratios = [(no + 1e-9) / (bh + 1e-9) for no, bh in zip(total_no, total_bh)]
+        plt.scatter([n]*len(ratios), ratios, c='magenta', alpha=0.5, s=10)
+        max_ratios.append(max(ratios) if ratios else 0)
+    
+    # Tracer la courbe du max (enveloppe supérieure)
+    plt.plot(valeurs_n, max_ratios, 'k--', linewidth=2, label='Max Ratio')
+    plt.xlabel('Taille n')
+    plt.ylabel('Ratio NO/BH')
+    plt.title('Ratio (tNO + θNO) / (tBH + θBH)')
+    plt.legend()
+    plt.grid(True)
+    
     plt.tight_layout()
     plt.show()
 
@@ -1017,7 +1038,7 @@ def determiner_complexite_pire_cas(resultats: Dict):
     Analyse la complexité dans le pire des cas en traçant les courbes max.
     """
     if not MATPLOTLIB_AVAILABLE:
-        print("⚠ Matplotlib n'est pas installé. Impossible de tracer les graphiques.")
+        print("! Matplotlib n'est pas installé. Impossible de tracer les graphiques.")
         return
 
     valeurs_n = sorted([int(k) for k in resultats.keys()])
@@ -1026,32 +1047,58 @@ def determiner_complexite_pire_cas(resultats: Dict):
     max_no = [max(resultats[str(n)]['theta_NO']) for n in valeurs_n]
     max_bh = [max(resultats[str(n)]['theta_BH']) for n in valeurs_n]
     max_mp_no = [max(resultats[str(n)]['t_NO']) for n in valeurs_n]
+    max_mp_bh = [max(resultats[str(n)]['t_BH']) for n in valeurs_n]
+    max_total_no = [max(resultats[str(n)]['theta_NO_plus_t_NO']) for n in valeurs_n]
+    max_total_bh = [max(resultats[str(n)]['theta_BH_plus_t_BH']) for n in valeurs_n]
     
-    plt.figure(figsize=(15, 5))
+    plt.figure(figsize=(15, 10))
     
     # Analyse NO (théorique O(nm) -> O(n^2))
-    plt.subplot(1, 3, 1)
+    plt.subplot(2, 3, 1)
     plt.plot(valeurs_n, max_no, 'bo-', label='Max NO')
     # Courbe théorique ajustée (sommaire)
-    scale = max_no[-1] / (valeurs_n[-1]**2)
-    plt.plot(valeurs_n, [scale * n**2 for n in valeurs_n], 'k--', label=f'O(n^2)')
-    plt.title('Complexité Pire Cas : Nord-Ouest')
+    if max_no[-1] > 0:
+        scale = max_no[-1] / (valeurs_n[-1]**2)
+        plt.plot(valeurs_n, [scale * n**2 for n in valeurs_n], 'k--', label=f'O(n^2)')
+    plt.title('Pire Cas : Init Nord-Ouest')
     plt.legend()
     plt.grid(True)
     
     # Analyse BH (théorique plus complexe, souvent O(n^3) ou O(n^4))
-    plt.subplot(1, 3, 2)
+    plt.subplot(2, 3, 2)
     plt.plot(valeurs_n, max_bh, 'ro-', label='Max BH')
-    scale = max_bh[-1] / (valeurs_n[-1]**3)
-    plt.plot(valeurs_n, [scale * n**3 for n in valeurs_n], 'k--', label=f'O(n^3)')
-    plt.title('Complexité Pire Cas : Balas-Hammer')
+    if max_bh[-1] > 0:
+        scale = max_bh[-1] / (valeurs_n[-1]**3)
+        plt.plot(valeurs_n, [scale * n**3 for n in valeurs_n], 'k--', label=f'O(n^3)')
+    plt.title('Pire Cas : Init Balas-Hammer')
     plt.legend()
     plt.grid(True)
     
-    # Analyse Marche-Pied
-    plt.subplot(1, 3, 3)
-    plt.plot(valeurs_n, max_mp_no, 'go-', label='Max Marche-Pied')
-    plt.title('Complexité Pire Cas : Marche-Pied')
+    # Analyse Marche-Pied (NO)
+    plt.subplot(2, 3, 3)
+    plt.plot(valeurs_n, max_mp_no, 'go-', label='Max MP(NO)')
+    plt.title('Pire Cas : MP (sur NO)')
+    plt.legend()
+    plt.grid(True)
+
+    # Analyse Marche-Pied (BH)
+    plt.subplot(2, 3, 4)
+    plt.plot(valeurs_n, max_mp_bh, 'yo-', label='Max MP(BH)')
+    plt.title('Pire Cas : MP (sur BH)')
+    plt.legend()
+    plt.grid(True)
+
+    # Analyse Total NO
+    plt.subplot(2, 3, 5)
+    plt.plot(valeurs_n, max_total_no, 'mo-', label='Max Total(NO)')
+    plt.title('Pire Cas : Total (NO)')
+    plt.legend()
+    plt.grid(True)
+
+    # Analyse Total BH
+    plt.subplot(2, 3, 6)
+    plt.plot(valeurs_n, max_total_bh, 'co-', label='Max Total(BH)')
+    plt.title('Pire Cas : Total (BH)')
     plt.legend()
     plt.grid(True)
     
@@ -1063,7 +1110,7 @@ def comparer_algorithmes(resultats: Dict):
     Affiche des graphiques comparatifs (bar charts) des temps moyens.
     """
     if not MATPLOTLIB_AVAILABLE:
-        print("⚠ Matplotlib n'est pas installé. Impossible de tracer les graphiques.")
+        print("! Matplotlib n'est pas installé. Impossible de tracer les graphiques.")
         return
 
     valeurs_n = sorted([int(k) for k in resultats.keys()])
@@ -1147,7 +1194,7 @@ def analyser_tous_les_resultats(dossier: str = "complexity"):
     import glob
     
     if not MATPLOTLIB_AVAILABLE:
-        print("⚠ Matplotlib n'est pas installé. Impossible de créer les visualisations.")
+        print("! Matplotlib n'est pas installé. Impossible de créer les visualisations.")
         return
     
     print("\n" + "=" * 100)
@@ -1162,14 +1209,14 @@ def analyser_tous_les_resultats(dossier: str = "complexity"):
     fichiers_json = glob.glob(pattern)
     
     if not fichiers_json:
-        print(f"\n⚠ Aucun fichier JSON trouvé dans le dossier '{dossier}'")
+        print(f"\n! Aucun fichier JSON trouvé dans le dossier '{dossier}'")
         print("   Exécutez d'abord l'option 3 pour générer des résultats.")
         return
     
     # Trier les fichiers par nom
     fichiers_json_tries = sorted(fichiers_json)
     
-    print(f"\n✓ {len(fichiers_json_tries)} fichier(s) JSON trouvé(s)")
+    print(f"\n{len(fichiers_json_tries)} fichier(s) JSON trouvé(s)")
     print("\nFichiers analysés :")
     for fichier in fichiers_json_tries:
         print(f"  - {os.path.basename(fichier)}")
@@ -1182,11 +1229,11 @@ def analyser_tous_les_resultats(dossier: str = "complexity"):
             nom_fichier = os.path.basename(fichier)
             tous_les_resultats[nom_fichier] = resultats
         except Exception as e:
-            print(f"\n⚠ Erreur lors du chargement de {fichier}: {e}")
+            print(f"\n! Erreur lors du chargement de {fichier}: {e}")
             continue
     
     if not tous_les_resultats:
-        print("\n⚠ Aucun résultat valide chargé.")
+        print("\n! Aucun résultat valide chargé.")
         return
     
     # Extraire toutes les valeurs de n présentes
@@ -1226,7 +1273,7 @@ def analyser_tous_les_resultats(dossier: str = "complexity"):
                         resume_global[n][cle].extend(data[cle])
     
     # ========== VISUALISATION 1 : Tableaux comparatifs pour chaque n ==========
-    print("\n📊 Génération des tableaux comparatifs...")
+    print("\nGénération des tableaux comparatifs...")
     
     for n in valeurs_n_triees:
         print("\n" + "=" * 100)
@@ -1287,7 +1334,7 @@ def analyser_tous_les_resultats(dossier: str = "complexity"):
             print("-" * 100)
     
     # ========== VISUALISATION 5 : Tableau récapitulatif global ==========
-    print("\n📊 Génération du tableau récapitulatif global...")
+    print("\nGénération du tableau récapitulatif global...")
     
     fig, ax = plt.subplots(figsize=(16, max(6, len(valeurs_n_triees) * 0.6 + 2)))
     ax.axis('tight')
@@ -1352,5 +1399,5 @@ def analyser_tous_les_resultats(dossier: str = "complexity"):
         plt.show()
     
     print("\n" + "=" * 100)
-    print("✅ Analyse terminée ! Toutes les visualisations ont été générées.")
+    print("Analyse terminée ! Toutes les visualisations ont été générées.")
     print("=" * 100)

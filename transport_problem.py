@@ -271,7 +271,7 @@ def balas_hammer_method(
             sorted_cols.append(sorted(range(n), key=lambda i: costs[i][j]))
     except TimeoutError:
         if verbose:
-            print("⚠️ Timeout pendant le pré-calcul, bascule vers Nord-Ouest")
+            print("! Timeout pendant le pré-calcul, bascule vers Nord-Ouest")
         # On complète avec une méthode rapide (Nord-Ouest adapté aux restes)
         for i in range(n):
             if remaining_supplies[i] > 1e-9:
@@ -405,7 +405,7 @@ def balas_hammer_method(
     # Boucle principale
     while nb_active_rows > 0 and nb_active_cols > 0:
         if max_duration and (time.perf_counter() - start_time) > max_duration:
-            if verbose: print("⚠️ Timeout Balas-Hammer atteint")
+            if verbose: print("! Timeout Balas-Hammer atteint")
             break
 
         # OPTIMISATION : On utilise le cache des pénalités au lieu de tout recalculer

@@ -152,7 +152,7 @@ def rendre_connexe(
         else:
             # Impossible de connecter ? Bizarre pour un graphe complet biparti
             if verbose:
-                print("  ⚠ Impossible de trouver une arête de connexion !")
+                print("  ! Impossible de trouver une arête de connexion !")
             break
             
     return arêtes_ajoutées
@@ -310,7 +310,7 @@ def methode_marche_pied(
             
             cycles_detectes += 1
             if verbose:
-                print(f"⚠ Cycle détecté : {cycle}")
+                print(f"! Cycle détecté : {cycle}")
             
             # Maximiser sur le cycle (on optimise le flux)
             delta = maximiser_sur_cycle(allocation, cycle, verbose=verbose)
@@ -321,7 +321,7 @@ def methode_marche_pied(
             # Si delta = 0, c'est un cas particulier (on continue quand même pour éliminer le cycle structurellement)
             if delta <= 1e-9:
                 if verbose:
-                    print("   ⚠ Delta = 0 : aucune modification de flux, mais cycle éliminé structurellement")
+                    print("   ! Delta = 0 : aucune modification de flux, mais cycle éliminé structurellement")
                 # On force une case à zéro pour casser le cycle (on casse le cycle manuellement)
                 if cycle:
                     # On met la première case du cycle à zéro
@@ -329,7 +329,7 @@ def methode_marche_pied(
                     allocation[i][j] = 0.0
         
         if cycles_detectes > 0 and verbose:
-            print(f"✓ Proposition rendue acyclique ({cycles_detectes} cycle(s) éliminé(s))\n")
+            print(f"Proposition rendue acyclique ({cycles_detectes} cycle(s) éliminé(s))\n")
         
         # Étape 2 : Vérifier que la proposition est connexe (on vérifie que tout est bien connecté)
         est_connexe, composantes = is_connected_transport(allocation)
@@ -337,7 +337,7 @@ def methode_marche_pied(
         
         if not est_connexe:
             if verbose:
-                print("⚠ Proposition non connexe")
+                print("! Proposition non connexe")
                 print("Sous-graphes connexes :")
                 print_components(composantes)
                 print("Ajout d'arêtes de coût minimal pour rendre connexe...")
@@ -346,7 +346,7 @@ def methode_marche_pied(
             arêtes_ajoutées_connexité = rendre_connexe(costs, allocation, supplies, demands)
             
             if verbose:
-                print("✓ Proposition rendue connexe")
+                print("Proposition rendue connexe")
                 if arêtes_ajoutées_connexité:
                     print(f"  Arêtes ajoutées : {[(i+1, j+1) for i, j in arêtes_ajoutées_connexité]}\n")
                 else:
@@ -369,7 +369,7 @@ def methode_marche_pied(
         if arete_ameliorante is None:
             # Solution optimale trouvée !
             if verbose:
-                print("✓ Solution optimale trouvée !")
+                print("Solution optimale trouvée !")
                 print("  Tous les coûts marginaux sont >= 0\n")
             break
         
@@ -397,7 +397,7 @@ def methode_marche_pied(
         # Si delta = 0, c'est le cas particulier de la section 2.3 (on conserve l'arête améliorante et on enlève les arêtes de connexité)
         if delta <= 1e-9:
             if verbose:
-                print("⚠ Delta = 0 : cas particulier détecté")
+                print("! Delta = 0 : cas particulier détecté")
                 print("  On conserve l'arête améliorante et on enlève les arêtes ajoutées lors du test de connexité")
             
             # Enlever les arêtes ajoutées lors du test de connexité
@@ -418,7 +418,7 @@ def methode_marche_pied(
     
     if nb_iterations >= max_iterations:
         if verbose:
-            print("⚠ Nombre maximum d'itérations atteint")
+            print("! Nombre maximum d'itérations atteint")
     
     # Calculer le coût total final (histoire de savoir combien ça coûte au final)
     cout_total = compute_total_cost(costs, allocation)
