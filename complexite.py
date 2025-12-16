@@ -298,30 +298,33 @@ def resoudre_marche_pied_silencieux(
     return allocation, nb_iterations
 
 
-def mesurer_temps_nord_ouest(costs: List[List[float]], supplies: List[float], demands: List[float]) -> float:
+def mesurer_temps_nord_ouest(costs: List[List[float]], supplies: List[float], demands: List[float]) -> Tuple[float, float]:
     # Alors là, cette fonction mesure le temps d'exécution de l'algorithme Nord-Ouest
-    # En clair, on prend le temps avant, on exécute l'algo, on prend le temps après, et on fait la différence
+    # et calcule le coût de la solution trouvée
     
     # Garbage collection avant mesure pour libérer la mémoire (important pour N=10000)
     gc.collect()
     
     start_time = time.perf_counter()
-    result = northwest_corner_method(supplies, demands)
+    allocation = northwest_corner_method(supplies, demands)
     end_time = time.perf_counter()
     
     # Vérifier que northwest_corner_method retourne bien une allocation
-    if not isinstance(result, list):
-        raise ValueError(f"northwest_corner_method a retourné un type inattendu: {type(result)}, attendu: List[List[float]]")
+    if not isinstance(allocation, list):
+        raise ValueError(f"northwest_corner_method a retourné un type inattendu: {type(allocation)}, attendu: List[List[float]]")
+    
+    # Calculer le coût de la solution initiale
+    cout_initial = compute_total_cost(costs, allocation)
     
     # Garbage collection après mesure
     gc.collect()
     
-    return end_time - start_time
+    return end_time - start_time, cout_initial
 
 
-def mesurer_temps_balas_hammer(costs: List[List[float]], supplies: List[float], demands: List[float]) -> float:
+def mesurer_temps_balas_hammer(costs: List[List[float]], supplies: List[float], demands: List[float]) -> Tuple[float, float]:
     # Alors là, cette fonction mesure le temps d'exécution de l'algorithme Balas-Hammer
-    # Même principe que pour Nord-Ouest : on mesure le temps d'exécution
+    # et calcule le coût de la solution trouvée
     
     # Garbage collection avant mesure pour libérer la mémoire
     gc.collect()
@@ -332,26 +335,29 @@ def mesurer_temps_balas_hammer(costs: List[List[float]], supplies: List[float], 
     max_duration = 300.0 if n >= 5000 else 60.0 if n >= 1000 else 10.0 if n >= 500 else 20.0 if n >= 200 else 30.0
     
     start_time = time.perf_counter()
-    result = balas_hammer_method(costs, supplies, demands, verbose=False, max_duration=max_duration)
+    allocation = balas_hammer_method(costs, supplies, demands, verbose=False, max_duration=max_duration)
     end_time = time.perf_counter()
     
     # Vérifier que balas_hammer_method retourne bien une allocation
-    if not isinstance(result, list):
-        raise ValueError(f"balas_hammer_method a retourné un type inattendu: {type(result)}, attendu: List[List[float]]")
+    if not isinstance(allocation, list):
+        raise ValueError(f"balas_hammer_method a retourné un type inattendu: {type(allocation)}, attendu: List[List[float]]")
+    
+    # Calculer le coût de la solution initiale
+    cout_initial = compute_total_cost(costs, allocation)
     
     # Garbage collection après mesure
     gc.collect()
     
-    return end_time - start_time
+    return end_time - start_time, cout_initial
 
 
 def mesurer_temps_marche_pied_no(
     costs: List[List[float]],
     supplies: List[float],
     demands: List[float]
-) -> float:
+) -> Tuple[float, float]:
     # Alors là, cette fonction mesure le temps d'exécution de la méthode du marche-pied avec solution initiale Nord-Ouest
-    # En résumé, on calcule d'abord la solution initiale avec NO, puis on optimise avec le marche-pied
+    # et calcule le coût final de la solution optimisée
     
     try:
         # Calculer la solution initiale avec Nord-Ouest
@@ -374,10 +380,13 @@ def mesurer_temps_marche_pied_no(
         if not isinstance(result, tuple) or len(result) != 2:
             raise ValueError(f"resoudre_marche_pied_silencieux a retourné un résultat inattendu: {type(result)}, attendu: Tuple[List[List[float]], int]")
         
+        allocation_finale, _ = result
+        cout_final = compute_total_cost(costs, allocation_finale)
+        
         # Garbage collection après mesure
         gc.collect()
         
-        return end_time - start_time
+        return end_time - start_time, cout_final
     except Exception as e:
         # En cas d'erreur, afficher plus de détails pour le débogage
         import traceback
@@ -390,9 +399,9 @@ def mesurer_temps_marche_pied_bh(
     costs: List[List[float]],
     supplies: List[float],
     demands: List[float]
-) -> float:
+) -> Tuple[float, float]:
     # Alors là, cette fonction mesure le temps d'exécution de la méthode du marche-pied avec solution initiale Balas-Hammer
-    # Même principe que pour NO, mais avec Balas-Hammer comme solution initiale
+    # et calcule le coût final de la solution optimisée
     
     try:
         # Déterminer une durée max adaptée à la taille
@@ -422,10 +431,13 @@ def mesurer_temps_marche_pied_bh(
         if not isinstance(result, tuple) or len(result) != 2:
             raise ValueError(f"resoudre_marche_pied_silencieux a retourné un résultat inattendu: {type(result)}, attendu: Tuple[List[List[float]], int]")
         
+        allocation_finale, _ = result
+        cout_final = compute_total_cost(costs, allocation_finale)
+        
         # Garbage collection après mesure
         gc.collect()
         
-        return end_time - start_time
+        return end_time - start_time, cout_final
     except Exception as e:
         # En cas d'erreur, afficher plus de détails pour le débogage
         import traceback
@@ -434,7 +446,7 @@ def mesurer_temps_marche_pied_bh(
         raise
 
 
-def executer_une_iteration_complete(n: int, seed: int) -> Tuple[float, float, float, float]:
+def executer_une_iteration_complete(n: int, seed: int) -> Tuple[float, float, float, float, float, float, float, float]:
     # Alors là, cette fonction exécute une itération complète : génère un problème et mesure tous les temps
     # En résumé, c'est une fonction helper pour la parallélisation
     # Pour faire simple : on fait tout en une fois pour pouvoir paralléliser facilement
@@ -459,51 +471,59 @@ def executer_une_iteration_complete(n: int, seed: int) -> Tuple[float, float, fl
         
         # OPTIMISATION : Pour n >= 1000, réutiliser les clones quand possible
         # Mesurer tous les temps avec gestion d'erreur individuelle
+        
+        # Init NO
         try:
             c, s, d = clones()
-            temps_no = mesurer_temps_nord_ouest(c, s, d)
-            # Libérer la mémoire immédiatement après utilisation
+            temps_no, cout_no = mesurer_temps_nord_ouest(c, s, d)
             del c, s, d
             gc.collect()
         except Exception as e:
             print(f"[PID {pid}] ! Erreur dans mesurer_temps_nord_ouest (n={n}, seed={seed}): {e}", file=sys.stderr, flush=True)
             temps_no = 0.0
+            cout_no = 0.0
         
+        # Init BH
         try:
             c, s, d = clones()
-            temps_bh = mesurer_temps_balas_hammer(c, s, d)
+            temps_bh, cout_bh = mesurer_temps_balas_hammer(c, s, d)
             del c, s, d
             gc.collect()
         except Exception as e:
             print(f"[PID {pid}] ! Erreur dans mesurer_temps_balas_hammer (n={n}, seed={seed}): {e}", file=sys.stderr, flush=True)
             temps_bh = 0.0
+            cout_bh = 0.0
         
+        # MP sur NO
         try:
             c, s, d = clones()
-            temps_marche_pied_no = mesurer_temps_marche_pied_no(c, s, d)
+            temps_mp_no, cout_fin_no = mesurer_temps_marche_pied_no(c, s, d)
             del c, s, d
             gc.collect()
         except Exception as e:
             print(f"[PID {pid}] ! Erreur dans mesurer_temps_marche_pied_no (n={n}, seed={seed}): {e}", file=sys.stderr, flush=True)
-            temps_marche_pied_no = 0.0
+            temps_mp_no = 0.0
+            cout_fin_no = 0.0
         
+        # MP sur BH
         try:
             c, s, d = clones()
-            temps_marche_pied_bh = mesurer_temps_marche_pied_bh(c, s, d)
+            temps_mp_bh, cout_fin_bh = mesurer_temps_marche_pied_bh(c, s, d)
             del c, s, d
             gc.collect()
         except Exception as e:
             print(f"[PID {pid}] ! Erreur dans mesurer_temps_marche_pied_bh (n={n}, seed={seed}): {e}", file=sys.stderr, flush=True)
-            temps_marche_pied_bh = 0.0
+            temps_mp_bh = 0.0
+            cout_fin_bh = 0.0
         
-        print(f"[PID {pid}] Terminé (n={n}, seed={seed}): NO={temps_no:.6f}, BH={temps_bh:.6f}, MP_NO={temps_marche_pied_no:.6f}, MP_BH={temps_marche_pied_bh:.6f}", file=sys.stderr, flush=True)
-        return temps_no, temps_bh, temps_marche_pied_no, temps_marche_pied_bh
+        print(f"[PID {pid}] Terminé (n={n}, seed={seed}): NO={temps_no:.6f}, BH={temps_bh:.6f}, MP_NO={temps_mp_no:.6f}, MP_BH={temps_mp_bh:.6f}", file=sys.stderr, flush=True)
+        return temps_no, temps_bh, temps_mp_no, temps_mp_bh, cout_no, cout_bh, cout_fin_no, cout_fin_bh
     except Exception as e:
         # En cas d'erreur, retourner des valeurs par défaut pour éviter de bloquer tout le processus
         print(f"[PID {pid}] ! Erreur dans l'exécution (n={n}, seed={seed}): {e}", file=sys.stderr, flush=True)
         import traceback
         traceback.print_exc(file=sys.stderr)
-        return 0.0, 0.0, 0.0, 0.0
+        return 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
 
 
 def executer_etude_complexite(
@@ -521,43 +541,6 @@ def executer_etude_complexite(
     # Pour faire simple : on veut voir comment les algorithmes se comportent selon la taille
     # 
     # OPTIMISATION : Traitement par lots avec pauses pour éviter la surchauffe du CPU
-    
-    # Pseudo-code :
-    # SI valeurs_n n'est pas fourni:
-    #     valeurs_n = [10, 40, 102, 400, 1000, 4000, 10000]  (valeurs demandées)
-    # FIN SI
-    # 
-    # resultats = dictionnaire vide
-    # 
-    # POUR chaque n dans valeurs_n:
-    #     theta_NO = []
-    #     theta_BH = []
-    #     t_NO = []
-    #     t_BH = []
-    #     
-    #     POUR execution de 1 à nb_executions:
-    #         Générer un problème aléatoire de taille n
-    #         Mesurer theta_NO(n) et l'ajouter à la liste
-    #         Mesurer theta_BH(n) et l'ajouter à la liste
-    #         Mesurer t_NO(n) et l'ajouter à la liste
-    #         Mesurer t_BH(n) et l'ajouter à la liste
-    #     FIN POUR
-    #     
-    #     resultats[n] = {
-    #         'theta_NO': theta_NO,
-    #         'theta_BH': theta_BH,
-    #         't_NO': t_NO,
-    #         't_BH': t_BH,
-    #         'theta_NO_plus_t_NO': [a+b for a,b in zip(theta_NO, t_NO)],
-    #         'theta_BH_plus_t_BH': [a+b for a,b in zip(theta_BH, t_BH)]
-    #     }
-    # FIN POUR
-    # 
-    # SI sauvegarder_resultats:
-    #     Sauvegarder les résultats dans un fichier JSON
-    # FIN SI
-    # 
-    # RETOURNER resultats
     
     if valeurs_n is None:
         valeurs_n = [10, 40, 102, 400, 1000, 4000, 10000]
@@ -611,6 +594,10 @@ def executer_etude_complexite(
         theta_BH = []
         t_NO = []
         t_BH = []
+        couts_init_NO = []
+        couts_init_BH = []
+        couts_fin_NO = []
+        couts_fin_BH = []
         
         # Pour les petites valeurs de n, utiliser le mode séquentiel pour éviter les blocages
         utiliser_parallele_effectif = utiliser_parallele
@@ -712,7 +699,7 @@ def executer_etude_complexite(
                                 print(f"  ! Les processus sont bloqués, passage au lot suivant avec valeurs par défaut...")
                                 sys.stdout.flush()
                                 # Remplir avec des valeurs par défaut pour ne pas bloquer
-                                resultats_lot = [(0.0, 0.0, 0.0, 0.0) for _ in seeds_lot]
+                                resultats_lot = [(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0) for _ in seeds_lot]
                                 timeout_atteint = True
                                 print(f"  ! Lot {lot_num + 1} ignoré à cause du timeout")
                                 sys.stdout.flush()
@@ -744,7 +731,7 @@ def executer_etude_complexite(
                                 print(f"  ! Échec définitif pour le lot {lot_num + 1}: {e2}")
                                 sys.stdout.flush()
                                 # Remplir avec des valeurs par défaut pour ne pas bloquer
-                                resultats_lot = [(0.0, 0.0, 0.0, 0.0) for _ in seeds_lot]
+                                resultats_lot = [(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0) for _ in seeds_lot]
                     
                     resultats_iterations.extend(resultats_lot)
                     
@@ -802,6 +789,10 @@ def executer_etude_complexite(
             theta_BH = [r[1] for r in resultats_iterations]
             t_NO = [r[2] for r in resultats_iterations]
             t_BH = [r[3] for r in resultats_iterations]
+            couts_init_NO = [r[4] for r in resultats_iterations]
+            couts_init_BH = [r[5] for r in resultats_iterations]
+            couts_fin_NO = [r[6] for r in resultats_iterations]
+            couts_fin_BH = [r[7] for r in resultats_iterations]
             
             # OPTIMISATION : Garbage collection après avoir traité tous les lots
             gc.collect()
@@ -814,6 +805,10 @@ def executer_etude_complexite(
             theta_BH = []
             t_NO = []
             t_BH = []
+            couts_init_NO = []
+            couts_init_BH = []
+            couts_fin_NO = []
+            couts_fin_BH = []
             
             dernier_heartbeat = time.perf_counter()
             
@@ -829,26 +824,30 @@ def executer_etude_complexite(
                 # Mesurer theta_NO(n)
                 print(f"    → Mesure θNO(n)...")
                 sys.stdout.flush()
-                temps_no = mesurer_temps_nord_ouest(costs, supplies, demands)
+                temps_no, cout_no = mesurer_temps_nord_ouest(costs, supplies, demands)
                 theta_NO.append(temps_no)
+                couts_init_NO.append(cout_no)
                 
                 # Mesurer theta_BH(n)
                 print(f"    → Mesure θBH(n)...")
                 sys.stdout.flush()
-                temps_bh = mesurer_temps_balas_hammer(costs, supplies, demands)
+                temps_bh, cout_bh = mesurer_temps_balas_hammer(costs, supplies, demands)
                 theta_BH.append(temps_bh)
+                couts_init_BH.append(cout_bh)
                 
                 # Mesurer t_NO(n)
                 print(f"    → Mesure tNO(n) (marche-pied avec NO)...")
                 sys.stdout.flush()
-                temps_marche_pied_no = mesurer_temps_marche_pied_no(costs, supplies, demands)
+                temps_marche_pied_no, cout_fin_no = mesurer_temps_marche_pied_no(costs, supplies, demands)
                 t_NO.append(temps_marche_pied_no)
+                couts_fin_NO.append(cout_fin_no)
                 
                 # Mesurer t_BH(n)
                 print(f"    → Mesure tBH(n) (marche-pied avec BH)...")
                 sys.stdout.flush()
-                temps_marche_pied_bh = mesurer_temps_marche_pied_bh(costs, supplies, demands)
+                temps_marche_pied_bh, cout_fin_bh = mesurer_temps_marche_pied_bh(costs, supplies, demands)
                 t_BH.append(temps_marche_pied_bh)
+                couts_fin_BH.append(cout_fin_bh)
                 
                 temps_fin_exec = time.perf_counter()
                 temps_exec = temps_fin_exec - temps_debut_exec
@@ -880,6 +879,10 @@ def executer_etude_complexite(
             'theta_BH': theta_BH,
             't_NO': t_NO,
             't_BH': t_BH,
+            'cout_init_NO': couts_init_NO,
+            'cout_init_BH': couts_init_BH,
+            'cout_final_NO': couts_fin_NO,
+            'cout_final_BH': couts_fin_BH,
             'theta_NO_plus_t_NO': [a+b for a,b in zip(theta_NO, t_NO)],
             'theta_BH_plus_t_BH': [a+b for a,b in zip(theta_BH, t_BH)]
         }
@@ -1262,7 +1265,11 @@ def analyser_tous_les_resultats(dossier: str = "complexity"):
             't_NO': [],
             't_BH': [],
             'theta_NO_plus_t_NO': [],
-            'theta_BH_plus_t_BH': []
+            'theta_BH_plus_t_BH': [],
+            'cout_init_NO': [],
+            'cout_init_BH': [],
+            'cout_final_NO': [],
+            'cout_final_BH': []
         }
         
         for resultats in tous_les_resultats.values():
@@ -1394,10 +1401,78 @@ def analyser_tous_les_resultats(dossier: str = "complexity"):
             for j in range(len(headers_recap)):
                 table_recap[(i, j)].set_facecolor(couleur)
         
-        plt.title('Résumé Global - Comparaison des Algorithmes', fontsize=14, fontweight='bold', pad=20)
+        plt.title('Résumé Global - Comparaison des Algorithmes (Temps)', fontsize=14, fontweight='bold', pad=20)
         plt.tight_layout()
         plt.show()
-    
+
+    # ========== NOUVELLE VISUALISATION : Comparaison de la QUALITÉ (Coûts) ==========
+    print("\nGénération du tableau comparatif de qualité (Coûts)...")
+
+    fig2, ax2 = plt.subplots(figsize=(16, max(6, len(valeurs_n_triees) * 0.6 + 2)))
+    ax2.axis('tight')
+    ax2.axis('off')
+
+    headers_quality = ['Valeur n', 'Coût Init NO', 'Coût Init BH', 'Coût Final NO', 'Coût Final BH', 'Gain BH Init', 'Gain BH Final']
+    table_data_quality = []
+
+    for n in valeurs_n_triees:
+        data = resume_global[n]
+        
+        # Vérifier si les données de coût sont disponibles
+        if not data['cout_init_NO'] or not data['cout_init_BH']:
+            table_data_quality.append([str(n), "N/A", "N/A", "N/A", "N/A", "N/A", "N/A"])
+            continue
+
+        c_init_no = sum(data['cout_init_NO']) / len(data['cout_init_NO'])
+        c_init_bh = sum(data['cout_init_BH']) / len(data['cout_init_BH'])
+        c_fin_no = sum(data['cout_final_NO']) / len(data['cout_final_NO'])
+        c_fin_bh = sum(data['cout_final_BH']) / len(data['cout_final_BH'])
+        
+        gain_init = ((c_init_no - c_init_bh) / c_init_no * 100) if c_init_no > 0 else 0
+        gain_final = ((c_fin_no - c_fin_bh) / c_fin_no * 100) if c_fin_no > 0 else 0
+
+        table_data_quality.append([
+            str(n),
+            f"{c_init_no:.2f}",
+            f"{c_init_bh:.2f}",
+            f"{c_fin_no:.2f}",
+            f"{c_fin_bh:.2f}",
+            f"{gain_init:.2f}%",
+            f"{gain_final:.2f}%"
+        ])
+
+    if table_data_quality:
+        table_quality = ax2.table(cellText=table_data_quality, colLabels=headers_quality,
+                                cellLoc='center', loc='center')
+        table_quality.auto_set_font_size(False)
+        table_quality.set_fontsize(10)
+        table_quality.scale(1, 2)
+
+        # Style Header
+        for i in range(len(headers_quality)):
+            table_quality[(0, i)].set_facecolor('#2196F3') # Bleu
+            table_quality[(0, i)].set_text_props(weight='bold', color='white')
+
+        # Colorer selon le gain
+        for i in range(1, len(table_data_quality) + 1):
+            try:
+                gain_val = float(table_data_quality[i-1][5].replace('%', ''))
+                if gain_val > 0:
+                    couleur = '#c8e6c9'  # Vert : BH meilleur
+                elif gain_val < 0:
+                    couleur = '#ffcdd2'  # Rouge : NO meilleur (rare)
+                else:
+                    couleur = 'white'
+            except:
+                couleur = 'white'
+
+            for j in range(len(headers_quality)):
+                table_quality[(i, j)].set_facecolor(couleur)
+
+        plt.title('Résumé Global - Comparaison de la Qualité (Coûts Moyens)', fontsize=14, fontweight='bold', pad=20)
+        plt.tight_layout()
+        plt.show()
+
     print("\n" + "=" * 100)
     print("Analyse terminée ! Toutes les visualisations ont été générées.")
     print("=" * 100)
